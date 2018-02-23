@@ -429,4 +429,8 @@ bifocal|(a.)雙焦點的
 gamesmanship|攪亂戰術`.split("\n").map(line => newCard(line.split("|")[0],line.split("|")[1]));
 }
 
+module.exports={
+    getAllPrestoredCards : getAllPrestoredCards
+};
+
 })();
