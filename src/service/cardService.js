@@ -1,5 +1,7 @@
+( () => {
+
 let count=0;
-const cards=prestoredWords();
+const cards=prestoredCards();
 const fav=[];
 const custom={};
 
@@ -24,7 +26,7 @@ function deleteFav(id){
     }
 }
 
-function getAllBuiltinCards(){
+function getAllPrestoredCards(){
     return cards;
 }
 
@@ -52,7 +54,7 @@ function newCard(side0, side1){
     return card;
 }
 
-function prestoredWords(){
+function prestoredCards(){
 return `surgery|u外科,外科學;c外科手術室,工作室
 massive|(a.)大而重的,寬大的,宏偉的
 quote|引用(vt.)引述,舉証,報價(vi.)引用
@@ -426,3 +428,5 @@ induct|(vt.)引導,使入門,引入,使就職
 bifocal|(a.)雙焦點的
 gamesmanship|攪亂戰術`.split("\n").map(line => newCard(line.split("|")[0],line.split("|")[1]));
 }
+
+})();
