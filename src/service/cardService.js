@@ -2,36 +2,40 @@
 
 let count=0;
 const cards=prestoredCards();
+const prestored=Array.from(new Array(cards.length), (x,i) => i);
 const fav=[];
-const custom={};
+const custom=[];
 
-function addCustom(side0, side1){
-    custom[count.toString()]=newCard(side0, side1);
+// addCustomCard('xxx','yyy');
+// let i=getAllCardsIn(custom);
+// deleteCardFrom(372,custom);
+// console.log('test');
+
+function getAllCardsIn(set){
+    return set.reduce(function(set, id, i) {
+        set[i] = getCardById(id);
+        return set;
+    }, {});
 }
 
-function deleteCustom(id){
-    delete custom.id;
+function getCardById(id){
+    return cards[id];
 }
 
-function addFav(id){
-    fav.push(id);
-}
-
-function deleteFav(id){
-    for (let i = fav.length-1; i >= 0; i--) {
-        if (fav[i] === id) {
-            fav.splice(i, 1);
+function deleteCardFrom(id, set){
+    cards.splice(id, 1);
+    for (let i = set.length-1; i >= 0; i--) {
+        if (set[i] === id) {
+            set.splice(i, 1);
             break;
         }
     }
 }
 
-function getAllPrestoredCards(){
-    return cards;
-}
 
-function getAllCustomCards(){
-    return custom;
+function addCustomCard(side0, side1){
+    custom.push(count);
+    cards.push(newCard(side0, side1));
 }
 
 function getAllFavCards(){
@@ -41,9 +45,17 @@ function getAllFavCards(){
     }, {});
 }
 
-function getCardById(id){
-    if (id>cards.length) return custom[id.toString()];
-    else return cards[id];
+function addToFav(id){
+    fav.push(id);
+}
+
+function removeFromFav(id){
+    for (let i = fav.length-1; i >= 0; i--) {
+        if (fav[i] === id) {
+            fav.splice(i, 1);
+            break;
+        }
+    }
 }
 
 function newCard(side0, side1){
@@ -430,7 +442,14 @@ gamesmanship|攪亂戰術`.split("\n").map(line => newCard(line.split("|")[0],li
 }
 
 module.exports={
-    getAllPrestoredCards : getAllPrestoredCards
+    getAllCards : cards,
+    getAllPrestoredCards : getAllCardsIn(prestored),
+    getAllFavCards : getAllCardsIn(fav),
+    getAllCustomCards : getAllCardsIn(custom),
+    getCardById : getCardById,
+    addToFav : addToFav,    
+    removeFromFav : removeFromFav,    
+    addCustomCard :addCustomCard
 };
 
 })();
