@@ -9,15 +9,15 @@ app.use( express.static('../public') );
 app.use( bodyParser.json({ extended: true, type: '*/*' }) );
 
 
-app.get('/all', (req, res) => { 
+app.get('/cards', (req, res) => { 
     res.send( JSON.stringify( service.getAllCards() ));
-});
+}); 
 
-app.get('/all/:id', (req, res) => { 
+app.get('/cards/:id', (req, res) => { 
     res.send( JSON.stringify(service.getCardById(req.params.id) ));
 });
 
-app.put('/all/:id', (req, res) => { 
+app.put('/cards/:id', (req, res) => { 
     let i= req.body.side0;
     let j= req.body.side1;
     service.updateCard(req.params.id, i, j );
@@ -61,4 +61,5 @@ app.delete('/custom/:id', (req, res) => {
 
 app.listen(PORT, () => {  
     console.log(`Server listening at http://localhost:${PORT}`);
+    console.log('use Ctrl-C to stop this server');
 });
