@@ -10,7 +10,7 @@ app.use( bodyParser.json({ extended: true, type: '*/*' }) );
 
 
 app.get('/all', (req, res) => { 
-    res.send( JSON.stringify( service.getAllCards ));
+    res.send( JSON.stringify( service.getAllCards() ));
 });
 
 app.get('/all/:id', (req, res) => { 
@@ -24,7 +24,7 @@ app.put('/all/:id', (req, res) => {
 });
 
 app.get('/fav', (req, res) => { 
-    res.send( JSON.stringify( service.getAllFavCards ));
+    res.send( JSON.stringify( service.getAllFavCards() ));
 });
 
 app.post('/fav', (req, res) => { 
@@ -36,8 +36,16 @@ app.delete('/fav/:id', (req, res) => {
     service.removeFromFav(req.params.id);
 });
 
+app.get('/prestored', (req, res) => { 
+    res.send( JSON.stringify( service.getAllPrestoredCards() ));
+});
+
+app.delete('/prestored/:id', (req, res) => { 
+    service.deleteFromPrestored(req.params.id);
+});
+
 app.get('/custom', (req, res) => { 
-    res.send( JSON.stringify( service.getAllCustomCards ));
+    res.send( JSON.stringify( service.getAllCustomCards() ));
 });
 
 app.post('/custom', (req, res) => { 
@@ -47,13 +55,9 @@ app.post('/custom', (req, res) => {
 });
 
 app.delete('/custom/:id', (req, res) => { 
-    service.deleteCardFrom(req.params.id, custom);
+    service.deleteFromCustom(req.params.id);
 });
 
-console.log(service.getAllCustomCards);
-service.deleteFromCustom(372);
-console.log(service.getAllCustomCards);
-console.log(service.getAllCustomCards);
 
 app.listen(PORT, () => {  
     console.log(`Server listening at http://localhost:${PORT}`);

@@ -6,10 +6,12 @@ const prestored=Array.from(new Array(cards.length), (x,i) => i);
 const fav=[];
 const custom=[];
 
- addCustomCard('xxx','yyy');
- //console.log(eval("custom"));
- //let i=getAllCardsIn(custom);
-// deleteCardFrom(372,custom);
+addCustomCard('xxx','yyy');
+//console.log(custom);
+//deleteCardFrom(372, custom);
+//let i=(id=>deleteCardFrom(id, custom));
+//i(372);
+//console.log(custom);
 
 
 function getAllCardsIn(set){
@@ -448,15 +450,16 @@ gamesmanship|攪亂戰術`.split("\n").map(line => newCard(line.split("|")[0],li
 
 module.exports={
     getAllCards : cards,
-    getAllPrestoredCards : getAllCardsIn(prestored),
-    getAllFavCards : getAllCardsIn(fav),
-    getAllCustomCards : getAllCardsIn(custom),
+    getAllPrestoredCards :(()=> getAllCardsIn(prestored)),
+    getAllFavCards : (()=>getAllCardsIn(fav)),
+    getAllCustomCards : (()=>getAllCardsIn(custom)),
     getCardById : getCardById,
     addToFav : addToFav,    
     removeFromFav : removeFromFav,    
     addCustomCard :addCustomCard,
     updateCard : updateCard,
-    deleteFromCustom : (id=> deleteCardFrom(id, custom))
+    deleteFromCustom : (id=>deleteCardFrom(id, custom)),
+    deleteFromPrestored : (id=>deleteCardFrom(id, prestored)),
 };
 
 })();

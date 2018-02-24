@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "src/service/controller.js",
-  
   "keywords": [],
-  
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.2"
