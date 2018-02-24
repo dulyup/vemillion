@@ -6,10 +6,11 @@ const prestored=Array.from(new Array(cards.length), (x,i) => i);
 const fav=[];
 const custom=[];
 
-// addCustomCard('xxx','yyy');
-// let i=getAllCardsIn(custom);
+ addCustomCard('xxx','yyy');
+ //console.log(eval("custom"));
+ //let i=getAllCardsIn(custom);
 // deleteCardFrom(372,custom);
-// console.log('test');
+
 
 function getAllCardsIn(set){
     return set.reduce(function(set, id, i) {
@@ -31,7 +32,6 @@ function deleteCardFrom(id, set){
         }
     }
 }
-
 
 function addCustomCard(side0, side1){
     custom.push(count);
@@ -56,6 +56,11 @@ function removeFromFav(id){
             break;
         }
     }
+}
+
+function updateCard(id, side0, side1){
+    if (side0) cards[id].side0=side0;
+    if (side1) cards[id].side1=side1;
 }
 
 function newCard(side0, side1){
@@ -449,7 +454,9 @@ module.exports={
     getCardById : getCardById,
     addToFav : addToFav,    
     removeFromFav : removeFromFav,    
-    addCustomCard :addCustomCard
+    addCustomCard :addCustomCard,
+    updateCard : updateCard,
+    deleteFromCustom : (id=> deleteCardFrom(id, custom))
 };
 
 })();
