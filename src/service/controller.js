@@ -20,6 +20,7 @@ app.put('/cards/:id', (req, res) => {
     let i= req.body.side0;
     let j= req.body.side1;
     service.updateCard(req.params.id, i, j );
+    res.send('OK');
 });
 
 app.get('/fav', (req, res) => { 
@@ -33,6 +34,7 @@ app.post('/fav', (req, res) => {
 
 app.delete('/fav/:id', (req, res) => { 
     service.removeFromFav(req.params.id);
+    res.send('OK');
 });
 
 app.get('/prestored', (req, res) => { 
@@ -41,6 +43,7 @@ app.get('/prestored', (req, res) => {
 
 app.delete('/prestored/:id', (req, res) => { 
     service.deleteFromPrestored(req.params.id);
+    res.send('OK');
 });
 
 app.get('/custom', (req, res) => { 
@@ -51,10 +54,12 @@ app.post('/custom', (req, res) => {
     let i= req.body.side0;
     let j= req.body.side1;
     service.addCustomCard(i,j);
+    res.send('OK');
 });
 
 app.delete('/custom/:id', (req, res) => { 
     service.deleteFromCustom(req.params.id);
+    res.send('OK');
 });
 
 
