@@ -5,12 +5,11 @@ const PORT = 3000;
 const service=require('./cardService.js');
 
 
-app.use( express.static('../public') ); 
+app.use( express.static('src') ); 
 app.use( bodyParser.json({ extended: true, type: '*/*' }) );
 
-
 app.get('/cards', (req, res) => { 
-    res.send( JSON.stringify( service.getAllCards() ));
+    res.send( JSON.stringify( service.getAllCards ));
 }); 
 
 app.get('/cards/:id', (req, res) => { 
