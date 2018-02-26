@@ -5,7 +5,8 @@ const PORT = 2666;
 const service=require('./cardService.js');
 
 
-app.use('',express.static(__dirname + 'src/public') ); 
+app.use('/',express.static(__dirname + '../public') ); 
+
 app.use( bodyParser.json({ extended: true, type: '*/*' }) );
 
 app.get('/cards', (req, res) => { 
