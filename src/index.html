@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="index.css"/>
+	<title>Vermillion Flashcards</title>
+	<header class="header"><p>Welcome to Flash Card</p></header>
+</head>
+<body>
+	<div class="homepage">
+		<div class="slogan">
+			<p id="slogan1">STUDY: <span id="slogan2">Easier</span></p>
+			<p id="slogan3">Faster</p>
+			<p id="slogan4">Harder</p>
+		</div>
+		<div class="buttons">
+			<button id="homepage-study">FLASHCARDS</button>
+			<button id="homepage-fav">FAVORITES</button>
+			<button id="homepage-my-cards">MY CARDS</button>
+		</div>
+	</div>
+
+	<div class="study-page">
+
+	</div>
+
+	<div class="favorite-page">
+		<div id="favorite-list" onclick="selectRow(this)" charset="utf-8"></div>
+		<div class="favorite-page-buttons">
+			<button class="favorite-page-back">Back</button>
+			<button class="favorite-page-edit">Edit</button>
+			<button class="favorite-page-study">Study</button>
+		</div>
+	</div>
+
+	<div class="my-cards-page">
+		<p class="my-cards-page-slogan">Create your own cards from here! Your list of existing cards:</p>
+		<div id="my-cards-list" onclick="selectRow(this)"></div>
+		<div class="my-cards-page-buttons">
+			<button class="my-cards-page-back">Back</button>
+			<button class="my-cards-page-add">Add</button>
+			<button class="my-cards-page-edit">Edit</button>
+			<button class="my-cards-page-study">Study</button>
+		</div>
+	</div>
+
+
+</body>
+<script src='index-dom.js'></script>
+<script src='connectServer.js'></script>
+
+</html>
