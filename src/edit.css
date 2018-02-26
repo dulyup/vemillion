@@ -1,10 +1,10 @@
 
-h1 {
+.edit-page h1 {
     color: green;
     text-align: center;
 }
 
-input
+.edit-page input
 {
     font-size: 18px;
     height: 18px;
@@ -27,7 +27,7 @@ input
     padding: 5px;
 }
 
-.modal-content {
+.edit-page .modal-content {
     background-color: #fefefe;
     margin: auto;
     padding: 20px;
@@ -36,7 +36,7 @@ input
     text-align: center;
 }
 
-button {
+.edit-page button {
     border: 1px;
     padding: 8px;
     margin: 20px;
@@ -47,32 +47,28 @@ button {
     font-size: 15px;
 }
 
-button:disabled,
-button[disabled]{
+.edit-page button:disabled,
+.edit-page button[disabled]{
   background-color: #cccccc;
   color: #666666;
   font-size: 10px;
 }
 
-.error {
+.edit-page .error {
     border:1px solid red;    
 }
 
-input:focus {
+.edit-page input:focus {
     outline: none !important;
 }
 
-.edit {
-
-}
-
-.alert {
+.edit-page .alert {
     padding-top: 10px;
     text-align: center;
     color: #f44336;
 }
 
-.status {
+.edit-page .status {
     text-align: center;
     font-weight: bold;
     color: red;
