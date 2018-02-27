@@ -16,7 +16,9 @@ function requestFavJsonUpdateFavList(){
                 return response.json();
             }
             return Promise.reject('error-response-not-okay');
-        }).then(fromJson => {let json = fromJson; createFavoriteTable(json);})
+        }).then(fromJson => {
+            createFavoriteTable(fromJson);
+        })
         .catch( ( error ) => {
             if(error.toString().startsWith('error-')) {
                 return Promise.reject(error);
@@ -32,7 +34,9 @@ function requestMyCardsJsonUpdateMyCardsList(){
                 return response.json();
             }
             return Promise.reject('error-response-not-okay');
-        }).then(fromJson => {let json = fromJson; createMyCardsTable(json);})
+        }).then(fromJson => {
+            createMyCardsTable(fromJson);
+        })
         .catch( ( error ) => {
             if(error.toString().startsWith('error-')) {
                 return Promise.reject(error);
