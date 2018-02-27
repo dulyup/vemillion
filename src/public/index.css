@@ -115,7 +115,7 @@ body{
 }
 
 #favorite-list > table {
-	margin-left: 300px;
+	margin-left: 400px;
 	width:600px;
 	border-collapse:collapse;
 	text-align:center;
@@ -158,7 +158,7 @@ td {
 }
 
 #my-cards-list > table {
-	margin-left: 300px;
+	margin-left: 400px;
 	width:600px;
 	border-collapse:collapse;
 	text-align:center;
