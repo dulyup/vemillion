@@ -1,12 +1,19 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-const PORT = 2666;  
+const PORT = 2666;
+// const path = require('path');
 const service=require('./cardService.js');
 
-
-app.use( express.static('src') ); 
 app.use( bodyParser.json({ extended: true, type: '*/*' }) );
+app.use(express.static(__dirname + '/../public') );
+
+// app.use(express.static(path.join(__dirname, '..', 'public')));
+// app.set('view engine', 'html');
+//
+// app.get('', (req, res) => {
+//     res.sendFile(path.resolve(__dirname, '..', 'public', 'index.html'));
+// });
 
 app.get('/cards', (req, res) => { 
     res.send( JSON.stringify( service.getAllCards ));
@@ -22,6 +29,14 @@ app.put('/cards/:id', (req, res) => {
     service.updateCard(req.params.id, i, j );
     res.send('OK');
 });
+
+
+// app.use('',express.static('src/public/index.html'));
+// app.use(express.static('/public'));
+// app.use( express.static('src') );
+// app.use('/',express.static('src/public/') );
+
+// app.use('/',express.static('src/public/') );
 
 app.get('/fav', (req, res) => { 
     res.send( JSON.stringify( service.getAllFavCards() ));

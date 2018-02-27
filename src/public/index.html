@@ -21,7 +21,28 @@
 	</div>
 
 	<div class="study-page">
-
+		<div id="wholecard">
+			<div id="header">Choose The Answer in <span id="time"></span> Seconds!</div>
+			<div id="TimeOut"></div>
+			<div id="result"></div>
+			<div id="cards">
+				<p id="question"></p>
+				<div id="card">
+					<input type = "button" id="haveNoIdea" value = "Have No Idea"></input>
+					<input type = "button" id="AButton" value = ""> </input>
+					<input type = "button" id="BButton" value = ""> </input>
+					<input type = "button" id="CButton" value = ""> </input>
+					<input type = "button" id="exit" value = "Exit"></input>
+				</div>
+			</div>
+		</div>
+		<div id="anwser">
+			<p id="correctAnwser"></p>
+			<button id="addtoFavorite">
+				<img id="myImg" src="./image/emptyheart.png" width="20px" height="20px" border="0">
+			</button>
+			<input type="button" id="answerPageButton" value="Next"></input>
+		</div>
 	</div>
 
 	<div class="favorite-page">
@@ -44,9 +65,20 @@
 		</div>
 	</div>
 
+	<div class="edit-page">
+		<div class="modal-content">
+
+			<h1 id='title'></h1>
+			<div>
+				<div class="edit-inputs">
+				</div>
+				<button class='cancel' id='cancelBtn'>Cancel</button>
+				<button class='save' id='saveBtn'>Save</button>
+			</div>
+		</div>
+	</div>
 
 </body>
+<script type="text/javascript" charset="UTF-8" src='editPage.js'></script>
 <script src='index-dom.js'></script>
-<script src='connectServer.js'></script>
-
 </html>
