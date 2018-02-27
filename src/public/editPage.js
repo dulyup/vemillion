@@ -38,7 +38,6 @@ function getUserInput(inputs) {
     inputs.forEach((input) => {
         obj[input.getAttribute('key')] = input.value;
     });
-
     return obj;
 }
 
@@ -81,9 +80,17 @@ function saveBtnListener() {
     }
 }
 
-function addListeners() {
+function addListeners(isFavPage) {
     cancelBtn.addEventListener('click', cancelBtnListener);
     saveBtn.addEventListener('click', saveBtnListener);
+    if (isFavPage) {
+        console.log('favorite page');
+        saveBtn.addEventListener('click', displayFavoritePage);
+    } else {
+        console.log('hi');
+        saveBtn.addEventListener('click', hideFavoritePage);
+        saveBtn.addEventListener('click', displayMyCardsPage);
+    }
     document.querySelectorAll('input').forEach((input) => {
         input.addEventListener('input', function() {
             handleInputChangeListener(input);
@@ -120,12 +127,12 @@ function hideModal() {
     modal[0].style.display = "none";
 }
 
-function showAddOrEditPage(id) {
+function showAddOrEditPage(id, isFavPage) {
     if (id) {
         getCardById(id).then((data) => {
             console.log(data);
             render(data);
-            addListeners();
+            addListeners(isFavPage);
             this.showModal();
         }).catch((e)=> {
             console.log(e);
