@@ -31,7 +31,7 @@ function generateInputs(data) {
         data = {english: "", chinese: ""};
     } 
 
-    return Object.keys(data).map((key, index) =>`<input class="input" key="${key}" value="${data[key]}"/><div id="${key}_status"> </div>`).join('\n'); 
+    return Object.keys(data).map((key, index) =>`<input class="input"  value="${data[key]}"/><div id="${key}_status"> </div>`).join('\n'); 
 }
 
 function getUserInput(inputs) {

@@ -184,14 +184,16 @@ function displayStudyPage() {
 
 //from lu niu
 function displayAddPage() {
-
+    showAddOrEditPage();
 }
 
 //from lu niu
-function displayEditPage() {
-    let idOfSelectedWord = getIdOfSelectedWord();
+function displayEditPage(id) {
+
+    let idOfSelectedWord = getIdOfSelectedWord(id);
     console.log(idOfSelectedWord); //when click edit, print id in console
     curRow = null; //show edit page, hide list, reset curRow(global variable) to null
+    showAddOrEditPage(id);
 }
 
 //==============================
