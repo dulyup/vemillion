@@ -1,13 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-const PORT = 2666;  
+const PORT = 2666;
 const service=require('./cardService.js');
 
-
-app.use(express.static(__dirname + '/../public') ); 
-
 app.use( bodyParser.json({ extended: true, type: '*/*' }) );
+app.use(express.static(__dirname + '/../public') );
+
 
 app.get('/cards', (req, res) => { 
     res.send( JSON.stringify( service.getAllCards ));
