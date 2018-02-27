@@ -15,10 +15,7 @@ addCustomCard('xxx','yyy');
 
 
 function getAllCardsIn(set){
-    return set.reduce(function(set, id, i) {
-        set[i] = getCardById(id);
-        return set;
-    }, {});
+    return set.map( id => cards[id]); 
 }
 
 function getCardById(id){
