@@ -9,19 +9,20 @@ const custom = new Set();
 
 addCustomCard('xxx','yyy');
 //console.log(getAllCardsIn(prestored));
-//console.log(custom);
+console.log(cards[372]);
+console.log(getCardById(372));
 //deleteCardFrom(372, custom);
 //let i=(id=>deleteCardFrom(id, custom));
 //i(372);
-//console.log(custom);
+console.log(cards[372]);
 
 
 function getAllCardsIn(set){
-    return Array.from(set, i=>cards[i]); 
+    return Array.from(set, id=>getCardById(id)); 
 }
 
 function getCardById(id){
-    return cards[id];
+    return Object.assign({inFav:fav.has(id)},cards[id]);
 }
 
 function deleteCard(id){
