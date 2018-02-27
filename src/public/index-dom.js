@@ -9,8 +9,8 @@ const favoriteTable = document.getElementById('favorite-list');
 //My Cards Page
 const myCardsTable = document.getElementById('my-cards-list');
 
-function callGetFavJsonService(url){
-    return fetch(url)
+function requestFavJsonUpdateFavList(){
+    return fetch('http://localhost:2666/fav')
         .then( response => {
             if(response.ok) {
                 return response.json();
@@ -25,8 +25,8 @@ function callGetFavJsonService(url){
         });
 }
 
-function callGetMycardsJsonService(url){
-    return fetch(url)
+function requestMyCardsJsonUpdateMyCardsList(){
+    return fetch('http://localhost:2666/custom')
         .then( response => {
             if(response.ok) {
                 return response.json();
@@ -77,21 +77,15 @@ function addStudyListenerHomepage() {
 }
 
 function addFavListenerHomepage() {
-    //callGetJsonService('http://localhost:2666/fav')
     const favBtnHomepage = document.getElementById('homepage-fav');
     favBtnHomepage.addEventListener('click', hideHomepage);
-    favBtnHomepage.addEventListener('click', callGetFavJsonService('http://localhost:2666/fav'));
     favBtnHomepage.addEventListener('click', displayFavoritePage);
-    //need to add getting data from server
 }
 
 function addMyCardListenerHomepage() {
     const myCaBtnsHomepage = document.getElementById('homepage-my-cards');
     myCaBtnsHomepage.addEventListener('click', hideHomepage);
-    myCaBtnsHomepage.addEventListener('click', callGetMycardsJsonService('http://localhost:2666/custom'));
     myCaBtnsHomepage.addEventListener('click', displayMyCardsPage);
-    // myCaBtnsHomepage.addEventListener('click', createMyCardsTable);
-    //need to add getting data from server
 }
 
 //==================================================================
@@ -102,7 +96,7 @@ function addBackListenerFavPage() {
 }
 
 function addEditListenerFavPage() {
-    document.querySelector('.favorite-page-edit').addEventListener('click', displayEditPage);
+    document.querySelector('.favorite-page-edit').addEventListener('click', displayEditPageFromFavPage);
 }
 
 function addStudyListenerFavPage() {
@@ -117,11 +111,11 @@ function addBackListenerMyCaPage() {
 }
 
 function addAddListenerMyCaPage() {
-    document.querySelector('.my-cards-page-add').addEventListener('click', displayAddPage);
+    document.querySelector('.my-cards-page-add').addEventListener('click', displayAddPageFromMyCardPage);
 }
 
 function addEditListenerMyCaPage() {
-    document.querySelector('.my-cards-page-edit').addEventListener('click', displayEditPage);
+    document.querySelector('.my-cards-page-edit').addEventListener('click', displayEditPageFromMyCardPage);
 }
 
 function addStudyListenerMyCaPage() {
@@ -173,8 +167,6 @@ function createTBody(table, json) {
     //add tbody into table
     table.appendChild(tbody);
     //traverse all words in json
-    console.log(json);
-    console.log(Object.keys(json).length);
     for (let i = 0; i < Object.keys(json).length; i++) {
         const keyOfJson = ["side0", "side1"]; //keep it the same as key in json
         map[i] = json[i]["id"];
@@ -185,7 +177,6 @@ function createTBody(table, json) {
             //create td
             let td = document.createElement("td");
             //set current attribute as content of td
-            console.log(json[i][index]);
             td.innerHTML = json[i][index];
             tr.appendChild(td);
         }
@@ -203,7 +194,7 @@ function selectRow(obj) {
             curRow.style.background='';
         }
         curRow = event.srcElement.parentElement;
-        curRow.style.background="#d5f163";
+        curRow.style.background="#b6e1c8";
         return curRow;
     }
 }
@@ -225,6 +216,7 @@ function displayHomepage() {
 
 function displayFavoritePage() {
     favoritePage.style = "";
+    requestFavJsonUpdateFavList();
     addBackListenerFavPage();
     addEditListenerFavPage();
     addStudyListenerFavPage();
@@ -232,6 +224,7 @@ function displayFavoritePage() {
 
 function displayMyCardsPage() {
     myCardsPage.style = "";
+    requestMyCardsJsonUpdateMyCardsList();
     addAddListenerMyCaPage();
     addBackListenerMyCaPage();
     addEditListenerMyCaPage();
@@ -400,8 +393,6 @@ function displayStudyPage() {
             }
 
             function getResult(value, answer) {
-                // console.log(answer);
-                // console.log(value);
                 if (value === answer) {
                     document.getElementById("result").innerHTML = "Correct!";
                 } else {
@@ -432,7 +423,7 @@ function displayStudyPage() {
                 document.getElementById("result").innerHTML = "";
                 // console.log(value);
                 if (document.getElementById("answerPageButton").value == "Exit") {
-                    exitButtonClicked();
+                    start();
                 } else {
                     nextButtonClicked();
                 }
@@ -802,21 +793,27 @@ function displayStudyFavPage() {
 //==Display edit, add pages==
 //===========================
 //from lu niu
-function displayAddPage() {
-    // deleteMyCardsTable();
-    showAddOrEditPage();
+function displayAddPageFromMyCardPage() {
+    deleteMyCardsTable();
+    showAddOrEditPage(null, false);
 }
 
 //from lu niu
-function displayEditPage() {
-    // deleteFavoriteTable();
+function displayEditPageFromFavPage() {
     let idOfSelectedWord = getIdOfSelectedWord();
     console.log(idOfSelectedWord); //when click edit, print id in console
     curRow = null; //show edit page, hide list, reset curRow(global variable) to null
-    showAddOrEditPage(idOfSelectedWord);
+    deleteFavoriteTable();
+    showAddOrEditPage(idOfSelectedWord, true);
 }
 
-
+function displayEditPageFromMyCardPage() {
+    let idOfSelectedWord = getIdOfSelectedWord();
+    console.log(idOfSelectedWord); //when click edit, print id in console
+    curRow = null; //show edit page, hide list, reset curRow(global variable) to null
+    deleteMyCardsTable();
+    showAddOrEditPage(idOfSelectedWord, false);
+}
 //==============================
 //==Hide pages and clear lists==
 //==============================
@@ -830,7 +827,6 @@ function hideFavoritePage() {
 
 function hideMyCardsPage() {
     myCardsPage.style.display = "none";
-    // document.querySelector('my-cards-page').style.display = "none";
 }
 
 function hideStudyPage() {
@@ -860,17 +856,12 @@ function start() {
     deleteFavoriteTable();
     //clear data of my cards list
     deleteMyCardsTable();
-
-    // loadJSONFav(function(response) {
-    //     let fav_JSON = JSON.parse(response);
-    //     console.log(fav_JSON);
-    // });
 }
 
 start();
 
 
-let data = [
+/*let data = [
     {
         "id": "0",
         "word": "black",
@@ -1057,4 +1048,4 @@ let data = [
         "c":"橘色",
         "correctAnswer": "adj.白色的，纯洁的"
     }
-];
+];*/
