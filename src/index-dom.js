@@ -188,12 +188,12 @@ function displayAddPage() {
 }
 
 //from lu niu
-function displayEditPage(id) {
+function displayEditPage(idOfSelectedWordd) {
 
-    let idOfSelectedWord = getIdOfSelectedWord(id);
+    let idOfSelectedWord = getIdOfSelectedWord();
     console.log(idOfSelectedWord); //when click edit, print id in console
     curRow = null; //show edit page, hide list, reset curRow(global variable) to null
-    showAddOrEditPage(id);
+    showAddOrEditPage(idOfSelectedWord);
 }
 
 //==============================

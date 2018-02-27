@@ -21,7 +21,7 @@ saveBtn.disabled = false;
 cancelBtn.disabled = false;
 
 function render(data) {
-    document.querySelector('.inputs').innerHTML = generateInputs(data);
+    document.querySelector('.edit-inputs').innerHTML = generateInputs(data);
 }
 
 function generateInputs(data) {
