@@ -7,25 +7,19 @@ const prestored=new Set(cards.map((x,i)=>i));
 const fav = new Set();
 const custom = new Set();
 
-addCustomCard('xxx','yyy');
-//console.log(getAllCardsIn(prestored));
-console.log(cards[372]);
-console.log(getCardById(372));
-//deleteCardFrom(372, custom);
-//let i=(id=>deleteCardFrom(id, custom));
-//i(372);
-console.log(cards[372]);
-
+addToFav(58);
 
 function getAllCardsIn(set){
     return Array.from(set, id=>getCardById(id)); 
 }
 
 function getCardById(id){
-    return Object.assign({inFav:fav.has(id)},cards[id]);
+    id=+id;
+    return Object.assign({inFav:fav.has(id)},cards[+id]);
 }
 
 function deleteCard(id){
+    id=+id;
     cards.splice(id, 1);
     if (fav.has(id)) fav.delete(id);
     if (prestored.has(id)) prestored.delete(id);
@@ -38,16 +32,19 @@ function addCustomCard(side0, side1){
 }
 
 function addToFav(id){
+    id=+id;
     if (!fav.has(id)) fav.add(id);
 }
 
 function removeFromFav(id){
-    if (fav.has(id)) fav.delete(id);
+    id=+id;
+    if (fav.has(id)) {fav.delete(id);} 
 }
 
 function updateCard(id, side0, side1){
-    if (side0) cards[id].side0=side0;
-    if (side1) cards[id].side1=side1;
+    id=+id;
+    if (side0) {cards[id].side0=side0;}
+    if (side1) {cards[id].side1=side1;}
 }
 
 function newCard(side0, side1){
@@ -59,7 +56,7 @@ function newCard(side0, side1){
 }
 
 module.exports={
-    getAllCards : cards,
+    allCards : cards,
     getAllPrestoredCards :(()=> getAllCardsIn(prestored)),
     getAllFavCards : (()=>getAllCardsIn(fav)),
     getAllCustomCards : (()=>getAllCardsIn(custom)),

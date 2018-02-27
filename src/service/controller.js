@@ -7,9 +7,8 @@ const service=require('./cardService.js');
 app.use( bodyParser.json({ extended: true, type: '*/*' }) );
 app.use(express.static(__dirname + '/../public') );
 
-
 app.get('/cards', (req, res) => { 
-    res.send( JSON.stringify( service.getAllCards ));
+    res.send( JSON.stringify( service.allCards ));
 }); 
 
 app.get('/cards/:id', (req, res) => { 
@@ -32,9 +31,10 @@ app.post('/fav', (req, res) => {
     res.send('OK');
 });
 
-app.delete('/fav/:id', (req, res) => { 
+app.delete('/fav/:id', (req, res) => {     
     service.removeFromFav(req.params.id);
     res.send('OK');
+    // res.send(service.getAllFavCards());
 });
 
 app.get('/prestored', (req, res) => { 
@@ -61,7 +61,6 @@ app.delete('/custom/:id', (req, res) => {
     service.deleteCard(req.params.id);
     res.send('OK');
 });
-
 
 app.listen(PORT, () => {  
     console.log(`Server listening at http://localhost:${PORT}`);
