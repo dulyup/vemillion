@@ -42,7 +42,7 @@ app.get('/prestored', (req, res) => {
 });
 
 app.delete('/prestored/:id', (req, res) => { 
-    service.deleteFromPrestored(req.params.id);
+    service.deleteCard(req.params.id);
     res.send('OK');
 });
 
@@ -58,7 +58,7 @@ app.post('/custom', (req, res) => {
 });
 
 app.delete('/custom/:id', (req, res) => { 
-    service.deleteFromCustom(req.params.id);
+    service.deleteCard(req.params.id);
     res.send('OK');
 });
 
