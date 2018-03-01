@@ -2,63 +2,68 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const PORT = 2666;
-const service=require('./cardService.js');
+const cardService = require('./cardService.js');
+const idService = require('./mockIDService.js');
 
 app.use( bodyParser.json({ extended: true, type: '*/*' }) );
 app.use(express.static(__dirname + '/../public') );
 
+app.post('/userid',(req, res) => { 
+    res.send( JSON.stringify( idService.getID() ));
+});
+
 app.get('/cards', (req, res) => { 
-    res.send( JSON.stringify( service.allCards ));
+    res.send( JSON.stringify( cardService.allCards ));
 }); 
 
 app.get('/cards/:id', (req, res) => { 
-    res.send( JSON.stringify(service.getCardById(req.params.id) ));
+    res.send( JSON.stringify( cardService.getCardById(req.params.id) ));
 });
 
 app.put('/cards/:id', (req, res) => { 
     let i= req.body.side0;
     let j= req.body.side1;
-    service.updateCard(req.params.id, i, j );
+    cardService.updateCard(req.params.id, i, j );
     res.send('OK');
 });
 
 app.get('/fav', (req, res) => { 
-    res.send( JSON.stringify( service.getAllFavCards() ));
+    res.send( JSON.stringify( cardService.getAllFavCards() ));
 });
 
 app.post('/fav', (req, res) => { 
-    service.addToFav(req.body.id);
+    cardService.addToFav(req.body.id);
     res.send('OK');
 });
 
 app.delete('/fav/:id', (req, res) => {     
-    service.removeFromFav(req.params.id);
+    cardService.removeFromFav(req.params.id);
     res.send('OK');
     // res.send(service.getAllFavCards());
 });
 
 app.get('/prestored', (req, res) => { 
-    res.send( JSON.stringify( service.getAllPrestoredCards() ));
+    res.send( JSON.stringify( cardService.getAllPrestoredCards() ));
 });
 
 app.delete('/prestored/:id', (req, res) => { 
-    service.deleteCard(req.params.id);
+    cardService.deleteCard(req.params.id);
     res.send('OK');
 });
 
 app.get('/custom', (req, res) => { 
-    res.send( JSON.stringify( service.getAllCustomCards() ));
+    res.send( JSON.stringify( cardService.getAllCustomCards() ));
 });
 
 app.post('/custom', (req, res) => { 
     let i= req.body.side0;
     let j= req.body.side1;
-    service.addCustomCard(i,j);
+    cardService.addCustomCard(i,j);
     res.send('OK');
 });
 
 app.delete('/custom/:id', (req, res) => { 
-    service.deleteCard(req.params.id);
+    cardService.deleteCard(req.params.id);
     res.send('OK');
 });
 
