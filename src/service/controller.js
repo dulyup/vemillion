@@ -5,7 +5,7 @@ const PORT = 2666;
 const service = require('./service.js');
 const idService = require('./mockIDService.js');
 
-app.use( bodyParser.json({ extended: true, type: '*/*' }) );
+app.use(bodyParser.json({ extended: true, type: '*/*' }) );
 app.use(express.static(__dirname + '/../public') );
 
 app.post('/users',(req, res) => { 
@@ -17,7 +17,7 @@ app.post('/users',(req, res) => {
 app.get('/:userId/fav', (req, res) => { 
     const userId=req.get('userId');
     if ( userId !== req.params.userId){
-        res.send('you have no such permission on this list');
+        res.status(403).send('you have no such permission on this list');
     }
     else{
         res.send( JSON.stringify( service.getFavIdsOf(userId).map(cardId => service.getCardById(cardId) ) ));
@@ -27,7 +27,7 @@ app.get('/:userId/fav', (req, res) => {
 app.post('/:userId/fav', (req, res) => {
     const userId=req.get('userId');
     if ( userId !== req.params.userId){
-        res.send('you have no such permission on this list');
+        res.status(403).send('you have no such permission on this list');
     }
     else{ 
         service.addToFavOf(req.body.id, userId);
@@ -38,7 +38,7 @@ app.post('/:userId/fav', (req, res) => {
 app.delete('/:userId/fav/:cardId', (req, res) => { 
     const userId=req.get('userId');
     if ( userId !== req.params.userId){
-        res.send('you have no such permission on this list');
+        res.status(403).send('you have no such permission on this list');
     }
     else {
         service.removeFromFavOf(req.params.cardId, userId);
@@ -49,7 +49,11 @@ app.delete('/:userId/fav/:cardId', (req, res) => {
 });
 
 app.get('/prestored', (req, res) => { 
-    res.send( JSON.stringify( service.getAllPrestoredCards() ));
+    const userId = req.get('userId');
+    const fav = service.getFavIdsOf(userId);
+    const all = service.getAllPrestoredCards();
+    
+    res.send( JSON.stringify( all.map(card => {card.infav = fav.has(card.cardId); return card}) )); //
 });
 
 
@@ -61,13 +65,17 @@ app.delete('/prestored/:cardId', (req, res) => {
 */
 
 app.get('/:userId/custom', (req, res) => { 
-    res.send( JSON.stringify( service.getAllCustomCardsOf(req.params.userId) ));
+    const userId = req.get('userId');
+    const fav = service.getFavIdsOf(userId);
+    const all = service.getAllCustomCardsOf(req.params.userId);
+
+    res.send( JSON.stringify( all.map(card => {card.infav = fav.has(card.cardId); return card}) ));
 });
 
 app.post('/:userId/custom', (req, res) => {  
     const userId=req.get('userId');  
     if ( userId !== req.params.userId){
-        res.send('you have no such permission on this list');
+        res.status(403).send('you have no such permission on this list');
     }
     else{ 
         let i= req.body.side0;
@@ -80,7 +88,7 @@ app.post('/:userId/custom', (req, res) => {
 app.delete('/:userId/custom/:cardId', (req, res) => { 
     const userId=req.get('userId');
     if (!service.ownsCard(userId, req.params.cardId)){
-        res.send('you have no such permission on this card');
+        res.status(403).send('you have no such permission on this card');
     }
     else{
         service.deleteCard(req.params.cardId, userId);
@@ -100,7 +108,7 @@ app.get('/cards/:cardId', (req, res) => {
 app.put('/cards/:cardId', (req, res) => { 
     const userId=req.get('userId');
     if (!service.ownsCard(userId, req.params.cardId)){
-        res.send('you have no such permission on this card');
+        res.status(403).send('you have no such permission on this card');
     }
     else{
         let i= req.body.side0;

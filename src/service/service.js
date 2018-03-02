@@ -7,7 +7,8 @@ const fav = {}; //new Set();
 const custom = {}; //new Set();
 const users = new Set();
 
-//addToFav(58);
+newUser(1);
+addToFavOf(0,1);
 
 function newUser(userId){
     if (!users.has(userId)){
