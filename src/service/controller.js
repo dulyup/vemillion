@@ -58,6 +58,7 @@ app.get('/custom', (req, res) => {
 app.post('/custom', (req, res) => { 
     let i= req.body.side0;
     let j= req.body.side1;
+    if (!i || !j) res.status(400).send("neither side can be null");
     cardService.addCustomCard(i,j);
     res.send('OK');
 });
