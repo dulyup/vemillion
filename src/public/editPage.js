@@ -10,136 +10,178 @@ if (!String.prototype.format) {
     };
 }
 
-const cencelBtn = document.getElementById('cancelBtn');
-const saveBtn = document.getElementById('saveBtn');
-const title = document.getElementById('title');
-const modal = document.getElementsByClassName("edit-page");
-const getCardByIdURL = "http://localhost:2666/cards/{0}";
-const saveCardURL = "http://localhost:2666/cards";
-saveBtn.disabled = false;
-cancelBtn.disabled = false;
+function EditPage() {
 
-function render(data) {
-    document.querySelector('.edit-inputs').innerHTML = generateInputs(data);
 }
 
-function generateInputs(data) {
-    title.innerText = "Edit";
-    if (Object.keys(data).length == 0) {
-        title.innerText = "Add New";
-        data = {english: "", chinese: ""};
+EditPage.prototype = (function() {
+    const cencelBtn = document.getElementById('cancelBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const title = document.getElementById('title');
+    const modal = document.getElementsByClassName("edit-page");
+    const cardURL = "http://localhost:2666/cards/{0}";
+    const saveFavCardURL = "http://localhost:2666/fav";
+    const saveCtmCardURL = "http://localhost:2666/custom";
+    saveBtn.disabled = false;
+    cancelBtn.disabled = false;
+    function render(data) {
+        document.querySelector('.edit-inputs').innerHTML = generateInputs(data);
     }
 
-    return Object.keys(data).map((key, index) =>`<input class="input" key="${key}" value="${data[key]}"/><div id="${key}_status"> </div>`).join('\n');
-}
+    function generateInputs(data) {
+        title.innerText = "Edit";
+        if (Object.keys(data).length == 0) {
+            title.innerText = "Add New";
+            data = { side0: "", side1: "" };
+        }
 
-function getUserInput(inputs) {
-    var obj = {};
-    inputs.forEach((input) => {
-        obj[input.getAttribute('key')] = input.value;
-    });
-    return obj;
-}
+        return Object.keys(data).map((key, index) => {
+            if (key == 'side0' || key == "side1") {
+                return `<input class="input" key="${key}" value="${data[key]}"/><div id="${key}_status"> </div>`;
+            }
 
-function validateInputs(inputs) {
-    for (var i = 0; i < inputs.length; i++)
-    {
-        if (!inputs[i].value) {
-            return false;
+            return `<input hidden class="input" key="${key}" value="${data[key]}"/><div id="${key}_status"> </div>`;
+        }).join('\n');
+    }
+
+    function getUserInput(inputs) {
+        var obj = {};
+        inputs.forEach((input) => {
+            obj[input.getAttribute('key')] = input.value;
+        });
+
+        return obj;
+    }
+
+    function validateInputs(inputs) {
+        for (var i = 0; i < inputs.length; i++)
+        {
+            if (!inputs[i].hidden && !inputs[i].value) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    function handleInputChangeListener(input) {
+        const status = document.getElementById(input.getAttribute("key")+ "_status");
+        if (!input.value) {
+            input.classList.add('error');
+            status.innerText = "Invalid input";
+        } else {
+            input.classList.remove('error');
+            status.innerText = '';
         }
     }
 
-    return true;
-}
-
-function handleInputChangeListener(input) {
-    const status = document.getElementById(input.getAttribute("key")+ "_status");
-    if (!input.value) {
-        input.classList.add('error');
-        status.innerText = "Invalid input";
-    } else {
-        input.classList.remove('error');
-        status.innerText = '';
-    }
-}
-
-function cancelBtnListener() {
-    hideModal();
-}
-
-function saveBtnListener() {
-    var inputs = document.querySelectorAll('input');
-    if (validateInputs(inputs)) {
-        var obj = getUserInput(inputs);
+    function cancelBtnListener(onCancelClick) {
         hideModal();
-        saveCard(saveCardURL, obj)
-            .then(data => {
-                // document.getElementById("edit-page").style.display = "none";
-            })
-            .catch(error => console.error(error));
+        onCancelClick();
     }
-}
 
-function addListeners(isFavPage) {
-    cancelBtn.addEventListener('click', cancelBtnListener);
-    saveBtn.addEventListener('click', saveBtnListener);
-    if (isFavPage) {
-        console.log('favorite page');
-        saveBtn.addEventListener('click', displayFavoritePage);
-    } else {
-        console.log('hi');
-        saveBtn.addEventListener('click', hideFavoritePage);
-        saveBtn.addEventListener('click', displayMyCardsPage);
+    function saveBtnListener(onSaveClick) {
+        var inputs = document.querySelectorAll(".edit-inputs input");
+        if (validateInputs(inputs)) {
+            var obj = getUserInput(inputs);
+            hideModal();
+            onSaveClick(obj);
+        }
     }
-    document.querySelectorAll('input').forEach((input) => {
-        input.addEventListener('input', function() {
-            handleInputChangeListener(input);
-        });
-    })
-}
 
-function saveCard(saveCardURL, obj) {
-    console.log(saveCardURL, obj);
-    return fetch(saveCardURL, obj,
-        {
-            method: 'POST',
-        }).then(function(response) {
-        return response.json();
-    });
-}
+    function showModal() {
+        modal[0].style.display = "block";
+    }
 
+    function hideModal() {
+        modal[0].style.display = "none";
+    }
 
-function getCardById(id) {
-    console.log(getCardByIdURL.format(id));
-    return fetch(getCardByIdURL.format(id),
-        {
-            method: 'GET',
-        }).then(function(response) {
-        return response.json();
-    });
-}
+    function addListeners(onSaveClick, onCancelClick) {
+        cancelBtn.onclick = () => {
+            cancelBtnListener(onCancelClick);
+        };
 
-function showModal() {
-    modal[0].style.display = "block";
-}
+        saveBtn.onclick = () => {
+            saveBtnListener(onSaveClick);
+        };
 
-function hideModal() {
-    modal[0].style.display = "none";
-}
-
-function showAddOrEditPage(id, isFavPage) {
-    if (id) {
-        getCardById(id).then((data) => {
-            console.log(data);
-            render(data);
-            addListeners(isFavPage);
-            this.showModal();
-        }).catch((e)=> {
-            console.log(e);
+        document.querySelectorAll('.edit-inputs input').forEach((input) => {
+            input.oninput = () => {
+                handleInputChangeListener(input);
+            };
         })
-    } else {
-        render({});
-        addListeners();
-        this.showModal();
     }
-}
+
+    function saveCard(saveCardURL, obj) {
+        return fetch(saveCardURL,
+            {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(obj)
+            }).then((response) => {
+                if (response.status != 200) {
+                    throw "unexpected error";
+                }
+            });
+    }
+
+    function getCardById(id) {
+        return fetch(cardURL.format(id),
+            {
+                method: 'GET',
+            }).then((response) => {
+                return response.json();
+            });
+    }
+
+    return {
+        constructor: EditPage,
+        saveFavCard(obj) {
+            return saveCard(saveFavCardURL, obj);
+        },
+
+        saveCtmCard(obj) {
+            return saveCard(saveCtmCardURL, obj);
+        },
+
+        updateCard(id, obj) {
+            return fetch(cardURL.format(id),
+                {
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/json, text/plain, */*',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(obj)
+                }).then((response) => {
+                    if (response.status != 200) {
+                        throw "unexpected error";
+                    }
+                });
+        },
+
+        showAddOrEditPage(id, onSaveClick, onCancelClick) {
+            if (id) {
+                getCardById(id).then((data) => {
+                    render(data);
+                    addListeners(onSaveClick, onCancelClick);
+                    showModal();
+                }).catch((e) => {
+                    console.log(e);
+                    throw e;
+                });
+            } else {
+                render({});
+                addListeners(onSaveClick, onCancelClick);
+                showModal();
+            };
+        }
+    };
+})();
+
+
+

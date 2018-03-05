@@ -16,6 +16,7 @@ app.get('/cards/:id', (req, res) => {
     res.send( JSON.stringify(service.getCardById(req.params.id) ));
 });
 
+//from favorite/my cards -> edit page
 app.put('/cards/:id', (req, res) => { 
     let i= req.body.side0;
     let j= req.body.side1;
@@ -27,6 +28,7 @@ app.get('/fav', (req, res) => {
     res.send( JSON.stringify( service.getAllFavCards() ));
 });
 
+//from study page
 app.post('/fav', (req, res) => { 
     service.addToFav(req.body.id);
     res.send('OK');
@@ -50,6 +52,7 @@ app.get('/custom', (req, res) => {
     res.send( JSON.stringify( service.getAllCustomCards() ));
 });
 
+//from my card -> add page
 app.post('/custom', (req, res) => { 
     let i= req.body.side0;
     let j= req.body.side1;
