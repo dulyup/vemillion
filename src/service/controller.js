@@ -3,14 +3,9 @@ const bodyParser = require('body-parser');
 const app = express();
 const PORT = 2666;
 const cardService = require('./cardService.js');
-const idService = require('./mockIDService.js');
 
 app.use( bodyParser.json({ extended: true, type: '*/*' }) );
 app.use(express.static(__dirname + '/../public') );
-
-app.post('/userid',(req, res) => { 
-    res.send( JSON.stringify( idService.getID() ));
-});
 
 app.get('/cards', (req, res) => { 
     res.send( JSON.stringify( cardService.allCards ));
