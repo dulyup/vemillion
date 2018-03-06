@@ -15,28 +15,28 @@ app.get('/cards/:id', (req, res) => {
     res.send( JSON.stringify( cardService.getCardById(req.params.id) ));
 });
 
-//from favorite/my cards -> edit page
 app.put('/cards/:id', (req, res) => { 
     let i= req.body.side0;
     let j= req.body.side1;
     cardService.updateCard(req.params.id, i, j );
-    res.send('OK');
+    //res.send('OK');
+    res.send( JSON.stringify( cardService.getCardById(req.params.id) ));
 });
 
 app.get('/fav', (req, res) => { 
     res.send( JSON.stringify( cardService.getAllFavCards() ));
 });
 
-//from study page
 app.post('/fav', (req, res) => { 
     cardService.addToFav(req.body.id);
-    res.send('OK');
+    res.send( JSON.stringify( cardService.getAllFavCards() ));
+    //res.send('OK');
 });
 
 app.delete('/fav/:id', (req, res) => {     
     cardService.removeFromFav(req.params.id);
-    res.send('OK');
-    // res.send(service.getAllFavCards());
+    //res.send('OK');
+    res.send( JSON.stringify( cardService.getAllFavCards() ));
 });
 
 app.get('/prestored', (req, res) => { 
@@ -45,25 +45,27 @@ app.get('/prestored', (req, res) => {
 
 app.delete('/prestored/:id', (req, res) => { 
     cardService.deleteCard(req.params.id);
-    res.send('OK');
+    res.send( JSON.stringify( cardService.getAllPrestoredCards() ));
+    //res.send('OK');
 });
 
 app.get('/custom', (req, res) => { 
     res.send( JSON.stringify( cardService.getAllCustomCards() ));
 });
 
-//from my card -> add page
 app.post('/custom', (req, res) => { 
     let i= req.body.side0;
     let j= req.body.side1;
     if (!i || !j) res.status(400).send("neither side can be null");
     cardService.addCustomCard(i,j);
-    res.send('OK');
+    res.send( JSON.stringify( cardService.getAllCustomCards() ));
+    //res.send('OK');
 });
 
 app.delete('/custom/:id', (req, res) => { 
     cardService.deleteCard(req.params.id);
-    res.send('OK');
+    res.send( JSON.stringify( cardService.getAllCustomCards() ));
+    //res.send('OK');
 });
 
 app.listen(PORT, () => {  
