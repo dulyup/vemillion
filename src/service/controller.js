@@ -26,7 +26,7 @@ app.get('/:userId/fav', (req, res) => {
         res.status(403).send('you have no such permission on this list');
     }
     else{
-        res.send( JSON.stringify( service.getFavIdsOf(currentId).map(cardId => service.getCardById(cardId) ) ));
+        res.send( JSON.stringify( service.getFavIdsOf(currentId).map(cardId => cardWithFav(currentId, cardId) ) ));
     }
 });
 
@@ -37,7 +37,8 @@ app.post('/:userId/fav', (req, res) => {
     }
     else{ 
         service.addToFavOf(req.body.id, currentId);
-        res.send('OK');
+        //res.send('OK');
+        res.send( JSON.stringify( service.getFavIdsOf(currentId).map(cardId => cardWithFav(currentId, cardId) ) ));
     }
 });
 
@@ -48,7 +49,8 @@ app.delete('/:userId/fav/:cardId', (req, res) => {
     }
     else {
         service.removeFromFavOf(req.params.cardId, currentId);
-        res.send('OK');
+        res.send( JSON.stringify( service.getFavIdsOf(currentId).map(cardId => cardWithFav(currentId, cardId) ) ));
+        //res.send('OK');
         // res.send(service.getAllFavCards());
     }    
     
@@ -59,7 +61,7 @@ app.get('/prestored', (req, res) => {
     const fav = service.getFavIdsOf(currentId);
     const all = service.getAllPrestoredCards();
     
-    res.send( JSON.stringify( all.map(card => {card.infav = fav.has(card.cardId); return card}) )); //
+    res.send( JSON.stringify( fav.map(cardId => cardWithFav(currentId, cardId) ) )); //
 });
 
 
@@ -75,7 +77,7 @@ app.get('/:userId/custom', (req, res) => {
     const fav = service.getFavIdsOf(currentId);
     const all = service.getAllCustomCardsOf(req.params.userId);
 
-    res.send( JSON.stringify( all.map(card => {card.infav = fav.has(card.cardId); return card}) ));
+    res.send( JSON.stringify( fav.map(cardId => cardWithFav(currentId, cardId) ) ));
 });
 
 app.post('/:userId/custom', (req, res) => {  
@@ -123,6 +125,12 @@ app.put('/cards/:cardId', (req, res) => {
         res.send('OK');
     }
 });
+
+function cardWithFav(userId, cardId){
+    const card = service.getCardById(cardId);
+    card.infav = fav.has(card.cardId); 
+    return card;
+}
 
 app.listen(PORT, () => {  
     console.log(`Server listening at http://localhost:${PORT}`);
