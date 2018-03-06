@@ -1,12 +1,10 @@
-let id;
+let id=1;
 const active= new Set();
 
-id.current=1;
-
 function getID(){
-    const res = {userid:id};
+    const res = {currentId:id};
     active.add(id);
-    id= res%3+1;    
+    id = id%3+1;    
     return res;
 }
 
