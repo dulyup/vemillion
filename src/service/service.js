@@ -18,8 +18,13 @@ function newUser(userId){
     }
 }
 
+function hasCustomList(userId){
+    if (custom[userId]) return true;
+    return false;
+}
+
 function getAllCardsIn(set){
-    return Array.from(set, cardId=>cards[cardId]); //getCardById(cardId)); 
+    return Array.from(set, cardId=>cards[cardId]);  
 }
 
 /*
@@ -88,6 +93,7 @@ function newCard(side0, side1){
 
 module.exports={
     newUser : newUser,
+    hasCustomList: hasCustomList,
     allCards : cards,
     getAllPrestoredCards :(()=> getAllCardsIn(prestored)),
     getAllFavCardsOf : ( (userId)=>getAllCardsIn(fav[userId]) ),
