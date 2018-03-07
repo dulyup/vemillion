@@ -38,6 +38,10 @@ function deleteCard(cardId, ownerId){
     cardId=+cardId;
     cards.splice(cardId, 1);
     custom[+ownerId].delete(cardId);
+    
+    for (let userId in fav){
+        fav[userId].delete(cardId);
+    }
 }
 
 function addCustomCardOf (side0, side1, ownerId){
