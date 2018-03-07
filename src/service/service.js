@@ -23,8 +23,8 @@ function hasCustomList(userId){
     return false;
 }
 
-function getAllCardsIn(set){
-    return Array.from(set, cardId=>cards[cardId]);  
+function getAllCardIdsIn(set){
+    return Array.from(set);  
 }
 
 /*
@@ -54,17 +54,24 @@ function deleteCard(cardId, ownerId){
     // if (prestored.has(cardId)) prestored.delete(cardId);
 }
 
-function addCustomCardOf(side0, side1, ownerId){
+function addCustomCardOf (side0, side1, ownerId){
     const card = newCard(side0,side1);
     custom[ownerId].add(card.cardId);
     cards.push(card);
 }
 
-function getFavIdsOf(userId){
+/*
+function getFavIdsOf (userId){
     for (let cardId of fav[userId]){
         if (!cards[cardId]) fav[userId].delete(cardId);
     }
     return fav[userId];
+}
+*/
+
+function isInFavOf(cardId, userId){
+    if (fav[userId].has(cardId)) return true;
+    else return false;
 }
 
 function addToFavOf(cardId, userId){
@@ -95,12 +102,12 @@ module.exports={
     newUser : newUser,
     hasCustomList: hasCustomList,
     allCards : cards,
-    getAllPrestoredCards :(()=> getAllCardsIn(prestored)),
-    getAllFavCardsOf : ( (userId)=>getAllCardsIn(fav[userId]) ),
-    getAllCustomCardsOf : ( (userId)=>getAllCardsIn(custom[userId]) ),
-    getCardById : (cardId => cards[cardId]), 
+    getPrestoredCardIds :(()=> getAllCardIdsIn(prestored)),
+    getFavCardIdsOf : ( (userId)=>getAllCardIdsIn(fav[userId]) ),
+    getCustomCardIdsOf : ( (userId)=>getAllCardIdsIn(custom[userId]) ),
+    getCardById : (cardId => cards[cardId]),    
+    isInFavOf : isInFavOf, 
     ownsCard : ownsCard,
-    getFavIdsOf : getFavIdsOf,
     addToFavOf : addToFavOf,    
     removeFromFavOf : removeFromFavOf,    
     addCustomCardOf :addCustomCardOf,

@@ -16,8 +16,8 @@ app.post('/users',(req, res) => {
 
 app.get('/users',(req, res) => {
     const active = idService.activeUsers;
-    const hasCustomList = Array.from(activeList).filter(userId => service.hasCustomList(userId));
-    res.send( JSON.stringify( { activeUsers : activeList, hasCustomList : hasCustomList} ));
+    const withCustomList = active.filter(userId => service.hasCustomList(userId));
+    res.send( JSON.stringify( { activeUsers : active, withCustomList : withCustomList} ));
 });
 
 app.get('/:userId/fav', (req, res) => { 
@@ -26,7 +26,7 @@ app.get('/:userId/fav', (req, res) => {
         res.status(403).send('you have no such permission on this list');
     }
     else{
-        res.send( JSON.stringify( service.getFavIdsOf(currentId).map(cardId => cardWithFav(currentId, cardId) ) ));
+        res.send( JSON.stringify( cardListWithFavMark( service.getFavCardIdsOf(currentId), currentId ) ));
     }
 });
 
@@ -38,7 +38,7 @@ app.post('/:userId/fav', (req, res) => {
     else{ 
         service.addToFavOf(req.body.id, currentId);
         //res.send('OK');
-        res.send( JSON.stringify( service.getFavIdsOf(currentId).map(cardId => cardWithFav(currentId, cardId) ) ));
+        res.send( JSON.stringify( cardListWithFavMark( service.getFavCardIdsOf(currentId), currentId ) ));
     }
 });
 
@@ -49,19 +49,15 @@ app.delete('/:userId/fav/:cardId', (req, res) => {
     }
     else {
         service.removeFromFavOf(req.params.cardId, currentId);
-        res.send( JSON.stringify( service.getFavIdsOf(currentId).map(cardId => cardWithFav(currentId, cardId) ) ));
+        res.send( JSON.stringify( cardListWithFavMark( service.getFavCardIdsOf(currentId), currentId ) ));
         //res.send('OK');
-        // res.send(service.getAllFavCards());
     }    
     
 });
 
 app.get('/prestored', (req, res) => { 
-    const currentId = req.get('currentId');
-    const fav = service.getFavIdsOf(currentId);
-    const all = service.getAllPrestoredCards();
-    
-    res.send( JSON.stringify( fav.map(cardId => cardWithFav(currentId, cardId) ) )); //
+    const currentId = req.get('currentId');    
+    res.send( JSON.stringify( cardListWithFavMark( service.getPrestoredCardIds(), currentId ) ) ); //
 });
 
 
@@ -74,10 +70,7 @@ app.delete('/prestored/:cardId', (req, res) => {
 
 app.get('/:userId/custom', (req, res) => { 
     const currentId = req.get('currentId');
-    const fav = service.getFavIdsOf(currentId);
-    const all = service.getAllCustomCardsOf(req.params.userId);
-
-    res.send( JSON.stringify( fav.map(cardId => cardWithFav(currentId, cardId) ) ));
+    res.send( JSON.stringify( cardListWithFavMark( service.getCustomCardIdsOf(currentId), currentId ) ) );
 });
 
 app.post('/:userId/custom', (req, res) => {  
@@ -88,8 +81,10 @@ app.post('/:userId/custom', (req, res) => {
     else{ 
         let i= req.body.side0;
         let j= req.body.side1;
+        if ( !i || !j ) res.status(400).send("neither side can be null");
         service.addCustomCardOf(i,j, currentId);
-        res.send('OK');
+        //res.send('OK');
+        res.send( JSON.stringify( cardListWithFavMark( service.getCustomCardIdsOf(currentId), currentId ) ) );
     }
 });
 
@@ -100,17 +95,22 @@ app.delete('/:userId/custom/:cardId', (req, res) => {
     }
     else{
         service.deleteCard(req.params.cardId, currentId);
-        res.send('OK');
+        //res.send('OK');
+        res.send( JSON.stringify( cardListWithFavMark( service.getCustomCardIdsOf(currentId), currentId ) ) );
     }    
 });
 
-
+/*
 app.get('/cards', (req, res) => { 
+    const currentId=req.get('currentId');
+    res.send( JSON.stringify( cardListWithFavMark( service.allCards, currentId ) ) );
     res.send( JSON.stringify( service.allCards ));
 }); 
+*/
 
 app.get('/cards/:cardId', (req, res) => { 
-    res.send( JSON.stringify( service.getCardById(req.params.cardId) ));
+    const currentId=req.get('currentId');
+    res.send( JSON.stringify( getCardWithFavMark(req.params.cardId, currentId) ));
 });
 
 app.put('/cards/:cardId', (req, res) => { 
@@ -121,15 +121,21 @@ app.put('/cards/:cardId', (req, res) => {
     else{
         let i= req.body.side0;
         let j= req.body.side1;
+        if ( !i || !j ) res.status(400).send("neither side can be null");
         service.updateCard(req.params.cardId, i, j );
-        res.send('OK');
+        //res.send('OK');
+        res.send( JSON.stringify( getCardWithFavMark(req.params.cardId, currentId) ));
     }
 });
 
-function cardWithFav(userId, cardId){
+function getCardWithFavMark( cardId, userId ){
     const card = service.getCardById(cardId);
-    card.infav = fav.has(card.cardId); 
+    card.infav = service.isInFavOf(cardId, userId);
     return card;
+}
+
+function cardListWithFavMark( cardIdList, userId ){
+    return cardIdList.map(cardId => getCardWithFavMark(cardId, userId) );
 }
 
 app.listen(PORT, () => {  
