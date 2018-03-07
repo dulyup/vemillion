@@ -11,6 +11,7 @@ newUser(1);
 addToFavOf(0,1);
 
 function newUser(userId){
+    userId=+userId;
     if (!users.has(userId)){
         users.add(userId);
         fav[userId] = new Set();
@@ -19,69 +20,43 @@ function newUser(userId){
 }
 
 function hasCustomList(userId){
-    if (custom[userId]) return true;
+    if (custom[+userId]) return true;
     return false;
 }
 
 function getAllCardIdsIn(set){
-    return Array.from(set);  
+    const list = Array.from(set);
+    return list;  
 }
-
-/*
-function getCardById(cardId){
-    cardId=+cardId;
-    return cards[cardId]; //Object.assign({inFav:fav.has(cardId)},cards[cardId]);
-}
-*/
 
 function ownsCard (userId, cardId) {
-    if (custom[userId].has(cardId)) return true;
+    if (custom[+userId].has(+cardId)) return true;
     else return false;
 }
 
 function deleteCard(cardId, ownerId){
     cardId=+cardId;
     cards.splice(cardId, 1);
-    custom[ownerId].delete(cardId);
-
-    /*
-    for (let userId in fav){
-        fav[userId].delete(cardId);
-    }
-    */
-    // if (fav.has(cardId)) fav.delete(cardId);    
-    // if (custom.has(cardId)) custom.delete(cardId);
-    // if (prestored.has(cardId)) prestored.delete(cardId);
+    custom[+ownerId].delete(cardId);
 }
 
 function addCustomCardOf (side0, side1, ownerId){
     const card = newCard(side0,side1);
-    custom[ownerId].add(card.cardId);
+    custom[+ownerId].add(card.cardId);
     cards.push(card);
 }
 
-/*
-function getFavIdsOf (userId){
-    for (let cardId of fav[userId]){
-        if (!cards[cardId]) fav[userId].delete(cardId);
-    }
-    return fav[userId];
-}
-*/
-
 function isInFavOf(cardId, userId){
-    if (fav[userId].has(cardId)) return true;
+    if (fav[+userId].has(+cardId)) return true;
     else return false;
 }
 
 function addToFavOf(cardId, userId){
-    cardId=+cardId;
-    fav[userId].add(cardId);
+    fav[+userId].add(+cardId);
 }
 
 function removeFromFavOf(cardId, userId){
-    cardId=+cardId;
-    fav[userId].delete(cardId); 
+    fav[+userId].delete(+cardId); 
 }
 
 function updateCard(cardId, side0, side1){
