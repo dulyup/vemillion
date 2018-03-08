@@ -10,12 +10,12 @@ app.use(express.static(__dirname + '/../public') );
 
 app.post('/users',(req, res) => { 
     const info = idService.getID();
-    service.newUser(info.userId);
+    service.newUser(info.currentId);
     res.send( JSON.stringify( info ));
 });
 
 app.get('/users',(req, res) => {
-    const active = idService.activeUsers;
+    const active = Array.from(idService.activeUsers);
     const withCustomList = active.filter(userId => service.hasCustomList(userId));
     res.send( JSON.stringify( { activeUsers : active, withCustomList : withCustomList} ));
 });
