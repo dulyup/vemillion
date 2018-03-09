@@ -20,7 +20,7 @@ app.get('/users',(req, res) => {
     res.send( JSON.stringify( { activeUsers : active, withCustomList : withCustomList} ));
 });
 
-app.get('/:userId/fav', (req, res) => { 
+app.get('/users/:userId/fav', (req, res) => { 
     const currentId=req.get('currentId');
     if ( currentId !== req.params.userId){
         res.status(403).send('you have no such permission on this list');
@@ -30,7 +30,7 @@ app.get('/:userId/fav', (req, res) => {
     }
 });
 
-app.post('/:userId/fav', (req, res) => {
+app.post('/users/:userId/fav', (req, res) => {
     const currentId=req.get('currentId');
     if ( currentId !== req.params.userId){
         res.status(403).send('you have no such permission on this list');
@@ -42,7 +42,7 @@ app.post('/:userId/fav', (req, res) => {
     }
 });
 
-app.delete('/:userId/fav/:cardId', (req, res) => { 
+app.delete('/users/:userId/fav/:cardId', (req, res) => { 
     const currentId=req.get('currentId');
     if ( currentId !== req.params.userId){
         res.status(403).send('you have no such permission on this list');
@@ -68,12 +68,12 @@ app.delete('/prestored/:cardId', (req, res) => {
 });
 */
 
-app.get('/:userId/custom', (req, res) => { 
+app.get('/users/:userId/custom', (req, res) => { 
     const currentId = req.get('currentId');
-    res.send( JSON.stringify( cardListWithFavMark( service.getCustomCardIdsOf(currentId), currentId ) ) );
+    res.send( JSON.stringify( cardListWithFavMark( service.getCustomCardIdsOf(req.params.userId), currentId ) ) );
 });
 
-app.post('/:userId/custom', (req, res) => {  
+app.post('/users/:userId/custom', (req, res) => {  
     const currentId=req.get('currentId');  
     if ( currentId !== req.params.userId){
         res.status(403).send('you have no such permission on this list');
@@ -88,7 +88,7 @@ app.post('/:userId/custom', (req, res) => {
     }
 });
 
-app.delete('/:userId/custom/:cardId', (req, res) => { 
+app.delete('/users/:userId/custom/:cardId', (req, res) => { 
     const currentId=req.get('currentId');
     if (!service.ownsCard(currentId, req.params.cardId)){
         res.status(403).send('you have no such permission on this card');
@@ -135,7 +135,8 @@ function getCardWithFavMark( cardId, userId ){
 }
 
 function cardListWithFavMark( cardIdList, userId ){
-    return cardIdList.map(cardId => getCardWithFavMark(cardId, userId) );
+    if (cardIdList) return cardIdList.map(cardId => getCardWithFavMark(cardId, userId) );
+    else return null;
 }
 
 app.listen(PORT, () => {  

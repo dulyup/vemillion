@@ -20,13 +20,13 @@ function newUser(userId){
 }
 
 function hasCustomList(userId){
-    if (custom[+userId]) return true;
+    if (custom[+userId] && custom[+userId].size>0) return true;
     return false;
 }
 
 function getAllCardIdsIn(set){
-    const list = Array.from(set);
-    return list;  
+    if (set && set.size>0) return Array.from(set); 
+    else return null; 
 }
 
 function ownsCard (userId, cardId) {
