@@ -1,78 +1,3 @@
-( () => {
-
-let count=0;
-const cards=prestoredCards();
-const prestored=Array.from(new Array(cards.length), (x,i) => i);
-const fav=[];
-const custom=[];
-
-addCustomCard('xxx','yyy');
-//console.log(custom);
-//deleteCardFrom(372, custom);
-//let i=(id=>deleteCardFrom(id, custom));
-//i(372);
-//console.log(custom);
-
-
-function getAllCardsIn(set){
-    return set.reduce(function(set, id, i) {
-        set[i] = getCardById(id);
-        return set;
-    }, {});
-}
-
-function getCardById(id){
-    return cards[id];
-}
-
-function deleteCardFrom(id, set){
-    cards.splice(id, 1);
-    for (let i = set.length-1; i >= 0; i--) {
-        if (set[i] === id) {
-            set.splice(i, 1);
-            break;
-        }
-    }
-}
-
-function addCustomCard(side0, side1){
-    custom.push(count);
-    cards.push(newCard(side0, side1));
-}
-
-function getAllFavCards(){
-    return fav.reduce(function(fav, cur, i) {
-        fav[i] = cur;
-        return fav;
-    }, {});
-}
-
-function addToFav(id){
-    fav.push(id);
-}
-
-function removeFromFav(id){
-    for (let i = fav.length-1; i >= 0; i--) {
-        if (fav[i] === id) {
-            fav.splice(i, 1);
-            break;
-        }
-    }
-}
-
-function updateCard(id, side0, side1){
-    if (side0) cards[id].side0=side0;
-    if (side1) cards[id].side1=side1;
-}
-
-function newCard(side0, side1){
-    const card={};
-    card.id=count++;
-    card.side0=side0;
-    card.side1=side1;    
-    return card;
-}
-
 function prestoredCards(){
 return `surgery|u外科,外科學;c外科手術室,工作室
 massive|(a.)大而重的,寬大的,宏偉的
@@ -445,21 +370,9 @@ astigmatism|散光
 resp|反映
 induct|(vt.)引導,使入門,引入,使就職
 bifocal|(a.)雙焦點的
-gamesmanship|攪亂戰術`.split("\n").map(line => newCard(line.split("|")[0],line.split("|")[1]));
+gamesmanship|攪亂戰術`.split("\n");
 }
 
 module.exports={
-    getAllCards : cards,
-    getAllPrestoredCards :(()=> getAllCardsIn(prestored)),
-    getAllFavCards : (()=>getAllCardsIn(fav)),
-    getAllCustomCards : (()=>getAllCardsIn(custom)),
-    getCardById : getCardById,
-    addToFav : addToFav,    
-    removeFromFav : removeFromFav,    
-    addCustomCard :addCustomCard,
-    updateCard : updateCard,
-    deleteFromCustom : (id=>deleteCardFrom(id, custom)),
-    deleteFromPrestored : (id=>deleteCardFrom(id, prestored)),
+    lines : prestoredCards()
 };
-
-})();

@@ -4,21 +4,26 @@
 	<meta charset="UTF-8">
 	<link rel="stylesheet" href="index.css"/>
 	<title>Vermillion Flashcards</title>
-	<header class="header"><p>Welcome to Flash Card</p></header>
+	<header id="page-header"></header>
 </head>
 <body>
 	<div class="homepage">
 		<div class="slogan">
-			<p id="slogan1">STUDY: <span id="slogan2">Easier</span></p>
-			<p id="slogan3">Faster</p>
-			<p id="slogan4">Harder</p>
+			<p id="slogan-study">STUDY: <span id="slogan-easier">Easier</span></p>
+			<p id="slogan-faster">Faster</p>
+			<p id="slogan-harder">Harder</p>
 		</div>
-		<div class="buttons">
+		<div class="homepage-buttons">
 			<button id="homepage-study">FLASHCARDS</button>
 			<button id="homepage-fav">FAVORITES</button>
 			<button id="homepage-my-cards">MY CARDS</button>
-		</div>
+      <select id="homepage-dropbtn">
+        <option id="option0" disabled selected>SHARED CARDS</option>
+        <option id='option1' value="User"></option>
+        <option id='option2' value="User"></option>
+      </select>
 	</div>
+</div>
 
 	<div class="study-page">
 		<div id="wholecard">
@@ -46,28 +51,28 @@
 	</div>
 
 	<div class="favorite-page">
-		<div id="favorite-list" onclick="selectRow(this)" charset="utf-8"></div>
+		<p id="favorite-page-notification"></p>
+		<div id="favorite-list" onclick="selectRow(this)"></div>
 		<div class="favorite-page-buttons">
-			<button class="favorite-page-back">Back</button>
-			<button class="favorite-page-edit">Edit</button>
-			<button class="favorite-page-study">Study</button>
+			<button id="favorite-page-back">Back</button>
+			<button id="favorite-page-edit">Edit</button>
+			<button id="favorite-page-study">Study</button>
 		</div>
 	</div>
 
 	<div class="my-cards-page">
-		<p class="my-cards-page-slogan">Create your own cards from here! Your list of existing cards:</p>
+		<p id="my-cards-page-notification"></p>
 		<div id="my-cards-list" onclick="selectRow(this)"></div>
 		<div class="my-cards-page-buttons">
-			<button class="my-cards-page-back">Back</button>
-			<button class="my-cards-page-add">Add</button>
-			<button class="my-cards-page-edit">Edit</button>
-			<button class="my-cards-page-study">Study</button>
+			<button id="my-cards-page-back">Back</button>
+			<button id="my-cards-page-add">Add</button>
+			<button id="my-cards-page-edit">Edit</button>
+			<button id="my-cards-page-study">Study</button>
 		</div>
 	</div>
 
 	<div class="edit-page">
 		<div class="modal-content">
-
 			<h1 id='title'></h1>
 			<div>
 				<div class="edit-inputs">
@@ -76,6 +81,11 @@
 				<button class='save' id='saveBtn'>Save</button>
 			</div>
 		</div>
+	</div>
+
+	<div class="alert">
+		<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+		Sorry, you can not edit the pre-stored cards or other users' cards.
 	</div>
 
 </body>
