@@ -7,7 +7,6 @@ const prestored=new Set(cards.map((x,i)=>i));
 const fav = new Set();
 const custom = new Set();
 
-addToFav(58);
 
 function getAllCardsIn(set){
     return Array.from(set, id=>getCardById(id)); 
