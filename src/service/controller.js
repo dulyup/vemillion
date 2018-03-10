@@ -26,7 +26,7 @@ app.get('/users/:userId/fav', (req, res) => {
         res.status(403).send('you have no such permission on this list');
     }
     else{
-        res.send( JSON.stringify( cardListWithFavMark( service.getFavCardIdsOf(currentId), currentId ) ));
+        res.send( JSON.stringify( cardListWithMark( service.getFavCardIdsOf(currentId), currentId ) ));
     }
 });
 
@@ -38,7 +38,7 @@ app.post('/users/:userId/fav', (req, res) => {
     else{ 
         service.addToFavOf(req.body.id, currentId);
         //res.send('OK');
-        res.send( JSON.stringify( cardListWithFavMark( service.getFavCardIdsOf(currentId), currentId ) ));
+        res.send( JSON.stringify( cardListWithMark( service.getFavCardIdsOf(currentId), currentId ) ));
     }
 });
 
@@ -49,7 +49,7 @@ app.delete('/users/:userId/fav/:cardId', (req, res) => {
     }
     else {
         service.removeFromFavOf(req.params.cardId, currentId);
-        res.send( JSON.stringify( cardListWithFavMark( service.getFavCardIdsOf(currentId), currentId ) ));
+        res.send( JSON.stringify( cardListWithMark( service.getFavCardIdsOf(currentId), currentId ) ));
         //res.send('OK');
     }    
     
@@ -57,7 +57,7 @@ app.delete('/users/:userId/fav/:cardId', (req, res) => {
 
 app.get('/prestored', (req, res) => { 
     const currentId = req.get('currentId');    
-    res.send( JSON.stringify( cardListWithFavMark( service.getPrestoredCardIds(), currentId ) ) ); //
+    res.send( JSON.stringify( cardListWithMark( service.getPrestoredCardIds(), currentId ) ) ); //
 });
 
 
@@ -70,7 +70,7 @@ app.delete('/prestored/:cardId', (req, res) => {
 
 app.get('/users/:userId/custom', (req, res) => { 
     const currentId = req.get('currentId');
-    res.send( JSON.stringify( cardListWithFavMark( service.getCustomCardIdsOf(req.params.userId), currentId ) ) );
+    res.send( JSON.stringify( cardListWithMark( service.getCustomCardIdsOf(req.params.userId), currentId ) ) );
 });
 
 app.post('/users/:userId/custom', (req, res) => {  
@@ -84,7 +84,7 @@ app.post('/users/:userId/custom', (req, res) => {
         if ( !i || !j ) res.status(400).send("neither side can be null");
         service.addCustomCardOf(i,j, currentId);
         //res.send('OK');
-        res.send( JSON.stringify( cardListWithFavMark( service.getCustomCardIdsOf(currentId), currentId ) ) );
+        res.send( JSON.stringify( cardListWithMark( service.getCustomCardIdsOf(currentId), currentId ) ) );
     }
 });
 
@@ -96,7 +96,7 @@ app.delete('/users/:userId/custom/:cardId', (req, res) => {
     else{
         service.deleteCard(req.params.cardId, currentId);
         //res.send('OK');
-        res.send( JSON.stringify( cardListWithFavMark( service.getCustomCardIdsOf(currentId), currentId ) ) );
+        res.send( JSON.stringify( cardListWithMark( service.getCustomCardIdsOf(currentId), currentId ) ) );
     }    
 });
 
@@ -110,7 +110,7 @@ app.get('/cards', (req, res) => {
 
 app.get('/cards/:cardId', (req, res) => { 
     const currentId=req.get('currentId');
-    res.send( JSON.stringify( getCardWithFavMark(req.params.cardId, currentId) ));
+    res.send( JSON.stringify( getCardWithMark(req.params.cardId, currentId) ));
 });
 
 app.put('/cards/:cardId', (req, res) => { 
@@ -124,18 +124,19 @@ app.put('/cards/:cardId', (req, res) => {
         if ( !i || !j ) res.status(400).send("neither side can be null");
         service.updateCard(req.params.cardId, i, j );
         //res.send('OK');
-        res.send( JSON.stringify( getCardWithFavMark(req.params.cardId, currentId) ));
+        res.send( JSON.stringify( getCardWithMark(req.params.cardId, currentId) ));
     }
 });
 
-function getCardWithFavMark( cardId, userId ){
+function getCardWithMark( cardId, userId ){
     const card = service.getCardById(cardId);
     card.infav = service.isInFavOf(cardId, userId);
+    card.ownership = service.ownsCard(userId, cardId);
     return card;
 }
 
-function cardListWithFavMark( cardIdList, userId ){
-    if (cardIdList) return cardIdList.map(cardId => getCardWithFavMark(cardId, userId) );
+function cardListWithMark( cardIdList, userId ){
+    if (cardIdList) return cardIdList.map(cardId => getCardWithMark(cardId, userId) );
     else return null;
 }
 
