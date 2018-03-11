@@ -1,48 +1,41 @@
 /*homepage*/
-body{
+body {
 	background-color: ghostwhite;
 	margin: 0;
 }
 
-.header {
-	/*background-color: #73c2ca;*/
+#page-header {
 	background-color: #222;
-    height: 120px;
-    padding: 10px;
-    color: white;
-    text-align: center;
-    font-size: 40px;
-    font-family: sans-serif;
-    font-weight: bold;
+	padding: 40px 0px 40px 0px;
+  color: whitesmoke;
+  text-align: center;
+  font-size: 40px;
+	font-family: Helvetica;
+  font-weight: bold;
 }
 
-
-.header > p {
-	padding:15px 0;
-}
-
-.buttons {
+.homepage-buttons {
 	text-align: center;
-	/*margin-right: auto;*/
 }
 
-#homepage-study, #homepage-fav, #homepage-my-cards {
-	height: 100px;
-	width: 230px;
+#homepage-study, #homepage-fav, #homepage-my-cards, #homepage-dropbtn {
+	height: 80px;
+	width: 210px;
 	background-color: ghostwhite;
-	font-size: 30px;
+	font-size: 24px;
 	outline:none;
 	/*border: none;*/
 	margin: 20px;
+	border-radius: 5px;
 }
 
 #homepage-study:hover {
-	background-color: #4CAF50;
+    background-color: #4CAF50;
     color: white;
 }
 
 #homepage-fav:hover {
-	background-color: #4CAF50;
+    background-color: #4CAF50;
     color: white;
 }
 
@@ -51,7 +44,25 @@ body{
     color: white;
 }
 
+#homepage-dropbtn:hover {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#option0 #option1 #option2:hover{
+  height: 80px;
+  width: 200px;
+  background-color: #4CAF50;
+  font-size: 24px;
+  outline:none;
+  /*border: none;*/
+  margin: 20px;
+  border-radius: 5px;
+}
+
 .slogan {
+	/*background-color: #675682;*/
+	/*background-color: #6E3667;*/
 	background-color: #222;
 	text-align:right;
 	font-family: fantasy;
@@ -60,27 +71,32 @@ body{
 	padding-right: 50px;
 }
 
-#slogan1 {
+#slogan-study {
 	margin: 0px;
-	color: #fafff1;
+	color: lightskyblue;
 }
 
-#slogan2 {
-	color: #dbf139;
+#slogan-easier {
+	color: ghostwhite;
 	padding-left: 50px;
 }
 
-#slogan3 {
-	color: #f68e23;
+#slogan-faster {
+	color: indianred;
 }
 
-#slogan4 {
-	color: #9d5bca;
+#slogan-harder {
+	color: cornsilk;
 }
 
 /*Favorite page*/
 .favorite-page {
 	position: relative;
+	font-family: Helvetica;
+}
+
+#favorite-page-notification {
+	text-align: center;
 }
 
 .favorite-page-buttons {
@@ -93,44 +109,66 @@ body{
 	float:right;
 	position:fixed;
 	right:0px;
-	bottom:0px;
+	bottom:30px;
 	z-index:20;
 	/*border:2px solid #69c;*/
 	_position:absolute;
 }
 
-.favorite-page-back, .favorite-page-edit, .favorite-page-study {
+#favorite-page-back, #favorite-page-edit, #favorite-page-study {
 	text-align: center;
 	margin: 5px;
 	height: 30px;
 	width: 60px;
 	font-size: large;
 	background-color: ghostwhite;
+	border: 1px solid MediumSeaGreen;
+	border-radius: 5px;
+}
+
+#favorite-page-back:hover {
+	background-color: IndianRed;
+	color: white;
+}
+
+#favorite-page-edit:hover{
+	background-color: #4CAF50;
+	color: white;
+}
+
+#favorite-page-study:hover {
+	background-color: #4CAF50;
+	color: white;
 }
 
 #favorite-list {
 	width:100%;
 	height:100px;
-
 }
 
 #favorite-list > table {
-	margin-left: 300px;
+	margin-left: 400px;
 	width:600px;
 	border-collapse:collapse;
 	text-align:center;
 }
 
 th {
-	border:1px solid #ccc;
+	padding: 10px 0px 10px 0px;
+	font-weight: bold;
 }
 
 td {
-	border:1px solid #ccc;
+	border: 1px solid MediumSeaGreen;
 }
 
 /*my cards page*/
 .my-cards-page {
+	font-family: Helvetica;
+}
+
+#my-cards-page-notification {
+	text-align: center;
 }
 
 .my-cards-page-buttons {
@@ -138,18 +176,40 @@ td {
 	float:right;
 	position:fixed;
 	right:0px;
-	bottom:0px;
+	bottom:30px;
 	z-index:20;
 	_position:absolute;
 }
 
-.my-cards-page-back, .my-cards-page-add, .my-cards-page-edit, .my-cards-page-study {
+#my-cards-page-back, #my-cards-page-add, #my-cards-page-edit, #my-cards-page-study {
 	text-align: center;
 	margin: 5px;
 	height: 30px;
 	width: 60px;
 	font-size: large;
 	background-color: ghostwhite;
+	border: 1px solid MediumSeaGreen;
+	border-radius: 5px;
+}
+
+#my-cards-page-back:hover {
+	background-color: IndianRed;
+	color: white;
+}
+
+#my-cards-page-add:hover {
+	background-color: #4CAF50;
+	color: white;
+}
+
+#my-cards-page-edit:hover {
+	background-color: #4CAF50;
+	color: white;
+}
+
+#my-cards-page-study:hover {
+	background-color: #4CAF50;
+	color: white;
 }
 
 #my-cards-list {
@@ -158,15 +218,15 @@ td {
 }
 
 #my-cards-list > table {
-	margin-left: 300px;
+	margin-left: 400px;
 	width:600px;
 	border-collapse:collapse;
 	text-align:center;
 }
 
 .my-cards-page-slogan {
-	font-family: sans-serif;
-	font-size: 20px;
+	font-family: Helvetica;
+	font-size: 18px;
 	margin: 5px 0px 5px 20px; /*top-right-down-left*/
 	font-weight: bold;
 	color: #222;
@@ -393,4 +453,34 @@ td {
 	color: red;
 	margin-bottom: 20px;
 	font-size: 20px;
+}
+
+/* The alert message box */
+.alert {
+	font-family: Helvetica;
+	height: auto;
+	width: 240px;
+	text-align: center;
+	padding: 20px;
+	margin-left: 40px;
+	background-color: indianred; /* Red */
+	color: white;
+	margin-bottom: 15px;
+}
+
+/* The close button */
+.closebtn {
+	margin-left: 15px;
+	color: white;
+	font-weight: bold;
+	float: right;
+	font-size: 22px;
+	line-height: 20px;
+	cursor: pointer;
+	/*transition: 0.3s;*/
+}
+
+/* When moving the mouse over the close button */
+.closebtn:hover {
+	color: black;
 }

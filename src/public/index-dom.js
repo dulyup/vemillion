@@ -1,22 +1,40 @@
-// const server = require('./connectServer');
+const img_array = ['./image/emptyheart.png', './image/fullheart.png'];
+//==========================================================
+//================fetch data from the server================
+//==========================================================
+requestUserId();
 
-//Homepage
-const homepage = document.querySelector('.homepage');
-const favoritePage = document.querySelector('.favorite-page');
-const myCardsPage = document.querySelector('.my-cards-page');
-//Favorite Page
-const favoriteTable = document.getElementById('favorite-list');
-//My Cards Page
-const myCardsTable = document.getElementById('my-cards-list');
+function requestUserId() {
+    return fetch('http://localhost:2666/users', { method: 'POST',
+    }).then( response => {
+        if (response.ok) {
+            return response.json();
+        }
+        return Promise.reject('error-response-not-okay');
+    }).then(fromJson => { //currentId: id
+        start(fromJson.currentId);
+    }).catch( ( error ) => {
+        if(error.toString().startsWith('error-')) {
+            return Promise.reject(error);
+        }
+        return Promise.reject('error-response-json-bad');
+    });
+}
 
-function callGetFavJsonService(url){
-    return fetch(url)
-        .then( response => {
+function requestFavJsonUpdateFavList(currentUserId){
+    return fetch('http://localhost:2666/users/'+ currentUserId +'/fav',
+        {headers: {'currentId': currentUserId}
+        }).then( response => {
             if(response.ok) {
                 return response.json();
             }
             return Promise.reject('error-response-not-okay');
-        }).then(fromJson => {let json = fromJson; createFavoriteTable(json);})
+        }).then(fromJson => {
+            deleteFavoriteTable();
+            createFavoriteTable(fromJson);
+            enableButton(fromJson !== null && curRow !== null, document.getElementById('favorite-page-edit'));
+            enableButton(fromJson !== null, document.getElementById('favorite-page-study'));
+        })
         .catch( ( error ) => {
             if(error.toString().startsWith('error-')) {
                 return Promise.reject(error);
@@ -25,14 +43,20 @@ function callGetFavJsonService(url){
         });
 }
 
-function callGetMycardsJsonService(url){
-    return fetch(url)
+function requestMyCardsJsonUpdateMyCardsList(currentUserId, chooseId){
+    let url = 'http://localhost:2666/users/'+chooseId+'/custom';
+    return fetch(url, {headers: {'currentId': currentUserId}})
         .then( response => {
             if(response.ok) {
                 return response.json();
             }
             return Promise.reject('error-response-not-okay');
-        }).then(fromJson => {let json = fromJson; createMyCardsTable(json);})
+        }).then(fromJson => {
+            deleteMyCardsTable();
+            createMyCardsTable(fromJson);
+            enableButton(fromJson !== null && curRow !== null, document.getElementById('my-cards-page-edit'));
+            enableButton(fromJson !== null, document.getElementById('my-cards-page-study'));
+        })
         .catch( ( error ) => {
             if(error.toString().startsWith('error-')) {
                 return Promise.reject(error);
@@ -41,114 +65,188 @@ function callGetMycardsJsonService(url){
         });
 }
 
-function loadJSON(callback) {
-    var xobj = new XMLHttpRequest();
+var xobj;
+function loadJSON(currentUserId) {
+    xobj = new XMLHttpRequest();
     xobj.overrideMimeType("application/json");
-    xobj.open('GET', 'http://localhost:2666/cards', true); // Replace 'my_data' with the path to your file
-    xobj.onreadystatechange = function () {
-        if ( xobj.readyState == 4 && xobj.status == "200") {
-            // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
-            callback(xobj.responseText);
-        }
-    };
+    xobj.onreadystatechange = function() {callback(currentUserId);};
+    xobj.open('GET', 'http://localhost:2666/prestored', true);
+    xobj.setRequestHeader('currentId', currentUserId);
     xobj.send(null);
 }
 
-function loadJSONFav(callback) {
-    var xobj = new XMLHttpRequest();
-    xobj.overrideMimeType("application/json");
-    xobj.open('GET', 'http://localhost:2666/fav', true); // Replace 'my_data' with the path to your file
-    xobj.onreadystatechange = function () {
-        if ( xobj.readyState == 4 && xobj.status == "200") {
-            // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
-            callback(xobj.responseText);
+function callback(currentUserId) {
+    if ( xobj.readyState == 4 && xobj.status == "200") {
+        displayStudyPage(xobj.responseText, currentUserId);
+    }
+}
+
+var xfav;
+function loadJSONFav(currentUserId) {
+    xfav = new XMLHttpRequest();
+    xfav.overrideMimeType("application/json");
+    xfav.onreadystatechange = function() {callbackFav(currentUserId);};
+    xfav.open('GET', 'http://localhost:2666/users/'+ currentUserId + '/fav', true);
+    xfav.setRequestHeader('currentId', currentUserId);
+    xfav.send(null);
+}
+
+function callbackFav(currentUserId) {
+    if ( xfav.readyState == 4 && xfav.status == "200") {
+        displayStudyFavPage(xfav.responseText, currentUserId);
+    }
+}
+
+var xcustom;
+function loadJSONMyCard(currentUserId, chooseId) {
+    xcustom = new XMLHttpRequest();
+    xcustom.overrideMimeType("application/json");
+    xcustom.onreadystatechange = function() {callbackMyCard(currentUserId, chooseId);};
+    xcustom.open('GET', 'http://localhost:2666/users/'+ chooseId + '/custom', true);
+    xcustom.setRequestHeader('currentId', currentUserId);
+    xcustom.send(null);
+}
+
+function callbackMyCard(currentUserId, chooseId) {
+    if ( xcustom.readyState == 4 && xcustom.status == "200") {
+        displayStudyMyCardPage(xcustom.responseText, currentUserId, chooseId);
+    }
+}
+
+//======================================================
+//==================Initialize the game=================
+//======================================================
+function initializeOption(currentUserId) {
+    let idArray = [];
+    for (let id = 1; id < 4; id++) {
+        if (currentUserId !== id) {
+            idArray.push(id);
         }
-    };
-    xobj.send(null);
+    }
+    document.getElementById("option0").selected = "selected";
+    document.getElementById("option1").innerText = idArray[0];
+    document.getElementById("option2").innerHTML = idArray[1];
+}
+
+function start(currentUserId) {
+    clearInterval(myTimer);
+    displayHomepage(currentUserId);
+    initializeOption(currentUserId);
+    addStudyListenerHomepage(currentUserId);
+    addFavListenerHomepage(currentUserId);
+    addMyCardListenerHomepage(currentUserId);
+    addSelectListenerHomepage(currentUserId);
+    hideFavoritePage();
+    hideMyCardsPage();
+    hideStudyPage();
+    hideAlert();
+    //clear data of favorite list
+    deleteFavoriteTable();
+    //clear data of my cards list
+    deleteMyCardsTable();
 }
 
 //======================================================================
 //==add listener for "study","favorite","my cards" buttons in Homepage==
 //======================================================================
-function addStudyListenerHomepage() {
-    const studyBtnHomepage = document.getElementById('homepage-study');
-    studyBtnHomepage.addEventListener('click', hideHomepage);
-    studyBtnHomepage.addEventListener('click', displayStudyPage);
+function addStudyListenerHomepage(currentUserId) {
+    document.getElementById('homepage-study').addEventListener('click', function(){loadJSON(currentUserId);});
+    document.getElementById('homepage-study').addEventListener('click', hideHomepage);
 }
 
-function addFavListenerHomepage() {
-    //callGetJsonService('http://localhost:2666/fav')
-    const favBtnHomepage = document.getElementById('homepage-fav');
-    favBtnHomepage.addEventListener('click', hideHomepage);
-    favBtnHomepage.addEventListener('click', callGetFavJsonService('http://localhost:2666/fav'));
-    favBtnHomepage.addEventListener('click', displayFavoritePage);
-    //need to add getting data from server
+function addFavListenerHomepage(currentUserId) {
+    document.getElementById('homepage-fav').addEventListener('click', function() {displayFavoritePage(currentUserId);});
+    document.getElementById('homepage-fav').addEventListener('click', hideHomepage);
 }
 
-function addMyCardListenerHomepage() {
-    const myCaBtnsHomepage = document.getElementById('homepage-my-cards');
-    myCaBtnsHomepage.addEventListener('click', hideHomepage);
-    myCaBtnsHomepage.addEventListener('click', callGetMycardsJsonService('http://localhost:2666/custom'));
-    myCaBtnsHomepage.addEventListener('click', displayMyCardsPage);
-    // myCaBtnsHomepage.addEventListener('click', createMyCardsTable);
-    //need to add getting data from server
+function addMyCardListenerHomepage(currentUserId) {
+    document.getElementById('homepage-my-cards').addEventListener('click', hideHomepage);
+    document.getElementById('homepage-my-cards').addEventListener('click', function() {displayMyCardsPage(currentUserId, currentUserId);});
 }
 
-//==================================================================
-//==add listener for "back","edit","study" buttons in FavoritePage==
-//==================================================================
-function addBackListenerFavPage() {
-    document.querySelector('.favorite-page-back').addEventListener('click', start); //jump to homepage
+function addSelectListenerHomepage(currentUserId) {
+  document.getElementById('homepage-dropbtn').addEventListener('change', hideHomepage);
+  document.getElementById('homepage-dropbtn').addEventListener('change', function() {onchange(currentUserId);});
 }
 
-function addEditListenerFavPage() {
-    document.querySelector('.favorite-page-edit').addEventListener('click', displayEditPage);
+function onchange1(currentUserId) {
+   let selectedUserId = select.options[1].text;
+   displayMyCardsPage(currentUserId, selectedUserId);
 }
 
-function addStudyListenerFavPage() {
-    document.querySelector('.favorite-page-study').addEventListener('click', displayStudyFavPage);
+function onchange(currentUserId) {
+    let select = document.getElementById('homepage-dropbtn');
+    let index = select.selectedIndex;
+    let selectedUserId = select.options[index].text;
+    displayMyCardsPage(currentUserId, selectedUserId);
 }
+//======================================================================
+//====add listener for "back","edit","study" buttons in FavoritePage====
+//======================================================================
+function addBackListenerFavPage(currentUserId) {
+    document.getElementById('favorite-page-back').addEventListener('click', function() {start(currentUserId);}); //jump to homepage
+}
+
+function addEditListenerFavPage(currentUserId) {
+    document.getElementById('favorite-page-edit').addEventListener('click', function() {displayEditPageFromFavPage(currentUserId);});
+}
+
+function addStudyListenerFavPage(currentUserId) {
+    document.getElementById('favorite-page-study').addEventListener('click', function() {loadJSONFav(currentUserId);});
+}
+
 
 //=========================================================================
 //==add listener for "back", "add", "edit","study" buttons in MyCardsPage==
 //=========================================================================
-function addBackListenerMyCaPage() {
-    document.querySelector('.my-cards-page-back').addEventListener('click', start); //jump to homepage
+function addBackListenerMyCaPage(currentUserId) {
+    document.getElementById('my-cards-page-back').addEventListener('click', function(){start(currentUserId);}); //jump to homepage
 }
 
-function addAddListenerMyCaPage() {
-    document.querySelector('.my-cards-page-add').addEventListener('click', displayAddPage);
+function addAddListenerMyCaPage(currentUserId) {
+    document.getElementById('my-cards-page-add').addEventListener('click', function(){displayAddPageFromMyCardPage(currentUserId);});
 }
 
-function addEditListenerMyCaPage() {
-    document.querySelector('.my-cards-page-edit').addEventListener('click', displayEditPage);
+function addEditListenerMyCaPage(currentUserId) {
+    document.getElementById('my-cards-page-edit').addEventListener('click', function() {displayEditPageFromMyCardPage(currentUserId);});
 }
 
-function addStudyListenerMyCaPage() {
-    document.querySelector('.my-cards-page-study').addEventListener('click', displayStudyPage);
+function addStudyListenerMyCaPage(currentUserId, chooseId) {
+    document.getElementById('my-cards-page-study').addEventListener('click', function() {loadJSONMyCard(currentUserId, chooseId);});
 }
 
-//=============================================
-//==Create list for Favorite and MyCards page==
-//=============================================
+
+//=============================================================
+//==========Create list for Favorite and MyCards page==========
+//=============================================================
 //create list for favorite page
 function createFavoriteTable(json) {
     let table = document.createElement("table");
     //create header
-    createThead(table);
-    //create tbody
-    createTBody(table, json);
-    favoriteTable.appendChild(table);
+    if (json !== null) {
+        document.getElementById('favorite-page-notification').innerHTML = "";
+        createThead(table);
+        //create tbody
+        createTBody(table, json);
+        document.getElementById('favorite-list').appendChild(table);
+    } else {
+        document.getElementById('favorite-page-notification').innerHTML = "You do not have favorite words yet.";
+    }
 }
 
 //create list for my cards page
 function createMyCardsTable(json) {
     let table = document.createElement("table");
-    //create header
-    createThead(table);
-    //create tbody
-    createTBody(table, json);
-    myCardsTable.appendChild(table);
+    if (json !== null) {
+        //create header
+        createThead(table);
+        //create tbody
+        createTBody(table, json);
+        document.getElementById('my-cards-list').appendChild(table);
+        document.getElementById('my-cards-page-notification').innerHTML = "";
+    } else {
+        document.getElementById('my-cards-page-notification').innerHTML = "No Cards";
+    }
 }
 
 //create table header
@@ -165,19 +263,17 @@ function createThead(table) {
     }
 }
 
-//create a map to store: key - rowIndex, value - id of word in each row
-let map = {};
+//create a rowWordIdMap to store: key - rowIndex, value - id of word in each row
+let rowWordIdMap = [];
 //create table body
 function createTBody(table, json) {
     let tbody = document.createElement("tbody");
     //add tbody into table
     table.appendChild(tbody);
     //traverse all words in json
-    console.log(json);
-    console.log(Object.keys(json).length);
     for (let i = 0; i < Object.keys(json).length; i++) {
         const keyOfJson = ["side0", "side1"]; //keep it the same as key in json
-        map[i] = json[i]["id"];
+        rowWordIdMap[i] = json[i]["cardId"];
         //create tr
         let tr = document.createElement("tr");
         //traverse every attribute of current word
@@ -185,7 +281,6 @@ function createTBody(table, json) {
             //create td
             let td = document.createElement("td");
             //set current attribute as content of td
-            console.log(json[i][index]);
             td.innerHTML = json[i][index];
             tr.appendChild(td);
         }
@@ -193,17 +288,22 @@ function createTBody(table, json) {
     }
 }
 
-//=======================================
-//==Get id of selected word in the list==
-//=======================================
+
+//=============================================================
+//=============Get id of selected word in the list=============
+//=============================================================
 let curRow = null;
 function selectRow(obj) {
     if(event.srcElement.tagName === "TD"){
         if (curRow !== null) {
             curRow.style.background='';
+            curRow.style.color='black';
         }
         curRow = event.srcElement.parentElement;
-        curRow.style.background="#d5f163";
+        curRow.style.background="#4CAF50";
+        curRow.style.color="white";
+        enableButton(curRow.rowIndex !== null, document.getElementById('favorite-page-edit'));
+        enableButton(curRow.rowIndex !== null, document.getElementById('my-cards-page-edit'));
         return curRow;
     }
 }
@@ -211,850 +311,450 @@ function selectRow(obj) {
 //Return the id of the selected word and pass it to edit page
 function getIdOfSelectedWord() {
     if (curRow !== null) {
-        return map[curRow.rowIndex - 1];
+        return rowWordIdMap[curRow.rowIndex - 1];
     }
-    return "Please select a word to edit";
+    return null;
 }
 
-//===========================
-//==Display different pages==
-//===========================
-function displayHomepage() {
-    homepage.style.display = "";
+//=========================================================
+//=================Display different pages=================
+//=========================================================
+function displayHomepage(currentUserId) {
+    document.getElementById('page-header').innerHTML="Welcome User " + currentUserId + " to Flash Card";
+    document.querySelector('.homepage').style.display = "";
 }
 
-function displayFavoritePage() {
-    favoritePage.style = "";
-    addBackListenerFavPage();
-    addEditListenerFavPage();
-    addStudyListenerFavPage();
+function displayFavoritePage(currentUserId) {
+    document.querySelector('.favorite-page').style = "";
+    document.getElementById('page-header').innerHTML="Favorites";
+    requestFavJsonUpdateFavList(currentUserId);
+    addBackListenerFavPage(currentUserId);
+    addEditListenerFavPage(currentUserId);
+    addStudyListenerFavPage(currentUserId);
 }
 
-function displayMyCardsPage() {
-    myCardsPage.style = "";
-    addAddListenerMyCaPage();
-    addBackListenerMyCaPage();
-    addEditListenerMyCaPage();
-    addStudyListenerMyCaPage();
+function displayMyCardsPage(currentUserId, chooseId) {
+    document.querySelector('.my-cards-page').style = "";
+    if (currentUserId === chooseId) {
+        requestMyCardsJsonUpdateMyCardsList(currentUserId, chooseId);
+        document.getElementById('page-header').innerHTML="My Cards";
+        document.getElementById('my-cards-page-add').style.display = "";
+        document.getElementById('my-cards-page-edit').style.display = "";
+        addAddListenerMyCaPage(currentUserId);
+        addEditListenerMyCaPage(currentUserId);
+        addStudyListenerMyCaPage(currentUserId, chooseId);
+        addBackListenerMyCaPage(currentUserId);
+    } else {  //
+        requestMyCardsJsonUpdateMyCardsList(currentUserId, chooseId);
+        document.getElementById('page-header').innerHTML= "User " +chooseId + " 's Cards";
+        addStudyListenerMyCaPage(currentUserId, chooseId);
+        document.getElementById('my-cards-page-add').style.display = "none";
+        document.getElementById('my-cards-page-edit').style.display = "none";
+        addBackListenerMyCaPage(currentUserId);
+    }
 }
 
+//==============================================
+//===========Enable or Disable button===========
+//==============================================
+function enableButton (condition, button) {
+    button.disabled = !condition;
+}
+
+
+//======================================================================
+//==============================Study Page==============================
+//======================================================================
 //from lulu tong
-function displayStudyPage() {
+var myTimer;
+function clock() {
+   var c = 11;
+   function myClock() {
+     document.getElementById("time").innerHTML = --c;
+     if (c === 0) {
+       clearInterval(myTimer);
+       document.getElementById("haveNoIdea").click();
+       document.getElementById("TimeOut").innerHTML = "Time out!";
+     }
+   }
+   myClock();
+   myTimer = setInterval(myClock, 1000);
+}
+
+let choiceJSON = [{id: 284, side0: "fart", side1: "屁(vi.)放屁"}, {id: 192, side0: "resist", side1: "(vt.)(vi.)抵抗,耐得住,抵制,反抗防染劑"}
+,{id: 169, side0: "destination", side1: "目的地目的文件,目的單元"},{id: 214, side0: "specialize", side1: "(vt.)使特殊化,列舉,特別指明,限定...的範圍(vi.)成為專家,專攻"},{id: 248, side0: "react", side1: "re-act (vt.)重作,重演"}
+,{id: 317, side0: "chronologically", side1: "(ad.)按年代地"}
+,{id: 145, side0: "intellectual", side1: "有知識者,知識分子,憑理智做事者(a.)智力的,知性的,聰明的"}
+,{id: 131, side0: "content", side1: "內容,滿足,意義,要旨(a.)滿足的,滿意的,意義的(vt.)使...滿足"}
+,{id: 350, side0: "unwillingness", side1: "不願意;不情願"},{id: 243, side0: "definition", side1: "u定義;限定,確定;清晰度"}];
+
+function displayStudyPage(response, currentUserId) {
     document.querySelector('.study-page').style.display = 'block';
     hideHomepage();
     hideMyCardsPage();
     hideFavoritePage();
-    let count = 1;
-    let flag = false;
-    let timerFlag = false;
-    let answerTimerFlag = false;
-    let j = 0;
-    let correctAnwser = "";
-    let img_array = new Array('./image/emptyheart.png', './image/fullheart.png');
-    let set = [];   // make sure questions have no duplicate.
+    showStudypage();
 
-    function init() {
+    let actual_JSON = JSON.parse(response);
+    let length = actual_JSON.length;
 
-        function startTimer(duration, display) {
-            let start = Date.now(),
-                diff,
-                minutes,
-                seconds;
-
-            function timer() {
-                // get the number of seconds that have elapsed since
-                // startTimer() was called
-                let currentTime = Date.now();
-
-                diff = duration - (((currentTime - start) / 1000) | 0);
-                msDiff = duration * 1000 - (currentTime - start);
-                // console.log(Math.floor(msDiff / 100));
-
-                // does the same job as parseInt truncates the float
-                minutes = (diff / 60) | 0;
-                seconds = (diff % 60) | 0;
-
-                minutes = minutes < 10 ? "0" + minutes : minutes;
-                seconds = seconds < 10 ? "0" + seconds : seconds;
-
-                display.textContent = minutes + ":" + seconds;
-
-                if (timerFlag) { // start Timer again
-                    start = Date.now() + 1000;
-                    diff = duration - (((Date.now() - start) / 1000) | 0);
-                    timerFlag = false;
-                }
-
-                if (!answerTimerFlag) {  // if answerTimerFlag is false, we try to meet the condition that timer = 0
-                    if (Math.floor(msDiff / 100) == 0) {
-                        // add one second so that the count down starts at the full duration
-                        // example 05:00 not 04:59
-
-                        // start = Date.now() + 1000;
-                        if (!flag) {  // if flag is false, we didn't complete whole study, and time out
-                            document.getElementById("haveNoIdea").click();
-                            document.getElementById("TimeOut").innerHTML = "Time out!"
-                            timerFlag = false;
-                        }
-                    }
-                }
-            };
-
-            // we don't want to wait a full second before the timer starts
-            timer();
-            setInterval(timer, 5);
-        }
-
-        function onLoad() {
-            let seconds = 10,
-                display = document.querySelector('#time');
-            startTimer(seconds, display);
-        };
-
-        loadJSON(function(response) {
-            // Parse JSON string into object
-            var myTimer = onLoad();
-
-            var actual_JSON = JSON.parse(response);
-            console.log(actual_JSON);
-            console.log("length: " + actual_JSON.length);
-
-            function contains(arr, val) {
-                if (arr.indexOf(val) !== -1) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-
-            function getCardRandomId() {
-                let index;
-                while (true) {
-                    index = parseInt(Math.random() * (actual_JSON.length + 1));
-                    if (!contains(set, index)) {
-                        set.push(index);
-                        break;
-                    }
-                }
-                return index;
-            }
-
-            function getThreeAnswer(index) {
-                let threeAnswers = [];
-                threeAnswers.push(index);
-                while(threeAnswers.length < 3) {
-                    let j = parseInt(Math.random() * (actual_JSON.length + 1));
-                    if (!contains(threeAnswers, j)) {
-                        threeAnswers.push(j);
-                    }
-                }
-                return threeAnswers;
-            }
-
-            function getRandomInt(min, max) {
-                return Math.floor(Math.random() * (max - min + 1) + min);
-            }
-
-            function shuffleAnwser(index) {
-                let answerset = getThreeAnswer(index);
-                for (let i = answerset.length - 1; i > 0; i--) {
-                    var j = getRandomInt(0, i);
-                    var t = answerset[i];
-                    answerset[i] = answerset[j];
-                    answerset[j] = t;
-                }
-                return answerset;
-            }
-
-            let i = getCardRandomId();
-            let answerset = shuffleAnwser(i);
-
-            document.getElementById("anwser").style.visibility = 'hidden';
-            document.getElementById("haveNoIdea").addEventListener('click', haveNoIdeaButtonClicked);
-            document.getElementById("AButton").addEventListener('click', AButtonClicked);
-            document.getElementById("BButton").addEventListener('click', BButtonClicked);
-            document.getElementById("CButton").addEventListener('click', CButtonClicked);
-            document.getElementById("exit").addEventListener('click', start);
-            document.getElementById("answerPageButton").addEventListener('click', answerPageButtonClicked);
-            document.getElementById("addtoFavorite").addEventListener('click', addtoFavoriteClicked)
-
-            function haveNoIdeaButtonClicked() {
-                buttonClicked();
-                document.getElementById("result").innerHTML = "You missed the anwser.";
-                document.getElementById("addtoFavorite").style.visibility = 'visible';
-            }
-
-            function AButtonClicked() {
-                buttonClicked();
-                getResult(document.getElementById("AButton").value, "A. " +  correctAnwser);
-            }
-
-            function BButtonClicked() {
-                buttonClicked();
-                getResult(document.getElementById("BButton").value, "B. "  + correctAnwser);
-            }
-
-            function CButtonClicked() {
-                buttonClicked();
-                getResult(document.getElementById("CButton").value, "C. " + correctAnwser);
-            }
-
-            function getResult(value, answer) {
-                // console.log(answer);
-                // console.log(value);
-                if (value === answer) {
-                    document.getElementById("result").innerHTML = "Correct!";
-                } else {
-                    document.getElementById("result").innerHTML = "Wrong!";
-                }
-                document.getElementById("addtoFavorite").style.visibility = 'visible';
-            }
-
-            function buttonClicked() {
-                answerTimerFlag = true;
-                var x = document.getElementById("card");
-                if (x.style.display === "none") {
-                    x.style.display = "block";
-                } else {
-                    x.style.display = "none";
-                }
-                // document.getElementById("header").style.visibility = 'hidden';
-                document.getElementById("header").style.display = 'none';
-                // document.getElementById("question").style.visibility = 'visible';
-                document.getElementById("anwser").style.visibility = 'visible';
-                // document.getElementById("next").style.visibility = 'visible'
-                document.getElementById("correctAnwser").innerHTML = correctAnwser;
-            }
-
-            function answerPageButtonClicked() {
-                timerFlag = true;
-                answerTimerFlag = false;
-                document.getElementById("result").innerHTML = "";
-                // console.log(value);
-                if (document.getElementById("answerPageButton").value == "Exit") {
-                    exitButtonClicked();
-                } else {
-                    nextButtonClicked();
-                }
-            }
-
-            function nextButtonClicked() {
-                count += 1;
-                i = getCardRandomId();
-                answerset = shuffleAnwser(i);
-                document.getElementById("TimeOut").innerHTML = "";
-                document.getElementById("header").style.display = 'block';
-                timerFlag = true;
-                document.getElementById("myImg").src= img_array[0];
-                j = 0;
-                document.getElementById("addtoFavorite").style.visibility = 'hidden';
-                if (count <= 10) {
-                    if (document.getElementById("card").style.display === "none") {
-                        document.getElementById("card").style.display = "block";
-                    } else if (document.getElementById("card").style.display === "block"){
-                        document.getElementById("card").style.display = "none";
-                    }
-                    document.getElementById("header").style.visibility = 'visible';
-                    document.getElementById("anwser").style.visibility = 'hidden';
-                    showQuestion(i, answerset);
-                } else if (count > 10 || count == actual_JSON.length){ // end of the JSON file
-                    flag = true;
-                    document.getElementById("header").style.visibility = 'hidden';
-                    document.getElementById("question").style.visibility = 'hidden';
-                    document.getElementById("card").style.visibility = 'hidden';
-                    document.getElementById("anwser").style.visibility = 'visible';
-                    document.getElementById("correctAnwser").innerHTML = "Congratulation! You have complete today's study.";
-                    document.getElementById("answerPageButton").value = "Exit";
-                }
-            }
-
-            function addtoFavoriteClicked() {
-                j++;
-                if(j == img_array.length) {
-                    j = 0;
-                }
-                document.getElementById("myImg").src=img_array[j];
-                if (j == 1) {
-                    addtoFavoriteJson();
-                } else {
-                    removeFromFavoriteJson();
-                }
-            }
-
-            function addtoFavoriteJson() {
-                var xhr = new XMLHttpRequest();
-                xhr.open('POST', 'http://localhost:2666/fav', true);
-                xhr.onreadystatechange=function(){
-                    console.log('onreadystatechange: '+ xhr.readyState);
-                };
-                xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-                xhr.send('{"id": '+ i +'}');
-            }
-
-            function removeFromFavoriteJson() {
-
-            }
-
-            showQuestion(i, answerset);
-
-            function showQuestion(i, answerset) {
-                let num =  parseInt(Math.random() * 2);
-                if (num == 1) {
-                    document.getElementById("question").innerHTML = actual_JSON[i].side0;
-                    document.getElementById("AButton").value = "A. " + actual_JSON[answerset[0]].side1;
-                    document.getElementById("BButton").value = "B. " + actual_JSON[answerset[1]].side1;
-                    document.getElementById("CButton").value = "C. " + actual_JSON[answerset[2]].side1;
-                    correctAnwser = actual_JSON[i].side1;
-                } else {
-                    document.getElementById("question").innerHTML = actual_JSON[i].side1;
-                    document.getElementById("AButton").value = "A. " + actual_JSON[answerset[0]].side0;
-                    document.getElementById("BButton").value = "B. " + actual_JSON[answerset[1]].side0;
-                    document.getElementById("CButton").value = "C. " + actual_JSON[answerset[2]].side0;
-                    correctAnwser = actual_JSON[i].side0;
-                }
-            }
-        });
-    }
-
-    init();
+    studyPage(actual_JSON, length, currentUserId, currentUserId);
 }
 
-function displayStudyFavPage() {
+function showStudypage() {
+    document.getElementById("header").style.visibility = 'visible';
+    document.getElementById("question").style.visibility = 'visible';
+    document.getElementById("AButton").style.visibility = 'visible';
+    document.getElementById("BButton").style.visibility = 'visible';
+    document.getElementById("CButton").style.visibility = 'visible';
+    document.getElementById("haveNoIdea").style.visibility = 'visible';
+    document.getElementById("exit").style.visibility = 'visible';
+    document.getElementById("answerPageButton").value = "Next";
+}
+
+function displayStudyFavPage(response, currentUserId) {
     document.querySelector('.study-page').style.display = 'block';
+    showStudypage();
+    hideHomepage();
     hideFavoritePage();
     hideMyCardsPage();
+
+    let actual_JSON = JSON.parse(response);
+    let length = Object.keys(actual_JSON).length;
+
+    studyPage(actual_JSON.concat(choiceJSON), length, currentUserId, currentUserId);
+}
+
+function displayStudyMyCardPage(response, currentUserId, chooseId) {
+    document.querySelector('.study-page').style.display = 'block';
+    showStudypage();
+    hideHomepage();
+    hideFavoritePage();
+    hideMyCardsPage();
+
+    let actual_JSON = JSON.parse(response);
+    let length = Object.keys(actual_JSON).length;
+
+    studyPage(actual_JSON.concat(choiceJSON), length, currentUserId, chooseId);
+}
+
+function studyPage(actual_JSON, length, currentUserId, chooseId) {
     let count = 1;
-    let flag = false;
-    let timerFlag = false;
-    let answerTimerFlag = false;
-    let j = 0;
+    let j = 1;
     let correctAnwser = "";
-    let img_array = new Array('./image/emptyheart.png', './image/fullheart.png');
     let set = [];   // make sure questions have no duplicate.
+    let choicelength = actual_JSON.length;
 
-    function init() {
-
-        function startTimer(duration, display) {
-            let start = Date.now(),
-                diff,
-                minutes,
-                seconds;
-
-            function timer() {
-                // get the number of seconds that have elapsed since
-                // startTimer() was called
-                let currentTime = Date.now();
-
-                diff = duration - (((currentTime - start) / 1000) | 0);
-                msDiff = duration * 1000 - (currentTime - start);
-                // console.log(Math.floor(msDiff / 100));
-
-                // does the same job as parseInt truncates the float
-                minutes = (diff / 60) | 0;
-                seconds = (diff % 60) | 0;
-
-                minutes = minutes < 10 ? "0" + minutes : minutes;
-                seconds = seconds < 10 ? "0" + seconds : seconds;
-
-                display.textContent = minutes + ":" + seconds;
-
-                if (timerFlag) { // start Timer again
-                    start = Date.now() + 1000;
-                    diff = duration - (((Date.now() - start) / 1000) | 0);
-                    timerFlag = false;
-                }
-
-                if (!answerTimerFlag) {  // if answerTimerFlag is false, we try to meet the condition that timer = 0
-                    if (Math.floor(msDiff / 100) == 0) {
-                        // add one second so that the count down starts at the full duration
-                        // example 05:00 not 04:59
-
-                        // start = Date.now() + 1000;
-                        if (!flag) {  // if flag is false, we didn't complete whole study, and time out
-                            document.getElementById("haveNoIdea").click();
-                            document.getElementById("TimeOut").innerHTML = "Time out!"
-                            timerFlag = false;
-                        }
-                    }
-                }
-            };
-
-            // we don't want to wait a full second before the timer starts
-            timer();
-            setInterval(timer, 5);
+    function contains(arr, val) {
+        if (arr.indexOf(val) !== -1) {
+            return true;
+        } else {
+            return false;
         }
-
-        function onLoad() {
-            let seconds = 10,
-                display = document.querySelector('#time');
-            startTimer(seconds, display);
-        };
-
-        loadJSONFav(function(response) {
-            // Parse JSON string into object
-            onLoad();
-            var actual_JSON = JSON.parse(response);
-            let length = Object.keys(actual_JSON).length;
-
-            function contains(arr, val) {
-                if (arr.indexOf(val) !== -1) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-
-            function getCardRandomId() {
-                let index;
-                while (true) {
-                    index = parseInt(Math.random() * (length + 1));
-                    console.log("index: " + index );
-                    if (!contains(set, index)) {
-                        set.push(index);
-                        break;
-                    }
-                }
-                return index;
-            }
-
-            function getThreeAnswer(index) {
-                let threeAnswers = [];
-                threeAnswers.push(index);
-                while(threeAnswers.length < 3) {
-                    let j = parseInt(Math.random() * (length + 1));
-                    if (!contains(threeAnswers, j)) {
-                        threeAnswers.push(j);
-                    }
-                }
-                return threeAnswers;
-            }
-
-            function getRandomInt(min, max) {
-                return Math.floor(Math.random() * (max - min + 1) + min);
-            }
-
-            function shuffleAnwser(index) {
-                let answerset = getThreeAnswer(index);
-                for (let i = answerset.length - 1; i > 0; i--) {
-                    var j = getRandomInt(0, i);
-                    var t = answerset[i];
-                    answerset[i] = answerset[j];
-                    answerset[j] = t;
-                }
-                return answerset;
-            }
-
-            let i = getCardRandomId();
-            console.log("i: " + i);
-            console.log(actual_JSON[i].id);
-            let answerset = shuffleAnwser(i);
-
-            document.getElementById("anwser").style.visibility = 'hidden';
-            document.getElementById("haveNoIdea").addEventListener('click', haveNoIdeaButtonClicked);
-            document.getElementById("AButton").addEventListener('click', AButtonClicked);
-            document.getElementById("BButton").addEventListener('click', BButtonClicked);
-            document.getElementById("CButton").addEventListener('click', CButtonClicked);
-            document.getElementById("exit").addEventListener('click', start);
-            document.getElementById("answerPageButton").addEventListener('click', answerPageButtonClicked);
-            document.getElementById("addtoFavorite").addEventListener('click', addtoFavoriteClicked)
-
-            function haveNoIdeaButtonClicked() {
-                buttonClicked();
-                document.getElementById("result").innerHTML = "You missed the anwser.";
-                document.getElementById("addtoFavorite").style.visibility = 'visible';
-            }
-
-            function AButtonClicked() {
-                buttonClicked();
-                getResult(document.getElementById("AButton").value, "A. " +  correctAnwser);
-            }
-
-            function BButtonClicked() {
-                buttonClicked();
-                getResult(document.getElementById("BButton").value, "B. "  + correctAnwser);
-            }
-
-            function CButtonClicked() {
-                buttonClicked();
-                getResult(document.getElementById("CButton").value, "C. " + correctAnwser);
-            }
-
-            function getResult(value, answer) {
-                // console.log(answer);
-                // console.log(value);
-                if (value === answer) {
-                    document.getElementById("result").innerHTML = "Correct!";
-                } else {
-                    document.getElementById("result").innerHTML = "Wrong!";
-                }
-                document.getElementById("addtoFavorite").style.visibility = 'visible';
-            }
-
-            function buttonClicked() {
-                answerTimerFlag = true;
-                var x = document.getElementById("card");
-                if (x.style.display === "none") {
-                    x.style.display = "block";
-                } else {
-                    x.style.display = "none";
-                }
-                // document.getElementById("header").style.visibility = 'hidden';
-                document.getElementById("header").style.display = 'none';
-                // document.getElementById("question").style.visibility = 'visible';
-                document.getElementById("anwser").style.visibility = 'visible';
-                // document.getElementById("next").style.visibility = 'visible'
-                document.getElementById("correctAnwser").innerHTML = correctAnwser;
-            }
-
-            function answerPageButtonClicked() {
-                timerFlag = true;
-                answerTimerFlag = false;
-                document.getElementById("result").innerHTML = "";
-                // console.log(value);
-                if (document.getElementById("answerPageButton").value == "Exit") {
-                    exitButtonClicked();
-                } else {
-                    nextButtonClicked();
-                }
-            }
-
-            function nextButtonClicked() {
-                count += 1;
-                i = getCardRandomId();
-                answerset = shuffleAnwser(i);
-                document.getElementById("TimeOut").innerHTML = "";
-                document.getElementById("header").style.display = 'block';
-                timerFlag = true;
-                document.getElementById("myImg").src= img_array[0];
-                j = 0;
-                document.getElementById("addtoFavorite").style.visibility = 'hidden';
-                if (count <= 10) {
-                    if (document.getElementById("card").style.display === "none") {
-                        document.getElementById("card").style.display = "block";
-                    } else if (document.getElementById("card").style.display === "block"){
-                        document.getElementById("card").style.display = "none";
-                    }
-                    document.getElementById("header").style.visibility = 'visible';
-                    document.getElementById("anwser").style.visibility = 'hidden';
-                    showQuestion(i, answerset);
-                } else if (count > 10 || count == actual_JSON.length){ // end of the JSON file
-                    flag = true;
-                    document.getElementById("header").style.visibility = 'hidden';
-                    document.getElementById("question").style.visibility = 'hidden';
-                    document.getElementById("card").style.visibility = 'hidden';
-                    document.getElementById("anwser").style.visibility = 'visible';
-                    document.getElementById("correctAnwser").innerHTML = "Congratulation! You have complete today's study.";
-                    document.getElementById("answerPageButton").value = "Exit";
-                }
-            }
-
-            function addtoFavoriteClicked() {
-                j++;
-                if(j == img_array.length) {
-                    j = 0;
-                }
-                document.getElementById("myImg").src=img_array[j];
-                if (j == 1) {
-                    addtoFavoriteJson();
-                } else {
-                    removeFromFavoriteJson();
-                }
-            }
-
-            function addtoFavoriteJson() {
-                var xhr = new XMLHttpRequest();
-                xhr.open('POST', 'http://localhost:2666/fav', true);
-                xhr.onreadystatechange=function(){
-                    console.log('onreadystatechange: '+ xhr.readyState);
-                };
-                xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-                xhr.send('{"id": '+ i +'}');
-            }
-
-            function removeFromFavoriteJson() {
-
-            }
-
-            showQuestion(i, answerset);
-
-            function showQuestion(i, answerset) {
-                let num =  parseInt(Math.random() * 2);
-                if (num == 1) {
-                    document.getElementById("question").innerHTML = actual_JSON[i].side0;
-                    document.getElementById("AButton").value = "A. " + actual_JSON[answerset[0]].side1;
-                    document.getElementById("BButton").value = "B. " + actual_JSON[answerset[1]].side1;
-                    document.getElementById("CButton").value = "C. " + actual_JSON[answerset[2]].side1;
-                    correctAnwser = actual_JSON[i].side1;
-                } else {
-                    document.getElementById("question").innerHTML = actual_JSON[i].side1;
-                    document.getElementById("AButton").value = "A. " + actual_JSON[answerset[0]].side0;
-                    document.getElementById("BButton").value = "B. " + actual_JSON[answerset[1]].side0;
-                    document.getElementById("CButton").value = "C. " + actual_JSON[answerset[2]].side0;
-                    correctAnwser = actual_JSON[i].side0;
-                }
-            }
-        });
     }
 
-    init();
-}
-//===========================
-//==Display edit, add pages==
-//===========================
-//from lu niu
-function displayAddPage() {
-    // deleteMyCardsTable();
-    showAddOrEditPage();
+    function getCardRandomId() {
+        let index;
+        while (set.length < 10) {
+            index = parseInt(Math.random() * length);
+            if (!contains(set, index)) {
+                set.push(index);
+                break;
+            }
+        }
+        return index;
+    }
+
+    function getThreeAnswer(index) {
+        let threeAnswers = [];
+        threeAnswers.push(index);
+        while(threeAnswers.length < 3) {
+            let j = parseInt(Math.random() * choicelength);
+            if (!contains(threeAnswers, j)) {
+                threeAnswers.push(j);
+            }
+        }
+        return threeAnswers;
+    }
+
+    function shuffleAnwser(index) {
+        let answerset = getThreeAnswer(index);
+        for (let i = answerset.length - 1; i >= 0; i--) {
+            let j = parseInt(Math.random() * (i + 1));
+            let t = answerset[i];
+            answerset[i] = answerset[j];
+            answerset[j] = t;
+        }
+        return answerset;
+    }
+
+    let i = getCardRandomId();
+    let answerset = shuffleAnwser(i);
+
+    document.getElementById("anwser").style.visibility = 'hidden';
+    document.getElementById("haveNoIdea").addEventListener('click', haveNoIdeaButtonClicked);
+    document.getElementById("AButton").addEventListener('click', AButtonClicked);
+    document.getElementById("BButton").addEventListener('click', BButtonClicked);
+    document.getElementById("CButton").addEventListener('click', CButtonClicked);
+    document.getElementById("exit").addEventListener('click', function() {exitClicked(currentUserId);});
+    document.getElementById("answerPageButton").addEventListener('click', answerPageButtonClicked);
+    document.getElementById("addtoFavorite").addEventListener('click', addtoFavoriteClicked)
+
+    function exitClicked(currentUserId) {
+      document.getElementById("haveNoIdea").removeEventListener('click', haveNoIdeaButtonClicked);
+      document.getElementById("AButton").removeEventListener('click', AButtonClicked);
+      document.getElementById("BButton").removeEventListener('click', BButtonClicked);
+      document.getElementById("CButton").removeEventListener('click', CButtonClicked);
+      document.getElementById("answerPageButton").removeEventListener('click', answerPageButtonClicked);
+      document.getElementById("addtoFavorite").removeEventListener('click', addtoFavoriteClicked)
+      start(currentUserId);
+    }
+
+    function haveNoIdeaButtonClicked() {
+        clearInterval(myTimer);
+        document.getElementById("card").style.display = "block";
+        buttonClicked();
+        document.getElementById("result").innerHTML = "You missed the anwser.";
+        document.getElementById("addtoFavorite").style.visibility = 'visible';
+
+    }
+
+    function AButtonClicked() {
+        buttonClicked();
+        getResult(document.getElementById("AButton").value, "A. " +  correctAnwser);
+    }
+
+    function BButtonClicked() {
+        buttonClicked();
+        getResult(document.getElementById("BButton").value, "B. "  + correctAnwser);
+    }
+
+    function CButtonClicked() {
+        buttonClicked();
+        getResult(document.getElementById("CButton").value, "C. " + correctAnwser);
+    }
+
+    function getResult(value, answer) {
+        if (value === answer) {
+            document.getElementById("result").innerHTML = "Correct!";
+        } else {
+            document.getElementById("result").innerHTML = "Wrong!";
+        }
+        document.getElementById("addtoFavorite").style.visibility = 'visible';
+    }
+
+    function buttonClicked() {
+        clearInterval(myTimer);
+        document.getElementById("card").style.display = "none";
+        document.getElementById("header").style.display = 'none';
+        document.getElementById("anwser").style.visibility = 'visible';
+        document.getElementById("correctAnwser").innerHTML = correctAnwser;
+    }
+
+    function answerPageButtonClicked() {
+        document.getElementById("result").innerHTML = "";
+        clearInterval(myTimer);
+        if (document.getElementById("answerPageButton").value === "Exit") {
+            exitClicked(currentUserId);
+        } else if (document.getElementById("answerPageButton").value === "Next"){
+            nextButtonClicked();
+        }
+    }
+
+    function nextButtonClicked() {
+        count += 1;
+        i = getCardRandomId();
+        answerset = shuffleAnwser(i);
+        document.getElementById("TimeOut").innerHTML = "";
+        document.getElementById("header").style.display = 'block';
+        document.getElementById("myImg").src= img_array[0];
+        j = 0;
+        document.getElementById("addtoFavorite").style.visibility = 'hidden';
+        if ((count <= 10 && length >= 10) || (count <= length && length < 10)) {   //three questions at most
+            showQuestion(i, answerset);
+            document.getElementById("card").style.display = "block";
+            document.getElementById("header").style.visibility = 'visible';
+            document.getElementById("anwser").style.visibility = 'hidden';
+        } else { // end of the JSON file
+            document.getElementById("header").style.visibility = 'hidden';
+            document.getElementById("question").style.visibility = 'hidden';
+            document.getElementById("card").style.visibility = 'hidden';
+            document.getElementById("anwser").style.visibility = 'visible';
+            document.getElementById("correctAnwser").innerHTML = "Congratulation! You have complete today's study.";
+            document.getElementById("answerPageButton").value = "Exit";
+        }
+    }
+
+    function addtoFavoriteClicked() {
+        j++;
+        if(j === img_array.length) {
+            j = 0;
+        }
+        document.getElementById("myImg").src=img_array[j];
+        if (j === 1) {
+            addtoFavoriteJson();
+        } else {
+            removeFromFavoriteJson();
+        }
+    }
+
+    function addtoFavoriteJson() {
+        var xhr = new XMLHttpRequest();
+        let url = 'http://localhost:2666/users/' + currentUserId +'/fav';
+        xhr.open('POST', url, true);
+        xhr.onreadystatechange = function(){
+            console.log('onreadystatechange: '+ xhr.readyState);
+        };
+        xhr.setRequestHeader('currentId', currentUserId);
+        xhr.send('{"id": '+ actual_JSON[i].cardId +'}');
+    }
+
+    function removeFromFavoriteJson() {
+        var xhr = new XMLHttpRequest();
+        let url = 'http://localhost:2666/users/' + currentUserId +'/fav/' + actual_JSON[i].cardId;
+        xhr.open('DELETE', url, true);
+        xhr.onreadystatechange=function(){
+            console.log('onreadystatechange: '+ xhr.readyState);
+        };
+        xhr.setRequestHeader('currentId', currentUserId);
+        xhr.send();
+    }
+
+    showQuestion(i, answerset);
+
+    function showQuestion(i, answerset) {
+        clock();
+        document.getElementById("card").style.display = "block";
+        let num =  parseInt(Math.random() * 2);
+        if (actual_JSON[i].infav) {
+          j = 1;
+          document.getElementById("myImg").src = img_array[j];
+        } else {
+          j = 0;
+          document.getElementById("myImg").src = img_array[j];
+        }
+        if (num === 1) {
+            document.getElementById("question").innerHTML = actual_JSON[i].side0;
+            document.getElementById("AButton").value = "A. " + actual_JSON[answerset[0]].side1;
+            document.getElementById("BButton").value = "B. " + actual_JSON[answerset[1]].side1;
+            document.getElementById("CButton").value = "C. " + actual_JSON[answerset[2]].side1;
+            correctAnwser = actual_JSON[i].side1;
+        } else {
+            document.getElementById("question").innerHTML = actual_JSON[i].side1;
+            document.getElementById("AButton").value = "A. " + actual_JSON[answerset[0]].side0;
+            document.getElementById("BButton").value = "B. " + actual_JSON[answerset[1]].side0;
+            document.getElementById("CButton").value = "C. " + actual_JSON[answerset[2]].side0;
+            correctAnwser = actual_JSON[i].side0;
+        }
+    }
 }
 
+
+//=====================================================
+//===============Display edit, add pages===============
+//=====================================================
 //from lu niu
-function displayEditPage() {
-    // deleteFavoriteTable();
+// const editPage = new EditPage();
+function displayAddPageFromMyCardPage(currentUserId) {
+    let editPage = new EditPage();
+    editPage.showAddOrEditPage(null, currentUserId, (obj) => {
+        // 'Save' clicked.
+        editPage.saveCtmCard(obj, currentUserId).then(() => {
+            // Places your code here if you want to do anything after save completed.
+            displayMyCardsPage(currentUserId, currentUserId);
+        }).then(() => {
+            curRow = null;
+        })
+    }, () => {
+        // 'Cancel' clicked.
+        if (curRow !== null) {
+            curRow.style.background = '';
+        }
+    })
+}
+
+function displayEditPageFromFavPage(currentUserId) {
+    let editPage = new EditPage(currentUserId);
     let idOfSelectedWord = getIdOfSelectedWord();
-    console.log(idOfSelectedWord); //when click edit, print id in console
-    curRow = null; //show edit page, hide list, reset curRow(global variable) to null
-    showAddOrEditPage(idOfSelectedWord);
+    //console.log(idOfSelectedWord); //when click edit, print id in console
+    if (idOfSelectedWord !== null) {
+        editPage.showAddOrEditPage(idOfSelectedWord, currentUserId, (obj) => {
+            // 'Save' clicked.
+            console.log(currentUserId);
+            editPage.updateCard(idOfSelectedWord, obj, currentUserId).then(() => {
+                // Places your code here if you want to do anything after save completed.
+                displayFavoritePage(currentUserId);
+            }).then(() => {
+                curRow = null;
+            })
+        }, () => {
+            // 'Cancel' clicked.
+            // reset the state of current row
+            resetTableElement();
+            enableButton(curRow !== null, document.getElementById('favorite-page-edit'));
+        });
+    }
 }
 
 
-//==============================
-//==Hide pages and clear lists==
-//==============================
+function displayEditPageFromMyCardPage(currentUserId) {
+    let editPage = new EditPage(currentUserId);
+    let idOfSelectedWord = getIdOfSelectedWord();
+    // console.log(idOfSelectedWord); //when click edit, print id in console
+    if (idOfSelectedWord !== null) {
+        editPage.showAddOrEditPage(idOfSelectedWord, currentUserId, (obj) => {
+            // 'Save' clicked.
+            editPage.updateCard(idOfSelectedWord, obj, currentUserId).then(() => {
+                // Places your code here if you want to do anything after save completed.
+                displayMyCardsPage(currentUserId, currentUserId);
+            }).then(() => {
+                // Reset curRow
+                curRow = null;
+            })
+        }, () => {
+            // 'Cancel' clicked.
+            // reset the state of current row
+            resetTableElement();
+            enableButton(curRow !== null, document.getElementById('my-cards-page-edit'));
+        })
+    }
+}
+
+function resetTableElement() {
+    if (curRow !== null) {
+        curRow.style.background='';
+        curRow.style.color='black';
+        curRow = null;
+    }
+}
+
+//==============================================================
+//==================Hide pages and clear lists==================
+//==============================================================
 function hideHomepage() {
-    homepage.style.display = "none";
+    document.querySelector('.homepage').style.display = "none";
 }
 
 function hideFavoritePage() {
-    favoritePage.style.display = "none";
+    document.querySelector('.favorite-page').style.display = "none";
 }
 
 function hideMyCardsPage() {
-    myCardsPage.style.display = "none";
-    // document.querySelector('my-cards-page').style.display = "none";
+    document.querySelector('.my-cards-page').style.display = "none";
 }
 
 function hideStudyPage() {
     document.querySelector('.study-page').style.display = "none";
 }
 
+function hideAlert() {
+    document.querySelector('.alert').style.display = "none";
+}
 
 function deleteFavoriteTable() {
-    favoriteTable.innerHTML = '';
+    document.getElementById('favorite-list').innerHTML = '';
 }
 
 function deleteMyCardsTable() {
-    myCardsTable.innerHTML = '';
+    document.getElementById('my-cards-list').innerHTML = '';
 }
-
-
-
-function start() {
-    addStudyListenerHomepage();
-    addFavListenerHomepage();
-    addMyCardListenerHomepage();
-    displayHomepage();
-    hideFavoritePage();
-    hideMyCardsPage();
-    hideStudyPage();
-    //clear data of favorite list
-    deleteFavoriteTable();
-    //clear data of my cards list
-    deleteMyCardsTable();
-
-    // loadJSONFav(function(response) {
-    //     let fav_JSON = JSON.parse(response);
-    //     console.log(fav_JSON);
-    // });
-}
-
-start();
-
-
-let data = [
-    {
-        "id": "0",
-        "word": "black",
-        "a": "adj.黑色的；黑人的",
-        "b":"白色",
-        "c":"橘色",
-        "correctAnswer": "adj.黑色的；黑人的"
-    },
-    {
-        "id": "1",
-        "word": "white",
-        "a": "adj.黑色的；黑人的",
-        "b":"adj.白色的，纯洁的",
-        "c":"橘色",
-        "correctAnswer": "adj.白色的，纯洁的"
-    },
-    {
-        "id": "2",
-        "word": "white",
-        "a": "adj.黑色的；黑人的",
-        "b":"adj.白色的，纯洁的",
-        "c":"橘色",
-        "correctAnswer": "adj.白色的，纯洁的"
-    },
-    {
-        "id": "3",
-        "word": "white",
-        "a": "adj.黑色的；黑人的",
-        "b":"adj.白色的，纯洁的",
-        "c":"橘色",
-        "correctAnswer": "adj.白色的，纯洁的"
-    },{
-        "id": "4",
-        "word": "white",
-        "a": "adj.黑色的；黑人的",
-        "b":"adj.白色的，纯洁的",
-        "c":"橘色",
-        "correctAnswer": "adj.白色的，纯洁的"
-    },{
-        "id": "5",
-        "word": "white",
-        "a": "adj.黑色的；黑人的",
-        "b":"adj.白色的，纯洁的",
-        "c":"橘色",
-        "correctAnswer": "adj.白色的，纯洁的"
-    },{
-        "id": "6",
-        "word": "white",
-        "a": "adj.黑色的；黑人的",
-        "b":"adj.白色的，纯洁的",
-        "c":"橘色",
-        "correctAnswer": "adj.白色的，纯洁的"
-    },{
-        "id": "7",
-        "word": "white",
-        "a": "adj.黑色的；黑人的",
-        "b":"adj.白色的，纯洁的",
-        "c":"橘色",
-        "correctAnswer": "adj.白色的，纯洁的"
-    },{
-        "id": "8",
-        "word": "white",
-        "a": "adj.黑色的；黑人的",
-        "b":"adj.白色的，纯洁的",
-        "c":"橘色",
-        "correctAnswer": "adj.白色的，纯洁的"
-    },{
-        "id": "9",
-        "word": "white",
-        "a": "adj.黑色的；黑人的",
-        "b":"adj.白色的，纯洁的",
-        "c":"橘色",
-        "correctAnswer": "adj.白色的，纯洁的"
-    },{
-        "id": "10",
-        "word": "white",
-        "a": "adj.黑色的；黑人的",
-        "b":"adj.白色的，纯洁的",
-        "c":"橘色",
-        "correctAnswer": "adj.白色的，纯洁的"
-    },{
-        "id": "11",
-        "word": "white",
-        "a": "adj.黑色的；黑人的",
-        "b":"adj.白色的，纯洁的",
-        "c":"橘色",
-        "correctAnswer": "adj.白色的，纯洁的"
-    },{
-        "id": "12",
-        "word": "white",
-        "a": "adj.黑色的；黑人的",
-        "b":"adj.白色的，纯洁的",
-        "c":"橘色",
-        "correctAnswer": "adj.白色的，纯洁的"
-    },{
-        "id": "13",
-        "word": "white",
-        "a": "adj.黑色的；黑人的",
-        "b":"adj.白色的，纯洁的",
-        "c":"橘色",
-        "correctAnswer": "adj.白色的，纯洁的"
-    },{
-        "id": "14",
-        "word": "white",
-        "a": "adj.黑色的；黑人的",
-        "b":"adj.白色的，纯洁的",
-        "c":"橘色",
-        "correctAnswer": "adj.白色的，纯洁的"
-    },{
-        "id": "15",
-        "word": "white",
-        "a": "adj.黑色的；黑人的",
-        "b":"adj.白色的，纯洁的",
-        "c":"橘色",
-        "correctAnswer": "adj.白色的，纯洁的"
-    },{
-        "id": "16",
-        "word": "white",
-        "a": "adj.黑色的；黑人的",
-        "b":"adj.白色的，纯洁的",
-        "c":"橘色",
-        "correctAnswer": "adj.白色的，纯洁的"
-    },{
-        "id": "17",
-        "word": "white",
-        "a": "adj.黑色的；黑人的",
-        "b":"adj.白色的，纯洁的",
-        "c":"橘色",
-        "correctAnswer": "adj.白色的，纯洁的"
-    },{
-        "id": "18",
-        "word": "white",
-        "a": "adj.黑色的；黑人的",
-        "b":"adj.白色的，纯洁的",
-        "c":"橘色",
-        "correctAnswer": "adj.白色的，纯洁的"
-    },{
-        "id": "19",
-        "word": "white",
-        "a": "adj.黑色的；黑人的",
-        "b":"adj.白色的，纯洁的",
-        "c":"橘色",
-        "correctAnswer": "adj.白色的，纯洁的"
-    },{
-        "id": "20",
-        "word": "white",
-        "a": "adj.黑色的；黑人的",
-        "b":"adj.白色的，纯洁的",
-        "c":"橘色",
-        "correctAnswer": "adj.白色的，纯洁的"
-    },{
-        "id": "21",
-        "word": "white",
-        "a": "adj.黑色的；黑人的",
-        "b":"adj.白色的，纯洁的",
-        "c":"橘色",
-        "correctAnswer": "adj.白色的，纯洁的"
-    },{
-        "id": "22",
-        "word": "white",
-        "a": "adj.黑色的；黑人的",
-        "b":"adj.白色的，纯洁的",
-        "c":"橘色",
-        "correctAnswer": "adj.白色的，纯洁的"
-    },{
-        "id": "23",
-        "word": "white",
-        "a": "adj.黑色的；黑人的",
-        "b":"adj.白色的，纯洁的",
-        "c":"橘色",
-        "correctAnswer": "adj.白色的，纯洁的"
-    },{
-        "id": "24",
-        "word": "white",
-        "a": "adj.黑色的；黑人的",
-        "b":"adj.白色的，纯洁的",
-        "c":"橘色",
-        "correctAnswer": "adj.白色的，纯洁的"
-    },{
-        "id": "25",
-        "word": "white",
-        "a": "adj.黑色的；黑人的",
-        "b":"adj.白色的，纯洁的",
-        "c":"橘色",
-        "correctAnswer": "adj.白色的，纯洁的"
-    }
-];

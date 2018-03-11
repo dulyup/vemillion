@@ -2,7 +2,7 @@ if (!String.prototype.format) {
     String.prototype.format = function() {
         var args = arguments;
         return this.replace(/{(\d+)}/g, function(match, number) {
-            return typeof args[number] != 'undefined'
+            return typeof args[number] !== 'undefined'
                 ? args[number]
                 : match
                 ;
@@ -10,129 +10,180 @@ if (!String.prototype.format) {
     };
 }
 
-const cencelBtn = document.getElementById('cancelBtn');
-const saveBtn = document.getElementById('saveBtn');
-const title = document.getElementById('title');
-const modal = document.getElementsByClassName("edit-page");
-const getCardByIdURL = "http://localhost:2666/cards/{0}";
-const saveCardURL = "http://localhost:2666/cards";
-saveBtn.disabled = false;
-cancelBtn.disabled = false;
-
-function render(data) {
-    document.querySelector('.edit-inputs').innerHTML = generateInputs(data);
+function EditPage() {
+   // this.currentUserId = currentUserId;
 }
 
-function generateInputs(data) {
-    title.innerText = "Edit";
-    if (Object.keys(data).length == 0) {
-        title.innerText = "Add New";
-        data = {english: "", chinese: ""};
+EditPage.prototype = (function() {
+    const cencelBtn = document.getElementById('cancelBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const title = document.getElementById('title');
+    const modal = document.getElementsByClassName("edit-page");
+    const cardURL = "http://localhost:2666/cards/{0}";
+    saveBtn.disabled = false;
+    cencelBtn.disabled = false;
+    function render(data) {
+        document.querySelector('.edit-inputs').innerHTML = generateInputs(data);
     }
 
-    return Object.keys(data).map((key, index) =>`<input class="input" key="${key}" value="${data[key]}"/><div id="${key}_status"> </div>`).join('\n');
-}
+    function generateInputs(data) {
+        title.innerText = "Edit";
+        if (Object.keys(data).length === 0) {
+            title.innerText = "Add New";
+            data = { side0: "", side1: "" };
+        }
 
-function getUserInput(inputs) {
-    var obj = {};
-    inputs.forEach((input) => {
-        obj[input.getAttribute('key')] = input.value;
-    });
+        return Object.keys(data).map((key, index) => {
+            if (key === 'side0' || key === "side1") {
+                return `<input class="input" key="${key}" value="${data[key]}"/><div id="${key}_status"> </div>`;
+            }
 
-    return obj;
-}
+            return `<input hidden class="input" key="${key}" value="${data[key]}"/><div id="${key}_status"> </div>`;
+        }).join('\n');
+    }
 
-function validateInputs(inputs) {
-    for (var i = 0; i < inputs.length; i++)
-    {
-        if (!inputs[i].value) {
-            return false;
+    function getUserInput(inputs) {
+        let obj = {};
+        inputs.forEach((input) => {
+            obj[input.getAttribute('key')] = input.value;
+        });
+
+        return obj;
+    }
+
+    function validateInputs(inputs) {
+        for (let i = 0; i < inputs.length; i++)
+        {
+            if (!inputs[i].hidden && !inputs[i].value) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    function handleInputChangeListener(input) {
+        const status = document.getElementById(input.getAttribute("key")+ "_status");
+        if (!input.value) {
+            input.classList.add('error');
+            status.innerText = "Invalid input";
+        } else {
+            input.classList.remove('error');
+            status.innerText = '';
         }
     }
 
-    return true;
-}
-
-function handleInputChangeListener(input) {
-    const status = document.getElementById(input.getAttribute("key")+ "_status");
-    if (!input.value) {
-        input.classList.add('error');
-        status.innerText = "Invalid input";
-    } else {
-        input.classList.remove('error');
-        status.innerText = '';
-    }
-}
-
-function cancelBtnListener() {
-    hideModal();
-}
-
-function saveBtnListener() {
-    var inputs = document.querySelectorAll('input');
-    if (validateInputs(inputs)) {
-        var obj = getUserInput(inputs);
+    function cancelBtnListener(onCancelClick) {
         hideModal();
-        saveCard(saveCardURL, obj)
-            .then(data => {
-                // document.getElementById("edit-page").style.display = "none";
-            })
-            .catch(error => console.error(error));
+        onCancelClick();
     }
-}
 
-function addListeners() {
-    cancelBtn.addEventListener('click', cancelBtnListener);
-    saveBtn.addEventListener('click', saveBtnListener);
-    document.querySelectorAll('input').forEach((input) => {
-        input.addEventListener('input', function() {
-            handleInputChangeListener(input);
-        });
-    })
-}
+    function saveBtnListener(onSaveClick) {
+        let inputs = document.querySelectorAll(".edit-inputs input");
+        if (validateInputs(inputs)) {
+            let obj = getUserInput(inputs);
+            hideModal();
+            onSaveClick(obj);
+        }
+    }
 
-function saveCard(saveCardURL, obj) {
-    console.log(saveCardURL, obj);
-    return fetch(saveCardURL, obj,
-        {
-            method: 'POST',
-        }).then(function(response) {
-        return response.json();
-    });
-}
+    function showModal() {
+        modal[0].style.display = "block";
+    }
 
+    function hideModal() {
+        modal[0].style.display = "none";
+    }
 
-function getCardById(id) {
-    console.log(getCardByIdURL.format(id));
-    return fetch(getCardByIdURL.format(id),
-        {
-            method: 'GET',
-        }).then(function(response) {
-        return response.json();
-    });
-}
+    function addListeners(onSaveClick, onCancelClick) {
+        cancelBtn.onclick = () => {
+            cancelBtnListener(onCancelClick);
+        };
 
-function showModal() {
-    modal[0].style.display = "block";
-}
+        saveBtn.onclick = () => {
+            saveBtnListener(onSaveClick);
+        };
 
-function hideModal() {
-    modal[0].style.display = "none";
-}
-
-function showAddOrEditPage(id) {
-    if (id) {
-        getCardById(id).then((data) => {
-            console.log(data);
-            render(data);
-            addListeners();
-            this.showModal();
-        }).catch((e)=> {
-            console.log(e);
+        document.querySelectorAll('.edit-inputs input').forEach((input) => {
+            input.oninput = () => {
+                handleInputChangeListener(input);
+            };
         })
-    } else {
-        render({});
-        addListeners();
-        this.showModal();
     }
-}
+
+    function saveCard(saveCardURL, obj, currentUserId) {
+        return fetch(saveCardURL,
+            {
+                method: 'POST',
+                headers: {'currentId': currentUserId},
+                body: JSON.stringify(obj),
+            }).then((response) => {
+                if (response.status !== 200) {
+                    throw "unexpected error";
+                }
+            });
+    }
+
+    function getCardById(id, currentUserId) {
+        return fetch(cardURL.format(id),
+            {
+                method: 'GET',
+                headers: {'currentId': currentUserId},
+            }).then((response) => {
+                return response.json();
+            });
+    }
+
+    return {
+        constructor: EditPage,
+        // saveFavCard(obj) {
+        //     let saveCardURL = "http://localhost:2666/users/" + currentUserId + "/fav";
+        //     return saveCard(saveFavCardURL, obj, EditPage.currentUserId);
+        // },
+
+        saveCtmCard(obj, currentUserId) {
+            let saveCtmCardURL = "http://localhost:2666/users/" + currentUserId + "/custom";
+            return saveCard(saveCtmCardURL, obj, currentUserId);
+        },
+
+        updateCard(id, obj, currentUserId) {
+            return fetch(cardURL.format(id),
+                {
+                    method: 'PUT',
+                    headers: {'currentId': currentUserId},
+                    body: JSON.stringify(obj)
+                }).then((response) => {
+                    if (response.status !== 200) {
+                        throw "unexpected error";
+                    }
+                });
+        },
+
+
+        showAddOrEditPage(id, currentUserId, onSaveClick, onCancelClick) {
+            if (id !== null) {
+                getCardById(id, currentUserId).then((data) => {
+                    if (!data["ownership"]) {
+                        let alert = document.querySelector('.alert');
+                        // Hide the alert after 3000ms
+                        setTimeout(()=>{ alert.style.display = "none";}, 3000);
+                        alert.style.display = "";
+                        resetTableElement();
+                        enableButton(curRow !== null, document.getElementById('favorite-page-edit'));
+                    } else {
+                        render(data);
+                        addListeners(onSaveClick, onCancelClick);
+                        showModal();
+                    }
+                }).catch((e) => {
+                    console.log(e);
+                    throw e;
+                });
+            } else {
+                render({});
+                addListeners(onSaveClick, onCancelClick);
+                showModal();
+            }
+        }
+    };
+})();
