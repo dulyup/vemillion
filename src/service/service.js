@@ -3,12 +3,9 @@
 let count=0;
 const cards=require('./prestoredCards.js').lines.map(line => newCard( line.split("|")[0], line.split("|")[1]));
 const prestored=new Set(cards.map((x,i)=>i));
-const fav = {}; //new Set();
-const custom = {}; //new Set();
+const fav = {}; 
+const custom = {};
 const users = new Set();
-
-newUser(1);
-addToFavOf(0,1);
 
 function newUser(userId){
     userId=+userId;

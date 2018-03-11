@@ -37,7 +37,6 @@ app.post('/users/:userId/fav', (req, res) => {
     }
     else{ 
         service.addToFavOf(req.body.id, currentId);
-        //res.send('OK');
         res.send( JSON.stringify( cardListWithMark( service.getFavCardIdsOf(currentId), currentId ) ));
     }
 });
@@ -50,7 +49,6 @@ app.delete('/users/:userId/fav/:cardId', (req, res) => {
     else {
         service.removeFromFavOf(req.params.cardId, currentId);
         res.send( JSON.stringify( cardListWithMark( service.getFavCardIdsOf(currentId), currentId ) ));
-        //res.send('OK');
     }    
     
 });
@@ -83,7 +81,6 @@ app.post('/users/:userId/custom', (req, res) => {
         let j= req.body.side1;
         if ( !i || !j ) res.status(400).send("neither side can be null");
         service.addCustomCardOf(i,j, currentId);
-        //res.send('OK');
         res.send( JSON.stringify( cardListWithMark( service.getCustomCardIdsOf(currentId), currentId ) ) );
     }
 });
@@ -95,7 +92,6 @@ app.delete('/users/:userId/custom/:cardId', (req, res) => {
     }
     else{
         service.deleteCard(req.params.cardId, currentId);
-        //res.send('OK');
         res.send( JSON.stringify( cardListWithMark( service.getCustomCardIdsOf(currentId), currentId ) ) );
     }    
 });
@@ -123,7 +119,6 @@ app.put('/cards/:cardId', (req, res) => {
         let j= req.body.side1;
         if ( !i || !j ) res.status(400).send("neither side can be null");
         service.updateCard(req.params.cardId, i, j );
-        //res.send('OK');
         res.send( JSON.stringify( getCardWithMark(req.params.cardId, currentId) ));
     }
 });
