@@ -159,17 +159,21 @@ EditPage.prototype = (function() {
                 });
         },
 
-
-        showAddOrEditPage(id, currentUserId, onSaveClick, onCancelClick) {
+        showAddOrEditPage(id, currentUserId, curRow, onSaveClick, onCancelClick) {
             if (id !== null) {
                 getCardById(id, currentUserId).then((data) => {
-                    if (!data["ownership"]) {
+                    if (!data["ownership"]) { //have no permission to edit the card
                         let alert = document.querySelector('.alert');
                         // Hide the alert after 3000ms
                         setTimeout(()=>{ alert.style.display = "none";}, 3000);
                         alert.style.display = "";
-                        resetTableElement();
-                        enableButton(curRow !== null, document.getElementById('favorite-page-edit'));
+                        //reset the style of the current row and button
+                        if (curRow !== null) {
+                            curRow.style.background='';
+                            curRow.style.color='black';
+                            curRow = null;
+                            document.getElementById('favorite-page-edit').disabled = true;
+                        }
                     } else {
                         render(data);
                         addListeners(onSaveClick, onCancelClick);
