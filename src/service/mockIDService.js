@@ -1,13 +1,14 @@
-const id={};
-
-id.current=1;
+let id=1;
+const active= new Set();
 
 function getID(){
-    const res = {userid:id.current}
-    id.current = res%3+1;
+    const res = {currentId:id};
+    active.add(id);
+    id = id%3+1;    
     return res;
 }
 
 module.exports={
-    getID : getID
+    getID : getID,
+    activeUsers : active
 };

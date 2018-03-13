@@ -2,7 +2,7 @@ if (!String.prototype.format) {
     String.prototype.format = function() {
         var args = arguments;
         return this.replace(/{(\d+)}/g, function(match, number) {
-            return typeof args[number] != 'undefined'
+            return typeof args[number] !== 'undefined'
                 ? args[number]
                 : match
                 ;
@@ -11,7 +11,7 @@ if (!String.prototype.format) {
 }
 
 function EditPage() {
-
+   // this.currentUserId = currentUserId;
 }
 
 EditPage.prototype = (function() {
@@ -20,23 +20,21 @@ EditPage.prototype = (function() {
     const title = document.getElementById('title');
     const modal = document.getElementsByClassName("edit-page");
     const cardURL = "http://localhost:2666/cards/{0}";
-    const saveFavCardURL = "http://localhost:2666/fav";
-    const saveCtmCardURL = "http://localhost:2666/custom";
     saveBtn.disabled = false;
-    cancelBtn.disabled = false;
+    cencelBtn.disabled = false;
     function render(data) {
         document.querySelector('.edit-inputs').innerHTML = generateInputs(data);
     }
 
     function generateInputs(data) {
         title.innerText = "Edit";
-        if (Object.keys(data).length == 0) {
+        if (Object.keys(data).length === 0) {
             title.innerText = "Add New";
             data = { side0: "", side1: "" };
         }
 
         return Object.keys(data).map((key, index) => {
-            if (key == 'side0' || key == "side1") {
+            if (key === 'side0' || key === "side1") {
                 return `<input class="input" key="${key}" value="${data[key]}"/><div id="${key}_status"> </div>`;
             }
 
@@ -45,7 +43,7 @@ EditPage.prototype = (function() {
     }
 
     function getUserInput(inputs) {
-        var obj = {};
+        let obj = {};
         inputs.forEach((input) => {
             obj[input.getAttribute('key')] = input.value;
         });
@@ -54,7 +52,7 @@ EditPage.prototype = (function() {
     }
 
     function validateInputs(inputs) {
-        for (var i = 0; i < inputs.length; i++)
+        for (let i = 0; i < inputs.length; i++)
         {
             if (!inputs[i].hidden && !inputs[i].value) {
                 return false;
@@ -81,9 +79,9 @@ EditPage.prototype = (function() {
     }
 
     function saveBtnListener(onSaveClick) {
-        var inputs = document.querySelectorAll(".edit-inputs input");
+        let inputs = document.querySelectorAll(".edit-inputs input");
         if (validateInputs(inputs)) {
-            var obj = getUserInput(inputs);
+            let obj = getUserInput(inputs);
             hideModal();
             onSaveClick(obj);
         }
@@ -113,26 +111,24 @@ EditPage.prototype = (function() {
         })
     }
 
-    function saveCard(saveCardURL, obj) {
+    function saveCard(saveCardURL, obj, currentUserId) {
         return fetch(saveCardURL,
             {
                 method: 'POST',
-                headers: {
-                    'Accept': 'application/json, text/plain, */*',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(obj)
+                headers: {'currentId': currentUserId},
+                body: JSON.stringify(obj),
             }).then((response) => {
-                if (response.status != 200) {
+                if (response.status !== 200) {
                     throw "unexpected error";
                 }
             });
     }
 
-    function getCardById(id) {
+    function getCardById(id, currentUserId) {
         return fetch(cardURL.format(id),
             {
                 method: 'GET',
+                headers: {'currentId': currentUserId},
             }).then((response) => {
                 return response.json();
             });
@@ -140,36 +136,49 @@ EditPage.prototype = (function() {
 
     return {
         constructor: EditPage,
-        saveFavCard(obj) {
-            return saveCard(saveFavCardURL, obj);
+        // saveFavCard(obj) {
+        //     let saveCardURL = "http://localhost:2666/users/" + currentUserId + "/fav";
+        //     return saveCard(saveFavCardURL, obj, EditPage.currentUserId);
+        // },
+
+        saveCtmCard(obj, currentUserId) {
+            let saveCtmCardURL = "http://localhost:2666/users/" + currentUserId + "/custom";
+            return saveCard(saveCtmCardURL, obj, currentUserId);
         },
 
-        saveCtmCard(obj) {
-            return saveCard(saveCtmCardURL, obj);
-        },
-
-        updateCard(id, obj) {
+        updateCard(id, obj, currentUserId) {
             return fetch(cardURL.format(id),
                 {
                     method: 'PUT',
-                    headers: {
-                        'Accept': 'application/json, text/plain, */*',
-                        'Content-Type': 'application/json'
-                    },
+                    headers: {'currentId': currentUserId},
                     body: JSON.stringify(obj)
                 }).then((response) => {
-                    if (response.status != 200) {
+                    if (response.status !== 200) {
                         throw "unexpected error";
                     }
                 });
         },
 
-        showAddOrEditPage(id, onSaveClick, onCancelClick) {
-            if (id) {
-                getCardById(id).then((data) => {
-                    render(data);
-                    addListeners(onSaveClick, onCancelClick);
-                    showModal();
+        showAddOrEditPage(id, currentUserId, curRow, onSaveClick, onCancelClick) {
+            if (id !== null) {
+                getCardById(id, currentUserId).then((data) => {
+                    if (!data["ownership"]) { //have no permission to edit the card
+                        let alert = document.querySelector('.alert');
+                        // Hide the alert after 3000ms
+                        setTimeout(()=>{ alert.style.display = "none";}, 3000);
+                        alert.style.display = "";
+                        //reset the style of the current row and button
+                        if (curRow !== null) {
+                            curRow.style.background='';
+                            curRow.style.color='black';
+                            curRow = null;
+                            document.getElementById('favorite-page-edit').disabled = true;
+                        }
+                    } else {
+                        render(data);
+                        addListeners(onSaveClick, onCancelClick);
+                        showModal();
+                    }
                 }).catch((e) => {
                     console.log(e);
                     throw e;
@@ -178,10 +187,7 @@ EditPage.prototype = (function() {
                 render({});
                 addListeners(onSaveClick, onCancelClick);
                 showModal();
-            };
+            }
         }
     };
 })();
-
-
-

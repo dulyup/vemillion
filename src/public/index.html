@@ -17,8 +17,13 @@
 			<button id="homepage-study">FLASHCARDS</button>
 			<button id="homepage-fav">FAVORITES</button>
 			<button id="homepage-my-cards">MY CARDS</button>
-		</div>
+      <select id="homepage-dropbtn">
+        <option id="option0" disabled selected>SHARED CARDS</option>
+        <option id='option1' value="User"></option>
+        <option id='option2' value="User"></option>
+      </select>
 	</div>
+</div>
 
 	<div class="study-page">
 		<div id="wholecard">
@@ -47,7 +52,7 @@
 
 	<div class="favorite-page">
 		<p id="favorite-page-notification"></p>
-		<div id="favorite-list" onclick="selectRow(this)"></div>
+		<div id="favorite-list"></div>
 		<div class="favorite-page-buttons">
 			<button id="favorite-page-back">Back</button>
 			<button id="favorite-page-edit">Edit</button>
@@ -57,7 +62,7 @@
 
 	<div class="my-cards-page">
 		<p id="my-cards-page-notification"></p>
-		<div id="my-cards-list" onclick="selectRow(this)"></div>
+		<div id="my-cards-list"></div>
 		<div class="my-cards-page-buttons">
 			<button id="my-cards-page-back">Back</button>
 			<button id="my-cards-page-add">Add</button>
@@ -78,7 +83,12 @@
 		</div>
 	</div>
 
+	<div class="alert">
+		<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+		Sorry, you can not edit the pre-stored cards or other users' cards.
+	</div>
+
 </body>
+<script src='indexBundle.js'></script>
 <script type="text/javascript" charset="UTF-8" src='editPage.js'></script>
-<script src='index-dom.js'></script>
 </html>

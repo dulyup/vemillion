@@ -1,31 +1,28 @@
 /*homepage*/
-body{
+body {
 	background-color: ghostwhite;
 	margin: 0;
 }
 
 #page-header {
-	/*background-color: #6E3667;*/
-	/*background-color: #675682;*/
-	/*background-color: #DFDCE3;*/
 	background-color: #222;
 	padding: 40px 0px 40px 0px;
-    color: whitesmoke;
-    text-align: center;
-    font-size: 40px;
+  color: whitesmoke;
+  text-align: center;
+  font-size: 40px;
 	font-family: Helvetica;
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .homepage-buttons {
 	text-align: center;
 }
 
-#homepage-study, #homepage-fav, #homepage-my-cards {
-	height: 100px;
-	width: 230px;
+#homepage-study, #homepage-fav, #homepage-my-cards, #homepage-dropbtn {
+	height: 80px;
+	width: 210px;
 	background-color: ghostwhite;
-	font-size: 30px;
+	font-size: 24px;
 	outline:none;
 	/*border: none;*/
 	margin: 20px;
@@ -33,18 +30,34 @@ body{
 }
 
 #homepage-study:hover {
-	background-color: #4CAF50;
+    background-color: #4CAF50;
     color: white;
 }
 
 #homepage-fav:hover {
-	background-color: #4CAF50;
+    background-color: #4CAF50;
     color: white;
 }
 
 #homepage-my-cards:hover {
     background-color: #4CAF50;
     color: white;
+}
+
+#homepage-dropbtn:hover {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#option0 #option1 #option2:hover{
+  height: 80px;
+  width: 200px;
+  background-color: #4CAF50;
+  font-size: 24px;
+  outline:none;
+  /*border: none;*/
+  margin: 20px;
+  border-radius: 5px;
 }
 
 .slogan {
@@ -440,4 +453,34 @@ td {
 	color: red;
 	margin-bottom: 20px;
 	font-size: 20px;
+}
+
+/* The alert message box */
+.alert {
+	font-family: Helvetica;
+	height: auto;
+	width: 240px;
+	text-align: center;
+	padding: 20px;
+	margin-left: 40px;
+	background-color: indianred; /* Red */
+	color: white;
+	margin-bottom: 15px;
+}
+
+/* The close button */
+.closebtn {
+	margin-left: 15px;
+	color: white;
+	font-weight: bold;
+	float: right;
+	font-size: 22px;
+	line-height: 20px;
+	cursor: pointer;
+	/*transition: 0.3s;*/
+}
+
+/* When moving the mouse over the close button */
+.closebtn:hover {
+	color: black;
 }
