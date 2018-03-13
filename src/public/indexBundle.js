@@ -1,18 +1,28 @@
 (function(){function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s}return e})()({1:[function(require,module,exports){
-module.exports.start = start;
-module.exports.hideFavoritePage = hideFavoritePage;
-module.exports.hideMyCardsPage = hideMyCardsPage;
-module.exports.addStudyListenerFavPage = addStudyListenerFavPage;
-module.exports.addStudyListenerMyCaPage = addStudyListenerMyCaPage;
+module.exports = {
+    start: start,
+    hideFavoritePage: (()=>hideElementQuerySelector('.favorite-page')),
+    hideMyCardsPage: (()=>hideElementQuerySelector('.my-cards-page')),
+    addStudyListenerFavPage: addStudyListenerFavPage,
+    addStudyListenerMyCaPage: addStudyListenerMyCaPage,
+};
 
 const studyPage = require('./studyPage');
 const listPage = require('./listPage');
+let currentId = null;
+
+boot();
+
+async function boot(){
+    while(!currentId){
+        currentId = await requestUserId();
+    }    
+    start();
+}
 
 //===========================================================
 //===============fetch user id from the server===============
 //===========================================================
-requestUserId();
-
 function requestUserId() {
     return fetch('http://localhost:2666/users', { method: 'POST',
     }).then( response => {
@@ -21,7 +31,7 @@ function requestUserId() {
         }
         return Promise.reject('error-response-not-okay');
     }).then(fromJson => { //currentId: id
-        start(fromJson.currentId);
+        return fromJson.currentId;
     }).catch( ( error ) => {
         if(error.toString().startsWith('error-')) {
             return Promise.reject(error);
@@ -33,27 +43,50 @@ function requestUserId() {
 //======================================================
 //==================Initialize the game=================
 //======================================================
-function start(currentUserId) {
-    displayHomepage(currentUserId);
-    initializeOption(currentUserId);
-    addStudyListenerHomepage(currentUserId);
-    addFavListenerHomepage(currentUserId);
-    addMyCardListenerHomepage(currentUserId);
-    addSelectListenerHomepage(currentUserId);
-    hideFavoritePage();
-    hideMyCardsPage();
-    hideStudyPage();
-    hideAlert();
+function start() {
+    displayHomepage(currentId);
+    initializeOption(currentId);
+    const list=['homepage-study','homepage-fav','homepage-my-cards'];
+    for (let i of list){
+        addHideHomepageListener(i);
+    }    
+    addOtherListeners(currentId)
+    hideOnInitialization();
+   
     //clear data of favorite list
     listPage.deleteFavoriteTable();
     //clear data of my cards list
     listPage.deleteMyCardsTable();
+    
 }
 
-function initializeOption(currentUserId) {
+function hideOnInitialization(){
+    const temp=['.favorite-page','.my-cards-page','.study-page','.alert'];
+    for (let i of temp){
+        hideElementQuerySelector(i);
+    }
+}
+
+function getUserList(){
+    return fetch('http://localhost:2666/users').then(response => {
+        if (response.ok) {
+            console.log(response);
+            resolve(response);
+        }
+        return Promise.reject('error-response-not-okay');
+    }).catch((error) => {
+        if (error.toString().startsWith('error-')) {
+            return Promise.reject(error);
+        }
+        return Promise.reject('error-response-json-bad');
+    });
+
+}
+
+function initializeOption() {
     let idArray = [];
     for (let id = 1; id < 4; id++) {
-        if (currentUserId !== id) {
+        if (currentId !== id) {
             idArray.push(id);
         }
     }
@@ -65,25 +98,22 @@ function initializeOption(currentUserId) {
 //================================================================================
 //==add listener for "study","favorite","my cards", "others" buttons in Homepage==
 //=================================================================================
-function addStudyListenerHomepage(currentUserId) {
-    document.getElementById('homepage-study').addEventListener('click', function(){studyPage.loadJSON(currentUserId);});
-    document.getElementById('homepage-study').addEventListener('click', hideHomepage);
+
+function addHideHomepageListener( elementId ){    
+    document.getElementById(elementId).addEventListener('click', ()=>{hideElementQuerySelector('.homepage')});    
 }
 
-function addFavListenerHomepage(currentUserId) {
-    document.getElementById('homepage-fav').addEventListener('click', function() {listPage.displayFavoritePage(currentUserId);});
-    document.getElementById('homepage-fav').addEventListener('click', hideHomepage);
+function addOtherListeners(currentUserId){
+    document.getElementById('homepage-study').addEventListener('click', ()=>{studyPage.loadJSON(currentUserId)});
+    document.getElementById('homepage-fav').addEventListener('click', ()=>{listPage.displayFavoritePage(currentUserId)});
+    document.getElementById('homepage-my-cards').addEventListener('click', ()=>{listPage.displayMyCardsPage(currentUserId, currentUserId)});
+    addSelectListenerHomepage();
 }
 
-function addMyCardListenerHomepage(currentUserId) {
-    document.getElementById('homepage-my-cards').addEventListener('click', hideHomepage);
-    document.getElementById('homepage-my-cards').addEventListener('click', function() {listPage.displayMyCardsPage(currentUserId, currentUserId);});
-}
-
-function addSelectListenerHomepage(currentUserId) {
-  document.getElementById('homepage-dropbtn').addEventListener('change', hideHomepage);
-  document.getElementById('homepage-dropbtn').addEventListener('change', function() {onchange(currentUserId);});
-}
+function addSelectListenerHomepage() {
+    document.getElementById('homepage-dropbtn').addEventListener('change', ()=>{hideElementQuerySelector('.homepage')});
+    document.getElementById('homepage-dropbtn').addEventListener('change', ()=>{onchange(currentId);});
+  }
 
 function onchange(currentUserId) {
     let select = document.getElementById('homepage-dropbtn');
@@ -95,11 +125,11 @@ function onchange(currentUserId) {
 
 //Interact with study page
 function addStudyListenerFavPage(currentUserId) {
-    document.getElementById('favorite-page-study').addEventListener('click', function() {studyPage.loadJSONFav(currentUserId);});
+    document.getElementById('favorite-page-study').addEventListener('click', ()=>{studyPage.loadJSONFav(currentUserId)});
 }
 
 function addStudyListenerMyCaPage(currentUserId, chooseId) {
-    document.getElementById('my-cards-page-study').addEventListener('click', function() {studyPage.loadJSONMyCard(currentUserId, chooseId);});
+    document.getElementById('my-cards-page-study').addEventListener('click', ()=>{studyPage.loadJSONMyCard(currentUserId, chooseId)});
 }
 
 
@@ -108,34 +138,10 @@ function displayHomepage(currentUserId) {
     document.querySelector('.homepage').style.display = "";
 }
 
-function hideHomepage() {
-    document.querySelector('.homepage').style.display = "none";
+function hideElementQuerySelector( queryString ){
+    document.querySelector( queryString ).style.display = "none";
 }
 
-function hideFavoritePage() {
-    document.querySelector('.favorite-page').style.display = "none";
-}
-
-function hideMyCardsPage() {
-    document.querySelector('.my-cards-page').style.display = "none";
-}
-
-function hideStudyPage() {
-    document.querySelector('.study-page').style.display = "none";
-}
-
-function hideAlert() {
-    document.querySelector('.alert').style.display = "none";
-}
-
-
-module.exports = {
-    start: start,
-    hideFavoritePage: hideFavoritePage,
-    hideMyCardsPage: hideMyCardsPage,
-    addStudyListenerFavPage: addStudyListenerFavPage,
-    addStudyListenerMyCaPage: addStudyListenerMyCaPage,
-};
 },{"./listPage":2,"./studyPage":5}],2:[function(require,module,exports){
 //Includes: Favorite page, My Cards page, Shared Cards Page
 const index = require('./index');
@@ -346,6 +352,7 @@ function displayMyCardsPage(currentUserId, chooseId) {
     }
 }
 
+
 //====================================================
 //============Interact with edit, add pages===========
 //====================================================
@@ -388,7 +395,6 @@ function displayEditPageFromFavPage(currentUserId) {
         });
     }
 }
-
 
 function displayEditPageFromMyCardPage(currentUserId) {
     let editPage = new EditPage(currentUserId);
