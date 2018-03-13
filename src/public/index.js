@@ -12,6 +12,10 @@ let currentId = null;
 
 boot();
 
+//======================================================
+//==================Initialize the game=================
+//======================================================
+
 async function boot(){
     while(!currentId){
         currentId = await requestUserId();
@@ -19,29 +23,6 @@ async function boot(){
     start();
 }
 
-//===========================================================
-//===============fetch user id from the server===============
-//===========================================================
-function requestUserId() {
-    return fetch('http://localhost:2666/users', { method: 'POST',
-    }).then( response => {
-        if (response.ok) {
-            return response.json();
-        }
-        return Promise.reject('error-response-not-okay');
-    }).then(fromJson => { //currentId: id
-        return fromJson.currentId;
-    }).catch( ( error ) => {
-        if(error.toString().startsWith('error-')) {
-            return Promise.reject(error);
-        }
-        return Promise.reject('error-response-json-bad');
-    });
-}
-
-//======================================================
-//==================Initialize the game=================
-//======================================================
 function start() {
     displayHomepage(currentId);
     initializeOption(currentId);
@@ -66,33 +47,61 @@ function hideOnInitialization(){
     }
 }
 
-function getUserList(){
-    return fetch('http://localhost:2666/users').then(response => {
+async function initializeOption(){
+    const drop = document.getElementById('homepage-dropbtn');
+    drop.options.length = 0;
+    const placeholder = document.createElement('option');
+    placeholder.text = "Shared Lists"; 
+    placeholder. selected = "selected";
+    drop.add(placeholder); 
+    let list = await getUserList();
+    for (let id of list.activeUsers){
+        if (id === currentId) continue;
+        let option = document.createElement('option');
+        option.text = +id;        
+        drop.add(option);
+    }
+    
+}
+
+function getUserList() {
+    return fetch('http://localhost:2666/users')
+    .then( response => {
         if (response.ok) {
-            console.log(response);
-            resolve(response);
+            return response.json();
         }
         return Promise.reject('error-response-not-okay');
-    }).catch((error) => {
-        if (error.toString().startsWith('error-')) {
+    }).then(fromJson => { 
+        return fromJson;
+    }).catch( ( error ) => {
+        if(error.toString().startsWith('error-')) {
             return Promise.reject(error);
         }
         return Promise.reject('error-response-json-bad');
     });
-
 }
 
-function initializeOption() {
-    let idArray = [];
-    for (let id = 1; id < 4; id++) {
-        if (currentId !== id) {
-            idArray.push(id);
+//===========================================================
+//===============fetch user id from the server===============
+//===========================================================
+
+function requestUserId() {
+    return fetch('http://localhost:2666/users', { method: 'POST',
+    }).then( response => {
+        if (response.ok) {
+            return response.json();
         }
-    }
-    document.getElementById("option0").selected = "selected";
-    document.getElementById("option1").innerText = idArray[0];
-    document.getElementById("option2").innerHTML = idArray[1];
+        return Promise.reject('error-response-not-okay');
+    }).then(fromJson => { //currentId: id
+        return fromJson.currentId;
+    }).catch( ( error ) => {
+        if(error.toString().startsWith('error-')) {
+            return Promise.reject(error);
+        }
+        return Promise.reject('error-response-json-bad');
+    });
 }
+
 
 //================================================================================
 //==add listener for "study","favorite","my cards", "others" buttons in Homepage==
@@ -112,7 +121,7 @@ function addOtherListeners(currentUserId){
 function addSelectListenerHomepage() {
     document.getElementById('homepage-dropbtn').addEventListener('change', ()=>{hideElementQuerySelector('.homepage')});
     document.getElementById('homepage-dropbtn').addEventListener('change', ()=>{onchange(currentId);});
-  }
+}
 
 function onchange(currentUserId) {
     let select = document.getElementById('homepage-dropbtn');
@@ -133,7 +142,7 @@ function addStudyListenerMyCaPage(currentUserId, chooseId) {
 
 
 function displayHomepage(currentUserId) {
-    document.getElementById('page-header').innerHTML="Welcome User " + currentUserId + " to Flash Card";
+    document.getElementById('page-header').innerHTML="Welcome to Flash Card, User " + currentUserId;
     document.querySelector('.homepage').style.display = "";
 }
 
