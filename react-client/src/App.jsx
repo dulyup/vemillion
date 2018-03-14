@@ -15,37 +15,51 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-
-        <header className="App-header">
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
+        <div className="homepage">
+          <div className="slogan">
+            <p id="slogan-study">STUDY: <span id="slogan-easier">Easier</span></p>
+            <p id="slogan-faster">Faster</p>
+            <p id="slogan-harder">Harder</p>
+          </div>
+          <div className="homepage-buttons">
+            {/*
+            <Button to presotred/>
+            <Button to fav/>
+            <Button to custom/>
+            <Select to shared/>
+            */}
+          </div>
+        </div>
 
         {/*
-        <Button to presotred/>
-        <Button to fav/>
-        <Button to custom/>
-        <Select to shared/>
-
         <Listview of presotred/>
         <Listview of fav/>
         <Listview of custom/>
         <Listview of shared/>
         */}
 
-        <button onClick={()=>this.showElement('.alert')}>Show Alert</button>
-        <Alert message='custom alert message' onClick={()=>this.hideElement('.alert')}/>
+        <button onClick={() => this.showElement('.alert')}>Show Alert</button>
+        <Alert message='custom alert message' onClick={() => this.hideElement('.alert')} />
 
 
       </div>
     );
   }
 
-  hideElement(queryString){
-    document.querySelector( queryString ).classList.add('hidden');
+  hideElement(queryString) {
+    document.querySelector(queryString).classList.add('hidden');
   }
 
-  showElement(queryString){
-    document.querySelector( queryString ).classList.remove('hidden');;
+  showElement(queryString) {
+    document.querySelector(queryString).classList.remove('hidden');;
+  }
+
+  goToView( queryString ) {
+    const views=['.homepage','.study-page','favorite-page','my-cards-page','edit-page'];
+    for (let i of views){
+      this.hideElement(i);
+    }
+    this.showElement(queryString);
   }
 
 
