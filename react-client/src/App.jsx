@@ -85,6 +85,7 @@ class App extends Component {
       this.setState({[queryString] : json});
       //hide loading
       console.log(this.state);
+      
       this.showElement(queryString);
     })
     .catch((error) => {
@@ -98,7 +99,6 @@ class App extends Component {
 
   async initializeOption(){
     const drop = document.getElementById('homepage-dropbtn');
-    console.log(drop);
     drop.options.length = 0;
     const placeholder = document.createElement('option');
     placeholder.text = "Shared Lists"; 
