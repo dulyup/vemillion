@@ -17,7 +17,11 @@ class App extends Component {
     };
   }
 
-  render() {
+  componentDidMount(){
+    this.initializeOption();
+  }
+
+  render() {    
 
     return (
       <div className="App">
@@ -33,9 +37,8 @@ class App extends Component {
 
             <button className='test-dummy' onClick={() => this.goToView('.study-page')}>STUDY</button>
             <button className='test-dummy' onClick={() => this.goToView('.favorite-page')}>FAV</button>
-            <button className='test-dummy' onClick={() => this.goToView('.my-cards-page')}>CUSTOM</button>
-            <button onClick={() => this.showElement('.alert')}>Show Alert</button>
-
+            <button className='test-dummy' onClick={() => this.goToView('.my-cards-page')}>CUSTOM</button>            
+            <select className='test-dummy' id='homepage-dropbtn'></select>
             {/*
             <Button to presotred/>
             <Button to fav/>
@@ -43,6 +46,7 @@ class App extends Component {
             <Select to shared/>
             */}
           </div>
+          <button onClick={() => this.showElement('.alert')}>Show Alert</button>
         </div>
 
         {/*
@@ -91,6 +95,24 @@ class App extends Component {
     });    
 
   }
+
+  async initializeOption(){
+    const drop = document.getElementById('homepage-dropbtn');
+    console.log(drop);
+    drop.options.length = 0;
+    const placeholder = document.createElement('option');
+    placeholder.text = "Shared Lists"; 
+    placeholder.selected = "selected";
+    drop.add(placeholder); 
+    let list = await connection.getUserList();
+    for (let id of list.activeUsers){
+        if (id === this.state.currentId) continue;
+        let option = document.createElement('option');
+        option.text = +id;        
+        drop.add(option);
+    }
+    
+}
 
 
   hideElement(queryString) {

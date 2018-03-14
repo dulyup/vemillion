@@ -22,6 +22,27 @@
   font-size: large;
 }
 
+.homepage-buttons {
+	text-align: center;
+}
+
+.homepage-buttons > *{
+  height: 80px;
+	width: 210px;
+	background-color: ghostwhite;
+	font-size: 24px;
+	outline:none;
+	/*border: none;*/
+	margin: 20px;
+	border-radius: 5px;
+	text-align: center;
+}
+
+.homepage-buttons > *:hover{
+  background-color: #4CAF50;
+  color: white;
+}
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
