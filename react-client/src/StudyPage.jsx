@@ -93,31 +93,31 @@ class StudyPage extends React.Component {
   }
 
   addtoFavoriteJson(currentUserId, i, actualJSON) {
-     console.log(currentUserId);
-     console.log(i);
-     console.log(actualJSON);
-     // let xhr = new XMLHttpRequest();
-     // let url = 'http://localhost:2666/users/' + currentUserId +'/fav';
-     // xhr.open('POST', url, true);
-     // xhr.onreadystatechange = function(){
-     //     console.log('onreadystatechange: '+ xhr.readyState);
-     // };
-     // xhr.setRequestHeader('currentId', currentUserId);
-     // xhr.send('{"id": '+ actual_JSON[i].cardId +'}');
+     // console.log(currentUserId);
+     // console.log(i);
+     // console.log(actualJSON);
+     let xhr = new XMLHttpRequest();
+     let url = 'http://localhost:2666/users/' + currentUserId +'/fav';
+     xhr.open('POST', url, true);
+     xhr.onreadystatechange = function(){
+         console.log('onreadystatechange: '+ xhr.readyState);
+     };
+     xhr.setRequestHeader('currentId', currentUserId);
+     xhr.send('{"id": '+ actual_JSON[i].cardId +'}');
   }
 
   removeFromFavoriteJson(currentUserId, i, actualJSON) {
-     console.log(currentUserId);
-     console.log(i);
-     console.log(actualJSON);
-      // let xhr = new XMLHttpRequest();
-      // let url = 'http://localhost:2666/users/' + currentUserId +'/fav/' + actual_JSON[i].cardId;
-      // xhr.open('DELETE', url, true);
-      // xhr.onreadystatechange = function(){
-      //     console.log('onreadystatechange: '+ xhr.readyState);
-      // };
-      // xhr.setRequestHeader('currentId', currentUserId);
-      // xhr.send();
+     // console.log(currentUserId);
+     // console.log(i);
+     // console.log(actualJSON);
+      let xhr = new XMLHttpRequest();
+      let url = 'http://localhost:2666/users/' + currentUserId +'/fav/' + actual_JSON[i].cardId;
+      xhr.open('DELETE', url, true);
+      xhr.onreadystatechange = function(){
+          console.log('onreadystatechange: '+ xhr.readyState);
+      };
+      xhr.setRequestHeader('currentId', currentUserId);
+      xhr.send();
   }
 
   haveNoIdeaButtonClicked() {
@@ -172,7 +172,7 @@ class StudyPage extends React.Component {
 
   // render之后执行
   componentDidMount() {
-    console.log("componentDidMount")
+    // console.log("componentDidMount")
     this.nextButtonClicked();
   }
 
