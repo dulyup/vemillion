@@ -1,0 +1,215 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 80px;
+}
+
+.App-header {
+  background-color: #222;
+  height: 150px;
+  padding: 20px;
+  color: white;
+}
+
+.App-title {
+  font-size: 1.5em;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+.homepage-buttons {
+	text-align: center;
+}
+
+.homepage-buttons > *{
+  height: 80px;
+	width: 210px;
+	background-color: ghostwhite;
+	font-size: 24px;
+	outline:none;
+	/*border: none;*/
+	margin: 20px;
+	border-radius: 5px;
+	text-align: center;
+}
+
+.homepage-buttons > *:hover{
+  background-color: #4CAF50;
+  color: white;
+}
+
+
+=======
+/*study page*/
+#wholecard {
+	display: block;
+	height: 25px;
+	margin: auto;
+	padding: 20px;
+}
+
+#anwser {
+	display: block;
+	text-align: center;
+	height: 25px;
+	margin: 0 auto;
+	padding: 20px;
+}
+
+/* 修改 */
+#cards,  #ending{
+	display: block;
+	margin:30px auto 10px auto;
+	height: 400px;
+	width: 900px;
+	background-color: WhiteSmoke;
+	border: 1px solid lightgray;
+}
+
+#time {
+	color:IndianRed;
+}
+
+#header, #TimeOut{
+	padding: 10px 0px 10px 0px;
+	text-align: center;
+	font-size: 18px;
+	font-family: Helvetica;
+	font-weight: bold;
+}
+
+#result{
+	text-align: center;
+	font-size: 18px;
+	font-family: Helvetica;
+	font-weight: bold;
+}
+
+
+#question {
+	display: block;
+	margin:10px auto 10px auto;
+	padding: 10px 0px 10px 0px;
+	color: #4CAF50;
+	text-align: center;
+	font-size: 16px;
+	font-family: Helvetica;
+	font-weight: bold;
+}
+
+#correctAnwser {
+	display: block;
+	margin:10px auto 10px auto;
+	padding: 10px 0px 10px 0px;
+	color: #4CAF50;
+	text-align: center;
+	font-size: 16px;
+	font-family: Helvetica;
+	font-weight: bold;
+}
+
+/* 修改 */
+#haveNoIdea, #AButton, #BButton, #CButton, #addtoFavorite, #answerPageButton, #endingButton {
+	display: block;
+	height: 50px;
+	width: 60%;
+	border: 1px solid MediumSeaGreen;
+	background-color: ghostwhite;
+	font-size: 14px;
+	border-radius: 5px;
+	text-align: center;
+	vertical-align: middle;
+	margin:10px auto 10px auto;
+	padding:12px 4px;
+}
+
+#endingButton {
+	display: block;
+	height: 35px;
+	width: 10%;
+	border: 1px solid MediumSeaGreen;
+	background-color: ghostwhite;
+	font-size: 14px;
+	border-radius: 5px;
+	text-align: center;
+	vertical-align: middle;
+	margin:10px auto 10px auto;
+	padding:8px 4px;
+}
+
+#exit {
+	/* display: block; */
+	height: 30px;
+	width: 10%;
+	margin: 50px 10px 20px 700px;
+	border: 1px solid MediumSeaGreen;
+	background-color: ghostwhite;
+	font-size: 14px;
+	border-radius: 5px;
+	text-align: center;
+	vertical-align: middle;
+}
+
+#addtoFavorite, #answerPageButton {
+	display: inline-block;
+	height: 40px;
+	width: 20%;
+	border: 1px solid MediumSeaGreen;
+	background-color: ghostwhite;
+	font-size: 14px;
+	border-radius: 5px;
+	text-align: center;
+	vertical-align: middle;
+	margin:10px 20px 10px 20px;
+	padding:12px 4px;
+}
+
+#addtoFavorite:hover {
+	border: 1px solid IndianRed;
+	color: white;
+}
+
+#haveNoIdea:hover {
+	border: 1px solid IndianRed;
+	background-color: IndianRed;
+	color: white;
+}
+
+#AButton:hover {
+	background-color: #4CAF50;
+	color: white;
+}
+
+#BButton:hover {
+	background-color: #4CAF50;
+	color: white;
+}
+
+#CButton:hover {
+	background-color: #4CAF50;
+	color: white;
+}
+
+#answerPageButton:hover {
+	background-color: #4CAF50;
+	color: white;
+}
+
+#exit:hover{
+	border: 1px solid Brown;
+	background-color: Brown;
+	color: white;
+}
+
+
+
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
