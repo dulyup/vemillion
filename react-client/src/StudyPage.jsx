@@ -1,5 +1,5 @@
 // Integration Note:
-// <StudyPage actualJSON={this.state.actualJSON} currentUserId={this.state.currentId}/>
+// <StudyPage actualJSON={this.state.actualJSON} currentUserId={this.state.currentId} clickExitButton/>
 
 import React from 'react';
 import ClockTimer from './ClockTimer';
@@ -13,9 +13,9 @@ class StudyPage extends React.Component {
       result: "",
       question: "",
       haveNoIdea: "Have No Idea",
-      AButton: "",
-      BButton: "",
-      CButton: "",
+      AButton: '',
+      BButton: '',
+      CButton: '',
       correctAnwser: "",
       infav: false,
       card: true,     // use for toogle
@@ -24,11 +24,10 @@ class StudyPage extends React.Component {
       timer: 10,
       seconds: 10,
       favSrc: null,   // use for fav button's image
-      indexOfImgArr: 1,
     }
     this.set = [];
     this.img_array = ['./image/emptyheart.png', './image/fullheart.png'];
-    // supplement for the choice， when the number of question is less than 10, in order to generate choices.
+    // // supplement for the choice， when the number of question is less than 10, in order to generate choices.
     this.choiceJSON = [{"cardId":355,"side0":"millennial","side1":"(a.)一千年的;千福年的","infav":false,"ownership":false},
                        {"cardId":356,"side0":"binder","side1":"縛者,用以綁縛之物,夾器","infav":false,"ownership":false},
                        {"cardId":357,"side0":"spil","side1":"矽品","infav":false,"ownership":false},
@@ -48,7 +47,7 @@ class StudyPage extends React.Component {
                        {"cardId":371,"side0":"gamesmanship","side1":"攪亂戰術","infav":false,"ownership":false}];
     this.indexOfImgArr = 1;
     this.actualLength = this.props.actualJSON.length;
-    this.actualJSON = this.props.actualJSON.length < 10 ? this.props.actualJSON.concat(this.choiceJSON) : this.props.actualJSON;
+    this.actualJSON = this.actualLength < 10 ? this.props.actualJSON.concat(this.choiceJSON) : this.props.actualJSON;
     this.i = 0;  // the index of pick up questions random
 
     this.haveNoIdeaButtonClicked = this.haveNoIdeaButtonClicked.bind(this);
@@ -65,16 +64,16 @@ class StudyPage extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    // if (this.props.actualJSON !== nextProps.actualJSON || this.props.currentUserId !== nextProps.currentUserId){
-    console.log(this.props.actualJSON.length);
-    console.log(nextProps.actualJSON.length);
+    this.setState({
+      card: true,     // use for toogle
+      answer: false,  // use for toogle
+      button: false,
+    })
     this.set = [];
     this.indexOfImgArr = 1;
     this.actualLength = nextProps.actualJSON.length
     this.actualJSON = nextProps.actualJSON.length < 10 ? nextProps.actualJSON.concat(this.choiceJSON) : nextProps.actualJSON;
-
-    // }
-    // console.log("componentWillReceiveProps");
+    this.nextButtonClicked();
   }
 
   favButtonClicked() {
@@ -93,31 +92,25 @@ class StudyPage extends React.Component {
   }
 
   addtoFavoriteJson(currentUserId, i, actualJSON) {
-     // console.log(currentUserId);
-     // console.log(i);
-     // console.log(actualJSON);
-     let xhr = new XMLHttpRequest();
-     let url = 'http://localhost:2666/users/' + currentUserId +'/fav';
-     xhr.open('POST', url, true);
-     xhr.onreadystatechange = function(){
-         console.log('onreadystatechange: '+ xhr.readyState);
-     };
-     xhr.setRequestHeader('currentId', currentUserId);
-     xhr.send('{"id": '+ actualJSON[i].cardId +'}');
+    let xhr = new XMLHttpRequest();
+    let url = 'http://localhost:3000/users/' + currentUserId +'/fav';
+    xhr.open('POST', url, true);
+    xhr.onreadystatechange = function(){
+       console.log('onreadystatechange: '+ xhr.readyState);
+    };
+    xhr.setRequestHeader('currentId', currentUserId);
+    xhr.send('{"id": '+ actualJSON[i].cardId +'}');
   }
 
   removeFromFavoriteJson(currentUserId, i, actualJSON) {
-     // console.log(currentUserId);
-     // console.log(i);
-     // console.log(actualJSON);
-      let xhr = new XMLHttpRequest();
-      let url = 'http://localhost:2666/users/' + currentUserId +'/fav/' + actualJSON[i].cardId;
-      xhr.open('DELETE', url, true);
-      xhr.onreadystatechange = function(){
-          console.log('onreadystatechange: '+ xhr.readyState);
-      };
-      xhr.setRequestHeader('currentId', currentUserId);
-      xhr.send();
+    let xhr = new XMLHttpRequest();
+    let url = 'http://localhost:3000/users/' + currentUserId +'/fav/' + actualJSON[i].cardId;
+    xhr.open('DELETE', url, true);
+    xhr.onreadystatechange = function(){
+        console.log('onreadystatechange: '+ xhr.readyState);
+    };
+    xhr.setRequestHeader('currentId', currentUserId);
+    xhr.send();
   }
 
   haveNoIdeaButtonClicked() {
@@ -153,12 +146,6 @@ class StudyPage extends React.Component {
      })
   }
 
-  // render之前执行
-  componentWillMount() {
-    console.log("componentWillMount")
-    this.showQuestion(this.actualJSON);
-  }
-
   nextButtonClicked() {
     this.setState({
       card: true,
@@ -172,27 +159,26 @@ class StudyPage extends React.Component {
 
   // render之后执行
   componentDidMount() {
-    // console.log("componentDidMount")
     this.nextButtonClicked();
   }
 
   showQuestion(actualJSON){
     if ((this.set.length < 10 && this.actualLength >= 10) || (this.set.length <= this.actualLength && this.actualLength < 10)) {
-      this.i = helper.getCardRandomId(actualJSON.length, this.set);
-      let answerset = helper.shuffleAnwser(this.i, actualJSON.length);
+      this.i = helper.getCardRandomId(this.actualLength, this.set);
+      let answerset = helper.shuffleAnwser(this.i, this.actualJSON.length);
       let num =  parseInt(Math.random() * 2, 10);
       this.setState({
-        question: (num === 1) ? actualJSON[this.i].side0 : actualJSON[this.i].side1,
-        AButton: (num === 1) ? actualJSON[answerset[0]].side1 : actualJSON[answerset[0]].side0,
-        BButton: (num === 1) ? actualJSON[answerset[1]].side1 : actualJSON[answerset[1]].side0,
-        CButton: (num === 1) ? actualJSON[answerset[2]].side1 : actualJSON[answerset[2]].side0,
-        correctAnwser: (num === 1) ? actualJSON[this.i].side1 : actualJSON[this.i].side0,
-        infav: actualJSON[this.i].infav,
-        favSrc: actualJSON[this.i].infav ? this.img_array[1] : this.img_array[0],
+        question: (num === 1) ? this.actualJSON[this.i].side0 : this.actualJSON[this.i].side1,
+        AButton: (num === 1) ? this.actualJSON[answerset[0]].side1 : this.actualJSON[answerset[0]].side0,
+        BButton: (num === 1) ? this.actualJSON[answerset[1]].side1 : this.actualJSON[answerset[1]].side0,
+        CButton: (num === 1) ? this.actualJSON[answerset[2]].side1 : this.actualJSON[answerset[2]].side0,
+        correctAnwser: (num === 1) ? this.actualJSON[this.i].side1 : this.actualJSON[this.i].side0,
+        infav: this.actualJSON[this.i].infav,
+        favSrc: this.actualJSON[this.i].infav ? this.img_array[1] : this.img_array[0],
         timer: 10,
         seconds: 10,
       })
-      this.indexOfImgArr = actualJSON[this.i].infav ? 1 : 0;
+      this.indexOfImgArr = this.actualJSON[this.i].infav ? 1 : 0;
     } else {
       this.setState({
         correctAnwser: "Congratulation! You have completed the study.",
@@ -203,7 +189,7 @@ class StudyPage extends React.Component {
     }
   }
 
-   onChildChanged(){
+  onChildChanged(){
     this.setState({
       timeOut: "Time Out",
       result: "Missed!",
@@ -227,10 +213,10 @@ class StudyPage extends React.Component {
     				<p id="question">{this.state.question}</p>
             <div id="card">
       					<input type = "button" id="haveNoIdea" value = {this.state.haveNoIdea} onClick={this.haveNoIdeaButtonClicked}/>
-      					<input type = "button" id="AButton" value = {this.state.AButton} onClick={this.AButtonClicked}/>
-      					<input type = "button" id="BButton" value = {this.state.BButton} onClick={this.BButtonClicked}/>
-      					<input type = "button" id="CButton" value = {this.state.CButton} onClick={this.CButtonClicked}/>
-      					<input type = "button" id="exit" value = "Exit" onClick={this.props.clickExitButton}/>
+                <button id="AButton" onClick={this.AButtonClicked}> {this.state.AButton} </button>
+      					<button id="BButton" onClick={this.BButtonClicked}>{this.state.BButton}</button>
+                <button id="CButton" onClick={this.CButtonClicked}>{this.state.CButton}</button>
+      					<button id="exit" value = "Exit" onClick={this.props.clickExitButton}>Exit</button>
       			</div>
           </div>
         </div>
