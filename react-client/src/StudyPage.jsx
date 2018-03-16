@@ -103,7 +103,7 @@ class StudyPage extends React.Component {
          console.log('onreadystatechange: '+ xhr.readyState);
      };
      xhr.setRequestHeader('currentId', currentUserId);
-     xhr.send('{"id": '+ actual_JSON[i].cardId +'}');
+     xhr.send('{"id": '+ actualJSON[i].cardId +'}');
   }
 
   removeFromFavoriteJson(currentUserId, i, actualJSON) {
@@ -111,7 +111,7 @@ class StudyPage extends React.Component {
      // console.log(i);
      // console.log(actualJSON);
       let xhr = new XMLHttpRequest();
-      let url = 'http://localhost:2666/users/' + currentUserId +'/fav/' + actual_JSON[i].cardId;
+      let url = 'http://localhost:2666/users/' + currentUserId +'/fav/' + actualJSON[i].cardId;
       xhr.open('DELETE', url, true);
       xhr.onreadystatechange = function(){
           console.log('onreadystatechange: '+ xhr.readyState);
@@ -220,7 +220,7 @@ class StudyPage extends React.Component {
     const { answer } = this.state;
     const { button } = this.state;
     return (
-      <div>
+      <div className='hidden study-page'>
         <div id='wholecard' style={{display: (card ? 'block' : 'none')}}>
           <div id="header">Choose The Answer in <span id="time"><ClockTimer timer={this.state.timer} seconds={this.state.seconds}  callbackParent={this.onChildChanged}/></span> Seconds!</div>
           <div id="cards">

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import Alert from './Alert';
 import Banner from './Banner';
+import StudyPage from './StudyPage';
 const connection = require('./connection');
 
 
@@ -21,7 +22,7 @@ class App extends Component {
     this.initializeOption();
   }
 
-  render() {    
+  render() { 
 
     return (
       <div className="App">
@@ -48,13 +49,17 @@ class App extends Component {
           </div>
           <button onClick={() => this.showElement('.alert')}>Show Alert</button>
         </div>
-
-        {/*
+        <div>
+          {/*
         <Listview of presotred/>
         <Listview of fav/>
         <Listview of custom/>
         <Listview of shared/>
         */}
+        <StudyPage actualJSON={this.state['.study-page']} currentUserId={this.state.currentId} clickExitButton={() => this.backToHome('.study-page')}/>
+
+        </div>
+        
         <p className='hidden test-dummy study-page' onClick={() => this.backToHome('.study-page')}> study-page </p>
         <p className='hidden test-dummy favorite-page' onClick={() => this.backToHome('.favorite-page')}>favorite-page </p>
         <p className='hidden test-dummy my-cards-page' onClick={() => this.backToHome('.my-cards-page')}> my-cards-page </p>        
