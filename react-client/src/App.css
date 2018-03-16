@@ -65,7 +65,7 @@
 #cards,  #ending{
 	display: block;
 	margin:30px auto 10px auto;
-	height: 400px;
+	height: 500px;
 	width: 900px;
 	background-color: WhiteSmoke;
 	border: 1px solid lightgray;
@@ -116,7 +116,7 @@
 /* 修改 */
 #haveNoIdea, #AButton, #BButton, #CButton, #addtoFavorite, #answerPageButton, #endingButton {
 	display: block;
-	height: 50px;
+	height: 60px;
 	width: 60%;
 	border: 1px solid MediumSeaGreen;
 	background-color: ghostwhite;
