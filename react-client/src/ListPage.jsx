@@ -39,11 +39,11 @@ class ListPage extends Component {
     }
 
     handleEditButton() {
-        return this.wordList !== null && this.state.selected !== '';
+        return this.wordList && this.state.selected !== '';
     }
 
     handleStudyButton() {
-        return this.wordList !== null;
+        return this.wordList;
     }
 
     goToView(queryString) {
@@ -72,7 +72,7 @@ class ListPage extends Component {
 
                 <div className="list-page-buttons">
                     <button id="list-page-back" onClick={this.props.clickBackButton}>Back</button>
-                    <button id="list-page-add" onClick={this.goToView.bind(this, '.edit-page')} disabled={this.handleEditButton()?false:"disabled"}>Add</button>
+                    <button id="list-page-add" onClick={this.goToView.bind(this, '.edit-page')}>Add</button>
                     <button id="list-page-edit" onClick={this.goToView.bind(this, '.edit-page')} disabled={this.handleEditButton()?false:"disabled"}>Edit</button>
                     <button id="list-page-study" onClick={this.goToView.bind(this, '.study-page')} disabled={this.handleStudyButton()?false:"disabled"}>Study</button>
                 </div>
