@@ -26,8 +26,7 @@ class Item extends Component {
         return (
             <tr className={`row ${this.state.activeRow ? 'selected' :'row'}`}
                 onClick={()=>{this.props.onClick(this.state.word["cardId"]);
-                              this.setState({
-                                  activeRow: !this.state.activeRow})}}>
+                              this.setState({activeRow: true})}}>
                 <td>{this.state.word["side0"]}</td>
                 <td>{this.state.word["side1"]}</td>
             </tr>

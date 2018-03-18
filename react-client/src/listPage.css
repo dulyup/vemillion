@@ -69,16 +69,6 @@ td {
     height: 10px;
 }
 
-.tr-click {
-    background-color: #4CAF50;
-    color: white;
-}
-
-.tr-cancel {
-    background-color: white;
-    color: black;
-}
-
 .selected:hover{
     background-color: #4CAF50;
     color: white;
