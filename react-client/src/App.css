@@ -43,8 +43,36 @@
   color: white;
 }
 
+.slogan {
+	/*background-color: #675682;*/
+	/*background-color: #6E3667;*/
+	background-color: #222;
+	text-align:right;
+	font-family: fantasy;
+	font-size: 30px;
+	font-weight: bolder;
+	padding-right: 50px;
+}
 
-=======
+#slogan-study {
+	margin: 0px;
+	color: lightskyblue;
+}
+
+#slogan-easier {
+	color: ghostwhite;
+	padding-left: 50px;
+}
+
+#slogan-faster {
+	color: indianred;
+}
+
+#slogan-harder {
+	color: cornsilk;
+}
+
+/*=======*/
 /*study page*/
 #wholecard {
 	display: block;

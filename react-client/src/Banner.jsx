@@ -5,7 +5,7 @@ class Banner extends Component {
     render(props) {
         return (
             <div className="banner">
-                <span>Welcome to Vermillion-Flashcard! User {this.props.id} !</span>
+                <span>{this.props.text} {this.props.id}</span>
             </div>
         );
     }
