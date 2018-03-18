@@ -39,11 +39,11 @@ class ListPage extends Component {
     }
 
     handleEditButton() {
-        return this.wordList && this.state.selected !== '';
+        return this.state.wordList && this.state.selected !== '';
     }
 
     handleStudyButton() {
-        return this.wordList;
+        return this.state.wordList;
     }
 
     goToView(queryString) {
