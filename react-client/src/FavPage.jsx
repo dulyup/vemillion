@@ -18,7 +18,7 @@ class FavPage extends Component {
         return (
             <div className="favorite-page">
 
-                <ListPage title={'Favorite'} wordList={this.state.wordList}/>
+                <ListPage title={'Favorite'} wordList={this.state.wordList} clickBackButton={this.props.clickBackButton}/>
 
             </div>
         );

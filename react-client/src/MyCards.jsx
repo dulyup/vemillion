@@ -18,7 +18,7 @@ class MyCardsPage extends Component {
         return (
             <div className="my-cards-page">
 
-                <ListPage title={'My Cards'} wordList={this.state.wordList}/>
+                <ListPage title={'My Cards'} wordList={this.state.wordList} clickBackButton={this.props.clickBackButton}/>
 
             </div>
         );
