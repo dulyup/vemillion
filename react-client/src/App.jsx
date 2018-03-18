@@ -3,6 +3,8 @@ import './App.css';
 import Alert from './Alert';
 import Banner from './Banner';
 import StudyPage from './StudyPage';
+import FavPage from "./FavPage";
+import MyCardsPage from "./MyCards";
 const connection = require('./connection');
 
 
@@ -36,7 +38,7 @@ class App extends Component {
           <div className="homepage-buttons">
 
             <button className='test-dummy' onClick={() => this.goToView('.study-page')}>STUDY</button>
-            <button className='test-dummy' onClick={() => this.goToView('.favorite-page')}>FAV</button>
+            <button className='test-dummy' onClick={() => this.goToView('.favorite-page')}>FAVORITE</button>
             <button className='test-dummy' onClick={() => this.goToView('.my-cards-page')}>CUSTOM</button>            
             <select className='test-dummy' id='homepage-dropbtn'></select>
             {/*
@@ -56,7 +58,8 @@ class App extends Component {
         <Listview of shared/>
         */}
         <StudyPage actualJSON={this.state['.study-page']} currentUserId={this.state.currentId} clickExitButton={() => this.backToHome('.study-page')}/>
-
+        <FavPage wordList={this.state['.favorite-page']} currentUserId={this.state.currentId} clickBackButton={() => this.backToHome('.favorite-page')}/>
+        <MyCardsPage wordList={this.state['.my-cards-page']} currentUserId={this.state.currentId} clickBackButton={() => this.backToHome('.my-cards-page')}/>
         </div>
         
         <p className='hidden test-dummy study-page' onClick={() => this.backToHome('.study-page')}> study-page </p>
@@ -105,7 +108,7 @@ class App extends Component {
     const drop = document.getElementById('homepage-dropbtn');
     drop.options.length = 0;
     const placeholder = document.createElement('option');
-    placeholder.text = "Shared Lists"; 
+    placeholder.text = "SHARED CARDS";
     placeholder.selected = "selected";
     drop.add(placeholder); 
     let list = await connection.getUserList();
