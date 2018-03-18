@@ -47,11 +47,7 @@ class ListPage extends Component {
     }
 
     goToView(queryString) {
-        const views = ['.study-page', '.edit-page'];
         this.hideElement('.list-page');
-        for (let i of views) {
-            this.hideElement(i);
-        }
         this.showElement(queryString);
     }
 
@@ -83,6 +79,7 @@ class ListPage extends Component {
 
 
                 <StudyPage actualJSON={this.state.wordList} currentUserId={this.currentId} clickExitButton={() => this.props.backToHome('.study-page')}/>
+                {/*please add "hidden" in the className of EditPage*/}
                 {/*<EditPage selected={this.state.selected}/>*/}
 
             </div>

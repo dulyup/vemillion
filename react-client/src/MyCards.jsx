@@ -16,7 +16,7 @@ class MyCardsPage extends Component {
 
     render() {
         return (
-            <div className="my-cards-page">
+            <div className="my-cards-page hidden">
 
                 <ListPage title={'My Cards'} currentId={this.currentId} wordList={this.state.wordList} clickBackButton={this.props.clickBackButton}/>
 

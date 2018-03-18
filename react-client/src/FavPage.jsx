@@ -16,7 +16,7 @@ class FavPage extends Component {
 
     render() {
         return (
-            <div className="favorite-page">
+            <div className="favorite-page hidden">
 
                 <ListPage title={'Favorite'} currentId={this.currentId} wordList={this.state.wordList} clickBackButton={this.props.clickBackButton}/>
 

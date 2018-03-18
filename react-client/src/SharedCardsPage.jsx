@@ -16,7 +16,7 @@ class SharedCardsPage extends Component {
 
     render() {
         return (
-            <div className="shared-cards-page">
+            <div className="shared-cards-page hidden">
 
                 <ListPage title={'Shared Cards'} currentId={this.currentId} wordList={this.state.wordList} clickBackButton={this.props.clickBackButton}/>
 
