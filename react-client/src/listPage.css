@@ -1,0 +1,97 @@
+.hidden {
+    display: none;
+}
+
+.list-page {
+    position: relative;
+    font-family: Helvetica;
+}
+
+.notification {
+    text-align: center;
+}
+
+.list-page-buttons {
+    width:100px;
+    float:right;
+    position:fixed;
+    right:0px;
+    bottom:30px;
+    z-index:20;
+    _position:absolute;
+}
+
+#list-page-back, #list-page-add,#list-page-edit, #list-page-study {
+    text-align: center;
+    margin: 5px;
+    height: 30px;
+    width: 60px;
+    font-size: large;
+    background-color: ghostwhite;
+    border: 1px solid MediumSeaGreen;
+    border-radius: 5px;
+}
+
+#list-page-back:hover {
+    background-color: IndianRed;
+    color: white;
+}
+
+#list-page-add:hover{
+    background-color: #4CAF50;
+    color: white;
+}
+
+#list-page-edit:hover{
+    background-color: #4CAF50;
+    color: white;
+}
+
+#list-page-study:hover {
+    background-color: #4CAF50;
+    color: white;
+}
+
+table {
+    margin:0px auto;
+    width:600px;
+    border-collapse:collapse;
+    text-align:center;
+}
+
+th {
+    padding: 10px 0px 10px 0px;
+    font-weight: bold;
+}
+
+td {
+    border: 1px solid MediumSeaGreen;
+    height: 10px;
+}
+
+.tr-click {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.tr-cancel {
+    background-color: white;
+    color: black;
+}
+
+.selected:hover{
+    background-color: #4CAF50;
+    color: white;
+}
+
+.selected {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.row {
+    background-color: white;
+    color: black;
+}
+
+
