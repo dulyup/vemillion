@@ -18,7 +18,7 @@ class SharedCardsPage extends Component {
         return (
             <div className="shared-cards-page">
 
-                <ListPage title={'Shared Cards'} wordList={this.state.wordList} clickBackButton={this.props.clickBackButton}/>
+                <ListPage title={'Shared Cards'} currentId={this.currentId} wordList={this.state.wordList} clickBackButton={this.props.clickBackButton}/>
 
             </div>
         );
