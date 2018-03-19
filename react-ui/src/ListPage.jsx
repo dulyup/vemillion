@@ -28,8 +28,6 @@ class ListPage extends Component {
     }
 
     componentDidMount() {
-        console.log(this.state.title);
-
         this.initial();
     }
 
@@ -57,7 +55,6 @@ class ListPage extends Component {
     }
 
     hideElement(queryString) {
-        console.log(queryString);
         document.querySelector(queryString).classList.add('hidden');
     }
 
