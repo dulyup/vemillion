@@ -68,9 +68,7 @@ class ListPage extends Component {
     render() {
         return (
             <div className="list-page">
-
                 <Banner text={this.state.title} />
-
                 <Table className="list"
                     onClick={this.handleSelected}
                     wordList={this.state.wordList}

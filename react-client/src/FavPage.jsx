@@ -4,17 +4,18 @@ import ListPage from "./ListPage";
 
 class FavPage extends Component {
 
-    constructor (props) {
+    constructor(props) {
         super(props);
         this.state = {
-            selected:'',
-            wordList : props.wordList
+            selected: '',
+            wordList: props.wordList
         };
-        this.currentId = this.props.currentId;
+
+        this.currentId = this.props.currentUserId;
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({wordList : nextProps.wordList });
+        this.setState({ wordList: nextProps.wordList });
     }
 
     render() {
@@ -22,8 +23,8 @@ class FavPage extends Component {
             <div className="favorite-page hidden">
 
                 <ListPage title={'Favorite'} currentId={this.currentId} wordList={this.state.wordList}
-                          clickBackButton={this.props.clickBackButton}
-                          setStudyList={this.props.setStudyList}/>
+                    clickBackButton={this.props.clickBackButton}
+                    setStudyList={this.props.setStudyList} />
 
             </div>
         );
