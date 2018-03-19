@@ -78,7 +78,15 @@ class App extends Component {
   }
 
   setStudyList(list){
-    this.setState({'.study-page': list}, ()=>{console.log(this.state);});    
+    this.setState({'.study-page': list}, ()=>{this.studyList()});    
+  }
+
+  studyList(){
+    const views=['.favorite-page','.my-cards-page'];
+    for (let i of views){
+      this.hideElement(i);
+    }
+    this.showElement('.study-page');
   }
 
   goToView(queryString) {
@@ -126,8 +134,7 @@ class App extends Component {
         drop.add(option);
     }
     
-}
-
+  }
 
   hideElement(queryString) {
     document.querySelector(queryString).classList.add('hidden');
