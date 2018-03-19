@@ -28,6 +28,8 @@ class ListPage extends Component {
     }
 
     componentDidMount() {
+        console.log(this.state.title);
+
         this.initial();
     }
 
@@ -55,6 +57,7 @@ class ListPage extends Component {
     }
 
     hideElement(queryString) {
+        console.log(queryString);
         document.querySelector(queryString).classList.add('hidden');
     }
 
@@ -69,27 +72,27 @@ class ListPage extends Component {
                 <Banner text={this.state.title} />
                 <div className="whole-list">
                     <Table className="list"
-                           onClick={this.handleSelected}
-                           wordList={this.state.wordList}
-                           selectedId={this.state.selected}
+                        onClick={this.handleSelected}
+                        wordList={this.state.wordList}
+                        selectedId={this.state.selected}
                     />
                 </div>
 
                 <div className="list-page-buttons">
                     <button className="list-page-back" onClick={this.props.clickBackButton}>Back</button>
                     <button className="list-page-add"
-                            onClick={() => this.setState({
-                                showAddPage: true,
-                            })} > Add</button>
+                        onClick={() => this.setState({
+                            showAddPage: true,
+                        })} > Add</button>
                     <button className="list-page-edit"
-                            onClick={() => {
-                                this.setState({
-                                    showEditPage: true,
-                                })
-                            }} disabled={this.handleEditButton() ? false : "disabled"}>Edit</button>
+                        onClick={() => {
+                            this.setState({
+                                showEditPage: true,
+                            })
+                        }} disabled={this.handleEditButton() ? false : "disabled"}>Edit</button>
                     <button className="list-page-study"
-                            onClick={() => this.props.setStudyList(this.state.wordList)}
-                            disabled={this.handleStudyButton() ? false : "disabled"}>Study</button>
+                        onClick={() => this.props.setStudyList(this.state.wordList)}
+                        disabled={this.handleStudyButton() ? false : "disabled"}>Study</button>
                 </div>
 
                 {/*please add "hidden" in the className of EditPage*/}
