@@ -4,6 +4,8 @@ import Table from "./Table";
 import Banner from "./Banner";
 import StudyPage from './StudyPage';
 import { EditPage, updateCard, saveCtmCard } from './EditPage';
+import Alert from "./Alert";
+const connection = require('./connection');
 
 class ListPage extends Component {
 
@@ -65,6 +67,7 @@ class ListPage extends Component {
         document.querySelector(queryString).classList.remove('hidden');
     }
 
+
     render() {
         return (
             <div className="list-page">
@@ -117,10 +120,12 @@ class ListPage extends Component {
                         if (!this.state.selected) {
                             saveCtmCard(data, this.currentId).then(() => {
                                 // Save completed.
+                                this.props.updateWordList();
                             });
                         } else {
                             updateCard(this.state.selected, data, this.currentId).then(() => {
                                 // Update completed
+                                this.props.updateWordList();
                             })
                         }
                     }} />
