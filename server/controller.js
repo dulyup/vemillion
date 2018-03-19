@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const bodyParser = require('body-parser');
 const app = express();
 const PORT = process.env.PORT || 2666;
@@ -6,7 +7,7 @@ const service = require('./service.js');
 const idService = require('./mockIDService.js');
 
 app.use(bodyParser.json({ extended: true, type: '*/*' }) );
-app.use(express.static(__dirname, '../react-ui/build') );
+app.use(express.static(path.resolve(__dirname, '../react-ui/build')) );
 
 app.post('/users',(req, res) => { 
     const info = idService.getID();
