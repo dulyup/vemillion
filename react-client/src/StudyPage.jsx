@@ -64,16 +64,18 @@ class StudyPage extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      card: true,     // use for toogle
-      answer: false,  // use for toogle
-      button: false,
-    })
-    this.set = [];
-    this.indexOfImgArr = 1;
-    this.actualLength = nextProps.actualJSON.length
-    this.actualJSON = nextProps.actualJSON.length < 10 ? nextProps.actualJSON.concat(this.choiceJSON) : nextProps.actualJSON;
-    this.nextButtonClicked();
+    if (nextProps.actualJSON !== null) {
+      this.setState({
+        card: true,     // use for toogle
+        answer: false,  // use for toogle
+        button: false,
+      })
+      this.set = [];
+      this.indexOfImgArr = 1;
+      this.actualLength = nextProps.actualJSON.length
+      this.actualJSON = nextProps.actualJSON.length < 10 ? nextProps.actualJSON.concat(this.choiceJSON) : nextProps.actualJSON;
+      this.nextButtonClicked();
+    }
   }
 
   favButtonClicked() {
