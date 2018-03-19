@@ -21,7 +21,7 @@ class ListPage extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({wordList : nextProps.wordList });
+        this.setState({wordList : nextProps.wordList }, ()=>console.log(this.state.wordList));
     }
 
     componentDidMount(){
@@ -65,7 +65,7 @@ class ListPage extends Component {
 
     render() {
         return (
-            <div className="list-page hidden">
+            <div className="list-page">
 
                 <Banner text={this.state.title}/>
 
@@ -78,7 +78,8 @@ class ListPage extends Component {
                     <button id="list-page-back" onClick={this.props.clickBackButton}>Back</button>
                     <button id="list-page-add" onClick={this.goToView.bind(this, '.edit-page')}>Add</button>
                     <button id="list-page-edit" onClick={this.goToView.bind(this, '.edit-page')} disabled={this.handleEditButton()?false:"disabled"}>Edit</button>
-                    <button id="list-page-study" onClick={this.props.setStudyList(this.state.wordList)} disabled={this.handleStudyButton()?false:"disabled"}>Study</button>
+                    <button id="list-page-study" onClick={()=>this.props.setStudyList(this.state.wordList)} 
+                        disabled={this.handleStudyButton()?false:"disabled"}>Study</button>
                 </div>
 
                 {/*<StudyPage actualJSON={this.state.wordList} currentUserId={this.currentId} clickExitButton={() => this.props.backToHome('.study-page')}/>*/}
