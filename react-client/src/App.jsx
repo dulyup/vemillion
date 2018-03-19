@@ -34,7 +34,7 @@ class App extends Component {
 
     return (
       <div className='App'>
-        <div className='hidden' id='loading'><p className='img'><img src={loading}/></p></div>
+        <div className='hidden' id='loading'><p className='img'><img src={loading} alt="loading gif"/></p></div>
 
         <div className='homepage'>
           
