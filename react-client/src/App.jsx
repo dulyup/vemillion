@@ -24,6 +24,7 @@ class App extends Component {
   }
 
   componentDidMount(){
+    this.addSelectListener();
     this.initializeOption();
   }
 
@@ -78,7 +79,9 @@ class App extends Component {
   }
 
   setStudyList(list){
-    this.setState({'.study-page': list}, ()=>{this.studyList()});    
+    this.setState({'.study-page': list}, ()=>{
+      this.studyList();
+    });    
   }
 
   studyList(){
@@ -127,15 +130,26 @@ class App extends Component {
     const placeholder = document.createElement('option');
     placeholder.text = "SHARED CARDS";
     placeholder.selected = "selected";
+    placeholder.disabled = "disabled";
     drop.add(placeholder); 
+
     let list = await connection.getUserList();
     for (let id of list.activeUsers){
         if (id === this.state.currentId) continue;
         let option = document.createElement('option');
         option.text = +id;        
         drop.add(option);
-    }
-    
+    }    
+  }
+
+  addSelectListener(){
+    const select=document.getElementById('homepage-dropbtn');
+    select.addEventListener('change', ()=>{
+      console.log(select.value);
+      this.setState({selectedId : select.value}, 
+        ()=>{this.goToView('.shared-cards-page')}
+      )
+    });
   }
 
   hideElement(queryString) {

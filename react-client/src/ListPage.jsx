@@ -34,10 +34,10 @@ class ListPage extends Component {
         if (this.state.title === 'Favorite') {
             this.hideElement('#list-page-add');
         }
-        if (this.state.title === "Shared Cards") {
-            this.hideElement('#list-page-add');
-            this.hideElement('#list-page-edit');
-        }
+        // if (this.state.title === "Shared Cards") {
+        //     this.hideElement('#list-page-add');
+        //     this.hideElement('#list-page-edit');
+        // }
     }
 
     handleSelected(id) {
