@@ -165,7 +165,7 @@ class StudyPage extends React.Component {
   }
 
   showQuestion(actualJSON){
-    if ((this.set.length < 10 && this.actualLength >= 10) || (this.set.length <= this.actualLength && this.actualLength < 10)) {
+    if ((this.set.length < 10 && this.actualLength >= 10) || (this.set.length < this.actualLength && this.actualLength < 10)) {
       this.i = helper.getCardRandomId(this.actualLength, this.set);
       let answerset = helper.shuffleAnwser(this.i, this.actualJSON.length);
       let num =  parseInt(Math.random() * 2, 10);
