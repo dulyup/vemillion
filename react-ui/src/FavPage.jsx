@@ -39,9 +39,9 @@ class FavPage extends Component {
             <div className="favorite-page hidden">
 
                 <ListPage title={'Favorite'} currentId={this.currentId} wordList={this.state.wordList}
-                    clickBackButton={this.props.clickBackButton}
-                    setStudyList={this.props.setStudyList}
-                    updateWordList={this.updateWordList}/>
+                          clickBackButton={this.props.clickBackButton}
+                          setStudyList={this.props.setStudyList}
+                          updateWordList={this.updateWordList}/>
 
             </div>
         );
