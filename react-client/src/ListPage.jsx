@@ -2,10 +2,8 @@ import React, { Component } from 'react';
 import './listPage.css';
 import Table from "./Table";
 import Banner from "./Banner";
-import StudyPage from './StudyPage';
-import { EditPage, updateCard, saveCtmCard } from './EditPage';
 import Alert from "./Alert";
-const connection = require('./connection');
+import { EditPage, updateCard, saveCtmCard } from './EditPage';
 
 class ListPage extends Component {
 
@@ -55,10 +53,10 @@ class ListPage extends Component {
         return this.state.wordList;
     }
 
-    goToView(queryString) {
-        this.hideElement('.list-page');
-        this.showElement(queryString);
-    }
+    // goToView(queryString) {
+    //     this.hideElement('.list-page');
+    //     this.showElement(queryString);
+    // }
 
     hideElement(queryString) {
         document.querySelector(queryString).classList.add('hidden');
@@ -69,6 +67,7 @@ class ListPage extends Component {
     }
 
     render() {
+        console.log(this.state.wordList);
         return (
             <div className="list-page">
                 <Banner text={this.state.title} />
@@ -109,12 +108,16 @@ class ListPage extends Component {
                         // Add code here when user ownership is false
                         this.setState({
                             showAddPage: false,
-                        })
+                        });
+                        setTimeout(() => {
+                            this.hideElement('.alert');
+                        },3000);
+                        this.showElement('.alert');
                     }}
                     onSaveClick={(data) => {
                         this.setState({
                             showAddPage: false,
-                        })
+                        });
 
                         saveCtmCard(data, this.currentId).then(() => {
                             // Save completed.
@@ -135,18 +138,23 @@ class ListPage extends Component {
                         // Add code here when user ownership is false
                         this.setState({
                             showEditPage: false,
-                        })
+                        });
+                        setTimeout(() => {
+                            this.hideElement('.alert');
+                        },3000);
+                        this.showElement('.alert');
                     }}
                     onSaveClick={(data) => {
                         this.setState({
                             showEditPage: false,
-                        })
+                        });
 
                         updateCard(this.state.selected, data, this.currentId).then(() => {
                             // Update completed
                             this.props.updateWordList();
                         })
                     }} />
+                <Alert message="Sorry, you can not edit preset or other users' cards " onClick={() => this.hideElement('.alert')} />
             </div >
         );
     }
