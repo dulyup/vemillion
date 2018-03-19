@@ -5,6 +5,7 @@ import Banner from './Banner';
 import StudyPage from './StudyPage';
 import FavPage from "./FavPage";
 import MyCardsPage from "./MyCards";
+import SharedCardsPage from './SharedCardsPage';
 const connection = require('./connection');
 
 
@@ -13,10 +14,12 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentId: this.props.currentId,
-      '.study-page':'',
-      '.favorite-page':'',
-      '.my-cards-page' : ''
+      currentId : this.props.currentId,
+      selectedId : null,
+      '.study-page' : '',
+      '.favorite-page' : '',
+      '.my-cards-page' : '',
+      '.shared-cards-page' : ''
     };
   }
 
@@ -46,32 +49,44 @@ class App extends Component {
             <Button to fav/>
             <Button to custom/>
             <Select to shared/>
+            <button onClick={() => this.setStudyList(Math.random().toString())}>setStudyList</button>
             */}
           </div>
-          <button onClick={() => this.showElement('.alert')}>Show Alert</button>
+          
         </div>
-        <div>
-          {/*
-        <Listview of presotred/>
-        <Listview of fav/>
-        <Listview of custom/>
-        <Listview of shared/>
-        */}
-        <StudyPage actualJSON={this.state['.study-page']} currentUserId={this.state.currentId} clickExitButton={() => this.backToHome('.study-page')}/>
-        <FavPage wordList={this.state['.favorite-page']} currentUserId={this.state.currentId} clickBackButton={() => this.backToHome('.favorite-page')}/>
-        <MyCardsPage wordList={this.state['.my-cards-page']} currentUserId={this.state.currentId} clickBackButton={() => this.backToHome('.my-cards-page')}/>
+        <div>          
+
+        <StudyPage actualJSON={this.state['.study-page']} currentUserId={this.state.currentId} 
+          clickExitButton={() => this.backToHome('.study-page')}/>
+
+        <FavPage wordList={this.state['.favorite-page']} currentUserId={this.state.currentId} 
+          clickBackButton={() => this.backToHome('.favorite-page')} setStudyList={(list)=>this.setStudyList(list)}/>
+
+        <MyCardsPage wordList={this.state['.my-cards-page']} currentUserId={this.state.currentId} 
+          clickBackButton={() => this.backToHome('.my-cards-page')} setStudyList={(list)=>this.setStudyList(list)}/>
+
+        <SharedCardsPage wordList={this.state['.shared-cards-page']} currentUserId={this.state.currentId} 
+          clickBackButton={() => this.backToHome('.shared-cards-page')} setStudyList={(list)=>this.setStudyList(list)}/>
+
         </div>
-        
-        <p className='hidden test-dummy study-page' onClick={() => this.backToHome('.study-page')}> study-page </p>
-        <p className='hidden test-dummy favorite-page' onClick={() => this.backToHome('.favorite-page')}>favorite-page </p>
-        <p className='hidden test-dummy my-cards-page' onClick={() => this.backToHome('.my-cards-page')}> my-cards-page </p>        
         
         <Alert message='custom alert message' onClick={() => this.hideElement('.alert')} />
-
 
       </div>
     );
 
+  }
+
+  setStudyList(list){
+    this.setState({'.study-page': list}, ()=>{this.studyList()});    
+  }
+
+  studyList(){
+    const views=['.favorite-page','.my-cards-page','.shared-cards-page'];
+    for (let i of views){
+      this.hideElement(i);
+    }
+    this.showElement('.study-page');
   }
 
   goToView(queryString) {
@@ -80,8 +95,11 @@ class App extends Component {
 
     //show loading
 
-    const views={'.study-page':'/prestored','.favorite-page':'/users/'+this.state.currentId+'/fav'
-    ,'.my-cards-page':'/users/'+this.state.currentId+'/custom'};
+    const views={'.study-page':'/prestored'
+    ,'.favorite-page':'/users/'+this.state.currentId+'/fav'
+    ,'.my-cards-page':'/users/'+this.state.currentId+'/custom'
+    ,'.shared-cards-page' : '/users/'+this.state.selectedId+'/custom'
+    };
 
     for (let i in views){
       this.hideElement(i);
@@ -91,7 +109,6 @@ class App extends Component {
     .then(json => {
       this.setState({[queryString] : json});
       //hide loading
-      //console.log(this.state);
       
       this.showElement(queryString);
     })
@@ -119,8 +136,7 @@ class App extends Component {
         drop.add(option);
     }
     
-}
-
+  }
 
   hideElement(queryString) {
     document.querySelector(queryString).classList.add('hidden');

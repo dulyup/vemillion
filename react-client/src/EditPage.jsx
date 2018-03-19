@@ -59,7 +59,31 @@ export class EditPage extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({ isHidden: nextProps.hidden });
+        if (nextProps.selectedId) {
+            this.getCardById(nextProps.selectedId, nextProps.currentUserId)
+                .then((data) => {
+                    console.log(data);
+                    if (!data["ownership"]) {
+                        this.setState({
+                            isHidden: true,
+                        })
+                        this.props.onAccessDenied();
+                    } else {
+                        this.setState({
+                            data: data,
+                            title: "Edit",
+                            isHidden: nextProps.hidden
+                        })
+                    }
+                }).catch((e) => {
+                    console.log(e);
+                    throw e;
+                });
+        } else {
+            this.setState({
+                isHidden: nextProps.hidden,
+            })
+        }
     }
 
     getCardById(id, currentUserId) {
@@ -80,7 +104,7 @@ export class EditPage extends React.Component {
                         this.setState({
                             isHidden: true,
                         })
-                        this.props.onDenied();
+                        this.props.onAccessDenied();
                     } else {
                         this.setState({
                             data: data,

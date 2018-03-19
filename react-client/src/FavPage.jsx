@@ -11,7 +11,6 @@ class FavPage extends Component {
             wordList : props.wordList
         };
         this.currentId = this.props.currentId;
-        
     }
 
     componentWillReceiveProps(nextProps) {
@@ -22,7 +21,9 @@ class FavPage extends Component {
         return (
             <div className="favorite-page hidden">
 
-                <ListPage title={'Favorite'} currentId={this.currentId} wordList={this.state.wordList} clickBackButton={this.props.clickBackButton}/>
+                <ListPage title={'Favorite'} currentId={this.currentId} wordList={this.state.wordList}
+                          clickBackButton={this.props.clickBackButton}
+                          setStudyList={this.props.setStudyList}/>
 
             </div>
         );
