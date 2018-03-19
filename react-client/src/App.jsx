@@ -5,6 +5,7 @@ import Banner from './Banner';
 import StudyPage from './StudyPage';
 import FavPage from "./FavPage";
 import MyCardsPage from "./MyCards";
+import SharedCardsPage from './SharedCardsPage';
 const connection = require('./connection');
 
 
@@ -13,10 +14,12 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentId: this.props.currentId,
-      '.study-page':'',
-      '.favorite-page':'',
-      '.my-cards-page' : ''
+      currentId : this.props.currentId,
+      selectedId : null,
+      '.study-page' : '',
+      '.favorite-page' : '',
+      '.my-cards-page' : '',
+      '.shared-cards-page' : ''
     };
   }
 
@@ -51,13 +54,7 @@ class App extends Component {
           </div>
           
         </div>
-        <div>
-          {/*
-        <Listview of presotred/>
-        <Listview of fav/>
-        <Listview of custom/>
-        <Listview of shared/>
-        */}
+        <div>          
 
         <StudyPage actualJSON={this.state['.study-page']} currentUserId={this.state.currentId} 
           clickExitButton={() => this.backToHome('.study-page')}/>
@@ -67,6 +64,9 @@ class App extends Component {
 
         <MyCardsPage wordList={this.state['.my-cards-page']} currentUserId={this.state.currentId} 
           clickBackButton={() => this.backToHome('.my-cards-page')} setStudyList={(list)=>this.setStudyList(list)}/>
+
+        <SharedCardsPage wordList={this.state['.shared-cards-page']} currentUserId={this.state.currentId} 
+          clickBackButton={() => this.backToHome('.shared-cards-page')} setStudyList={(list)=>this.setStudyList(list)}/>
 
         </div>
         
@@ -82,7 +82,7 @@ class App extends Component {
   }
 
   studyList(){
-    const views=['.favorite-page','.my-cards-page'];
+    const views=['.favorite-page','.my-cards-page','.shared-cards-page'];
     for (let i of views){
       this.hideElement(i);
     }
@@ -95,8 +95,11 @@ class App extends Component {
 
     //show loading
 
-    const views={'.study-page':'/prestored','.favorite-page':'/users/'+this.state.currentId+'/fav'
-    ,'.my-cards-page':'/users/'+this.state.currentId+'/custom'};
+    const views={'.study-page':'/prestored'
+    ,'.favorite-page':'/users/'+this.state.currentId+'/fav'
+    ,'.my-cards-page':'/users/'+this.state.currentId+'/custom'
+    ,'.shared-cards-page' : '/users/'+this.state.selectedId+'/custom'
+    };
 
     for (let i in views){
       this.hideElement(i);
@@ -106,7 +109,6 @@ class App extends Component {
     .then(json => {
       this.setState({[queryString] : json});
       //hide loading
-      //console.log(this.state);
       
       this.showElement(queryString);
     })
