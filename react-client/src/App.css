@@ -44,14 +44,13 @@
 }
 
 .slogan {
-	/*background-color: #675682;*/
-	/*background-color: #6E3667;*/
 	background-color: #222;
 	text-align:right;
 	font-family: fantasy;
 	font-size: 30px;
 	font-weight: bolder;
 	padding-right: 50px;
+  margin: 0px;
 }
 
 #slogan-study {
