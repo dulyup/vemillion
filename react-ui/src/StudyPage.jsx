@@ -27,7 +27,7 @@ class StudyPage extends React.Component {
       favSrc: null,   // use for fav button's image
     }
     this.set = [];
-    this.img_array = ['./image/emptyheart.png', './image/fullheart.png'];
+    this.img_array = ['../public/emptyheart.png', '../public/fullheart.png'];
     // // supplement for the choice， when the number of question is less than 10, in order to generate choices.
     this.choiceJSON = [{"cardId":355,"side0":"millennial","side1":"(a.)一千年的;千福年的","infav":false,"ownership":false},
                        {"cardId":356,"side0":"binder","side1":"縛者,用以綁縛之物,夾器","infav":false,"ownership":false},
