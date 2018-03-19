@@ -211,11 +211,6 @@ class StudyPage extends React.Component {
     return (
       <div className='hidden study-page'>
         <Banner text={'Welcome to Vermillion Flashcard! User '} id={this.props.currentUserId}/>
-        <div className="slogan">
-          <p id="slogan-study">STUDY: <span id="slogan-easier">Easier</span></p>
-          <p id="slogan-faster">Faster</p>
-          <p id="slogan-harder">Harder</p>
-        </div>
         <div id='wholecard' style={{display: (card ? 'block' : 'none')}}>
           <div id="header">Choose The Answer in <span id="time"><ClockTimer timer={this.state.timer} seconds={this.state.seconds}  callbackParent={this.onChildChanged}/></span> Seconds!</div>
           <div id="cards">
