@@ -86,7 +86,8 @@ class ListPage extends Component {
                         onClick={() => this.setState({
                             showEditPage: true,
                         })} disabled={this.handleEditButton() ? false : "disabled"}>Edit</button>
-                    <button id="list-page-study" onClick={() => this.props.setStudyList(this.state.wordList)}
+                    <button id="list-page-study"
+                            onClick={() => this.props.setStudyList(this.state.wordList)}
                         disabled={this.handleStudyButton() ? false : "disabled"}>Study</button>
                 </div>
 
@@ -98,9 +99,11 @@ class ListPage extends Component {
                     hidden={!this.state.showEditPage}
                     onCancelClick={() => {
                         // Add code here when click cancel
+
                     }}
                     onAccessDenied={() => {
                         // Add code here when user ownership is false
+
                     }}
                     onSaveClick={(data) => {
                         if (!this.state.selected) {
