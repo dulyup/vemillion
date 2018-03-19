@@ -79,19 +79,21 @@ td {
     height: 10px;
 }
 
-.selected:hover{
-    background-color: #4CAF50;
-    color: white;
+/*.selected:hover{*/
+    /*background-color: #4CAF50;*/
+    /*color: white;*/
+/*}*/
+
+
+
+.row {
+    background-color: white;
+    color: black;
 }
 
 .selected {
     background-color: #4CAF50;
     color: white;
-}
-
-.row {
-    background-color: white;
-    color: black;
 }
 
 

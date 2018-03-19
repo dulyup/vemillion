@@ -28,17 +28,20 @@ class ListPage extends Component {
     }
 
     componentDidMount() {
+        console.log(this.state.title);
         this.initial();
     }
 
     initial() {
+
         if (this.state.title === 'Favorite') {
+            console.log("hidden")
             this.hideElement('#list-page-add');
         }
-        // if (this.state.title === "Shared Cards") {
-        //     this.hideElement('#list-page-add');
-        //     this.hideElement('#list-page-edit');
-        // }
+        if (this.state.title === "Shared Cards") {
+            this.hideElement('#list-page-add');
+            this.hideElement('#list-page-edit');
+        }
     }
 
     handleSelected(id) {
@@ -74,6 +77,7 @@ class ListPage extends Component {
                     <Table className="list"
                         onClick={this.handleSelected}
                         wordList={this.state.wordList}
+                        selectedId={this.state.selected}
                     />
                 </div>
 

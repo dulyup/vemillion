@@ -1,8 +1,8 @@
 import React from 'react';
 import Tbody from './Tbody';
 
-const Table = ({wordList, onClick}) => {
-    if (!wordList) {
+const Table = (props) => {
+    if (!props.wordList) {
         return (<p>No cards</p>)
     } else {
         return (
@@ -14,8 +14,7 @@ const Table = ({wordList, onClick}) => {
                         <th>Explanation</th>
                     </tr>
                     </thead>
-                    <Tbody wordList={wordList}
-                           onClick={onClick}
+                    <Tbody {...props}
                     />
                 </table>
             </div>
