@@ -1,8 +1,34 @@
 import React from 'react';
 
-cardURL = "http://localhost:2666/cards/{0}";
+if (!String.prototype.format) {
+    String.prototype.format = function () {
+        var args = arguments;
+        return this.replace(/{(\d+)}/g, function (match, number) {
+            return typeof args[number] !== 'undefined'
+                ? args[number]
+                : match
+                ;
+        });
+    };
+}
+
+let cardURL = "http://localhost:3000/cards/{0}";
+
+function saveCard(saveCardURL, obj, currentUserId) {
+    return fetch(saveCardURL,
+        {
+            method: 'POST',
+            headers: { 'currentId': currentUserId },
+            body: JSON.stringify(obj),
+        }).then((response) => {
+            if (response.status !== 200) {
+                throw "unexpected error";
+            }
+        });
+}
+
 export function saveCtmCard(obj, currentUserId) {
-    let saveCtmCardURL = "http://localhost:2666/users/" + currentUserId + "/custom";
+    let saveCtmCardURL = "http://localhost:3000/users/" + currentUserId + "/custom";
     return saveCard(saveCtmCardURL, obj, currentUserId);
 };
 
@@ -25,8 +51,15 @@ export class EditPage extends React.Component {
         this.state = {
             data: { side0: "", side1: "" },
             title: "Add New",
-            isHidden: false,
+            isHidden: this.props.hidden,
         }
+
+        this.handleCancelClick = this.handleCancelClick.bind(this);
+        this.handleSaveClick = this.handleSaveClick.bind(this);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({ isHidden: nextProps.hidden });
     }
 
     getCardById(id, currentUserId) {
@@ -40,8 +73,8 @@ export class EditPage extends React.Component {
     }
 
     componentWillMount() {
-        if (this.props.id !== null) {
-            this.getCardById(this.props.id, this.props.currentUserId)
+        if (this.props.selectedId) {
+            this.getCardById(this.props.selectedId, this.props.currentUserId)
                 .then((data) => {
                     if (!data["ownership"]) {
                         this.setState({
@@ -65,12 +98,12 @@ export class EditPage extends React.Component {
         return Object.keys(data).map((key, index) => {
             if (key === 'side0' || key === "side1") {
                 return (
-                    <UserInput data={data} key={key} hidden={false} />
+                    <UserInput key={index} data={data} property={key} hidden={false} />
                 )
             }
 
             return (
-                <UserInput data={data} key={key} hidden={true} />
+                <UserInput key={index} data={data} property={key} hidden={true} />
             )
         });
     }
@@ -78,7 +111,7 @@ export class EditPage extends React.Component {
     getUserInput(inputs) {
         let obj = {};
         inputs.forEach((input) => {
-            obj[input.getAttribute('key')] = input.value;
+            obj[input.getAttribute('property')] = input.value;
         });
 
         return obj;
@@ -96,8 +129,8 @@ export class EditPage extends React.Component {
 
     handleSaveClick() {
         let inputs = document.querySelectorAll(".edit-inputs input");
-        if (validateInputs(inputs)) {
-            let obj = getUserInput(inputs);
+        if (this.validateInputs(inputs)) {
+            let obj = this.getUserInput(inputs);
             this.setState(
                 {
                     isHidden: true,
@@ -119,20 +152,20 @@ export class EditPage extends React.Component {
     }
 
     render() {
-        if (this.state.hidden) {
+        if (this.state.isHidden) {
             return null;
         }
 
         return (
-            <div class="edit-page">
-                <div class="modal-content">
+            <div className="edit-page">
+                <div className="modal-content">
                     <h1>{this.state.title}</h1>
                     <div>
-                        <div class="edit-inputs">
+                        <div className="edit-inputs">
                             {this.generateInputs(this.state.data)}
                         </div>
-                        <button class='cancel' onClick={this.handleCancelClick}>Cancel</button>
-                        <button class='save' onClick={this.handleSaveClick}>Save</button>
+                        <button className='cancel' onClick={this.handleCancelClick}>Cancel</button>
+                        <button className='save' onClick={this.handleSaveClick}>Save</button>
                     </div>
                 </div>
             </div>
@@ -140,14 +173,16 @@ export class EditPage extends React.Component {
     }
 }
 
-class UserInput extends React {
+class UserInput extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             status: '',
             addClass: false,
-            value: ''
+            value: this.props.data[this.props.property]
         }
+
+        this.handleChange = this.handleChange.bind(this);
     }
 
     handleChange(event) {
@@ -165,7 +200,7 @@ class UserInput extends React {
                 {
                     status: '',
                     addClass: false,
-                    value: ''
+                    value: value
                 }
             )
         }
@@ -183,9 +218,8 @@ class UserInput extends React {
                     value={this.state.value}
                     onChange={this.handleChange}
                     hidden={this.props.hidden}
-                    class={className}
-                    key={this.props.key}
-                    value={this.props.data[this.props.key]} />
+                    className={className}
+                    property={this.props.property} />
                 <div>{this.state.status} </div>
             </div>
         );

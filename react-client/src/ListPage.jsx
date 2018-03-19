@@ -3,29 +3,31 @@ import './listPage.css';
 import Table from "./Table";
 import Banner from "./Banner";
 import StudyPage from './StudyPage';
+import { EditPage, updateCard, saveCtmCard } from './EditPage';
 
 class ListPage extends Component {
 
-    constructor (props) {
+    constructor(props) {
         super(props);
         this.state = {
             title: this.props.title,
             wordList: this.props.wordList,
-            selected:'',
+            selected: '',
             isValidToEdit: false,
             isValidToStudy: false,
-
+            showEditPage: false
         };
+
         this.currentId = this.props.currentId;
-        this.handleSelected = this.handleSelected.bind(this);        
+        this.handleSelected = this.handleSelected.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({wordList : nextProps.wordList });
+        this.setState({ wordList: nextProps.wordList });
     }
 
-    componentDidMount(){
-        this.initial();        
+    componentDidMount() {
+        this.initial();
     }
 
     initial() {
@@ -39,7 +41,7 @@ class ListPage extends Component {
     }
 
     handleSelected(id) {
-        this.setState({selected: id}, ()=>console.log(id));
+        this.setState({ selected: id }, () => console.log(id));
     }
 
     handleEditButton() {
@@ -67,25 +69,49 @@ class ListPage extends Component {
         return (
             <div className="list-page">
 
-                <Banner text={this.state.title}/>
+                <Banner text={this.state.title} />
 
                 <Table className="list"
-                       onClick={this.handleSelected}
-                       wordList={this.state.wordList}
+                    onClick={this.handleSelected}
+                    wordList={this.state.wordList}
                 />
 
                 <div className="list-page-buttons">
                     <button id="list-page-back" onClick={this.props.clickBackButton}>Back</button>
-                    <button id="list-page-add" onClick={this.goToView.bind(this, '.edit-page')}>Add</button>
-                    <button id="list-page-edit" onClick={this.goToView.bind(this, '.edit-page')} disabled={this.handleEditButton()?false:"disabled"}>Edit</button>
-                    <button id="list-page-study" onClick={this.goToView.bind(this, '.study-page')} disabled={this.handleStudyButton()?false:"disabled"}>Study</button>
+                    <button id="list-page-add"
+                        onClick={() => this.setState({
+                            showEditPage: true,
+                        })}>Add</button>
+                    <button id="list-page-edit"
+                        onClick={() => this.setState({
+                            showEditPage: true,
+                        })} disabled={this.handleEditButton() ? false : "disabled"}>Edit</button>
+                    <button id="list-page-study" onClick={this.goToView.bind(this, '.study-page')} disabled={this.handleStudyButton() ? false : "disabled"}>Study</button>
                 </div>
 
-
-                <StudyPage actualJSON={this.state.wordList} currentUserId={this.currentId} clickExitButton={() => this.props.backToHome('.study-page')}/>
+                <StudyPage actualJSON={this.state.wordList} currentUserId={this.currentId} clickExitButton={() => this.props.backToHome('.study-page')} />
                 {/*please add "hidden" in the className of EditPage*/}
-                {/*<EditPage selected={this.state.selected}/>*/}
-
+                <EditPage
+                    selectedId={this.state.selected}
+                    currentUserId={this.currentId}
+                    hidden={!this.state.showEditPage}
+                    onCancelClick={() => {
+                        // Add code here when click cancel
+                    }}
+                    onAccessDenied={() => {
+                        // Add code here when user ownership is false
+                    }}
+                    onSaveClick={(data) => {
+                        if (!this.state.selected) {
+                            saveCtmCard(data, this.currentId).then(() => {
+                                // Save completed.
+                            });
+                        } else {
+                            updateCard(this.state.selected, data, this.currentId).then(() => {
+                                // Update completed
+                            })
+                        }
+                    }} />
             </div>
         );
     }
