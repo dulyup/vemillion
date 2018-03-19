@@ -2,9 +2,9 @@
   "name": "vermillion-test",
   "version": "1.0.0",
   "scripts": {
-    "start": "node src/service/controller.js"
+    "start": "node service/controller.js",
+    "heroku-postbuild": "cd react-client/ && npm install && npm run build"
   },
-  "main": "src/service/controller.js",
   "keywords": [],
   "dependencies": {
     "body-parser": "^1.18.2",
