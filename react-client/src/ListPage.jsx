@@ -17,6 +17,7 @@ class ListPage extends Component {
             selected: '',
             isValidToEdit: false,
             isValidToStudy: false,
+            showAddPage: false,
             showEditPage: false
         };
 
@@ -67,7 +68,6 @@ class ListPage extends Component {
         document.querySelector(queryString).classList.remove('hidden');
     }
 
-
     render() {
         return (
             <div className="list-page">
@@ -81,11 +81,10 @@ class ListPage extends Component {
                     <button id="list-page-back" onClick={this.props.clickBackButton}>Back</button>
                     <button id="list-page-add"
                         onClick={() => this.setState({
-                            showEditPage: true,
+                            showAddPage: true,
                         })} > Add</button>
                     <button id="list-page-edit"
                         onClick={() => {
-                            console.log("editClick");
                             this.setState({
                                 showEditPage: true,
                             })
@@ -97,6 +96,32 @@ class ListPage extends Component {
 
                 {/*<StudyPage actualJSON={this.state.wordList} currentUserId={this.currentId} clickExitButton={() => this.props.backToHome('.study-page')}/>*/}
                 {/*please add "hidden" in the className of EditPage*/}
+                <EditPage
+                    selectedId={null}
+                    currentUserId={this.currentId}
+                    hidden={!this.state.showAddPage}
+                    onCancelClick={() => {
+                        this.setState({
+                            showAddPage: false,
+                        })
+                    }}
+                    onAccessDenied={() => {
+                        // Add code here when user ownership is false
+                        this.setState({
+                            showAddPage: false,
+                        })
+                    }}
+                    onSaveClick={(data) => {
+                        this.setState({
+                            showAddPage: false,
+                        })
+
+                        saveCtmCard(data, this.currentId).then(() => {
+                            // Save completed.
+                            this.props.updateWordList();
+                        });
+                    }
+                    } />
                 <EditPage
                     selectedId={this.state.selected}
                     currentUserId={this.currentId}
@@ -117,17 +142,10 @@ class ListPage extends Component {
                             showEditPage: false,
                         })
 
-                        if (!this.state.selected) {
-                            saveCtmCard(data, this.currentId).then(() => {
-                                // Save completed.
-                                this.props.updateWordList();
-                            });
-                        } else {
-                            updateCard(this.state.selected, data, this.currentId).then(() => {
-                                // Update completed
-                                this.props.updateWordList();
-                            })
-                        }
+                        updateCard(this.state.selected, data, this.currentId).then(() => {
+                            // Update completed
+                            this.props.updateWordList();
+                        })
                     }} />
             </div >
         );

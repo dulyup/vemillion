@@ -60,10 +60,9 @@ export class EditPage extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.selectedId) {
-            if (nextProps.selectedId != this.props.selectedId) {
+            if (nextProps.selectedId != this.props.selectedId || nextProps.hidden != this.props.hidden) {
                 this.getCardById(nextProps.selectedId, nextProps.currentUserId)
                     .then((data) => {
-                        console.log(data);
                         if (!data["ownership"]) {
                             this.props.onAccessDenied();
                         } else {
