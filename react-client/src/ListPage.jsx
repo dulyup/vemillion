@@ -24,7 +24,7 @@ class ListPage extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({ wordList: nextProps.wordList }, () => console.log(this.state.wordList));
+        this.setState({ wordList: nextProps.wordList });
     }
 
     componentDidMount() {
@@ -67,14 +67,15 @@ class ListPage extends Component {
     }
 
     render() {
-        console.log(this.state.wordList);
         return (
             <div className="list-page">
                 <Banner text={this.state.title} />
-                <Table className="list"
-                    onClick={this.handleSelected}
-                    wordList={this.state.wordList}
-                />
+                <div className="whole-list">
+                    <Table className="list"
+                        onClick={this.handleSelected}
+                        wordList={this.state.wordList}
+                    />
+                </div>
 
                 <div className="list-page-buttons">
                     <button id="list-page-back" onClick={this.props.clickBackButton}>Back</button>
