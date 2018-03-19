@@ -4,7 +4,6 @@ import Table from "./Table";
 import Banner from "./Banner";
 import Alert from "./Alert";
 import { EditPage, updateCard, saveCtmCard } from './EditPage';
-import StudyPage from "./StudyPage";
 
 class ListPage extends Component {
 
@@ -57,11 +56,6 @@ class ListPage extends Component {
         return this.state.wordList;
     }
 
-    // goToView(queryString) {
-    //     this.hideElement('.list-page');
-    //     this.showElement(queryString);
-    // }
-
     hideElement(queryString) {
         console.log(queryString);
         document.querySelector(queryString).classList.add('hidden');
@@ -101,7 +95,6 @@ class ListPage extends Component {
                         disabled={this.handleStudyButton() ? false : "disabled"}>Study</button>
                 </div>
 
-                {/*<StudyPage actualJSON={this.state.wordList} currentUserId={this.currentId} clickExitButton={() => this.props.backToHome('.study-page')}/>*/}
                 {/*please add "hidden" in the className of EditPage*/}
                 <EditPage
                     selectedId={null}

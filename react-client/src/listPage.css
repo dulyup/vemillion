@@ -31,7 +31,7 @@
     _position:absolute;
 }
 
-#list-page-back, #list-page-add,#list-page-edit, #list-page-study {
+.list-page-back, .list-page-add, .list-page-edit, .list-page-study {
     text-align: center;
     margin: 5px;
     height: 30px;
@@ -42,17 +42,17 @@
     border-radius: 5px;
 }
 
-#list-page-back:hover {
+.list-page-back:hover {
     background-color: IndianRed;
     color: white;
 }
 
-#list-page-add:hover{
+.list-page-add:hover{
     background-color: #4CAF50;
     color: white;
 }
 
-#list-page-edit:hover{
+.list-page-edit:hover{
     background-color: #4CAF50;
     color: white;
 }
