@@ -60,25 +60,24 @@ export class EditPage extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.selectedId) {
-            this.getCardById(nextProps.selectedId, nextProps.currentUserId)
-                .then((data) => {
-                    console.log(data);
-                    if (!data["ownership"]) {
-                        this.setState({
-                            isHidden: true,
-                        })
-                        this.props.onAccessDenied();
-                    } else {
-                        this.setState({
-                            data: data,
-                            title: "Edit",
-                            isHidden: nextProps.hidden
-                        })
-                    }
-                }).catch((e) => {
-                    console.log(e);
-                    throw e;
-                });
+            if (nextProps.selectedId != this.props.selectedId) {
+                this.getCardById(nextProps.selectedId, nextProps.currentUserId)
+                    .then((data) => {
+                        console.log(data);
+                        if (!data["ownership"]) {
+                            this.props.onAccessDenied();
+                        } else {
+                            this.setState({
+                                data: data,
+                                title: "Edit",
+                                isHidden: nextProps.hidden
+                            })
+                        }
+                    }).catch((e) => {
+                        console.log(e);
+                        throw e;
+                    });
+            }
         } else {
             this.setState({
                 isHidden: nextProps.hidden,

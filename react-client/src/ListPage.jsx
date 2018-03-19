@@ -81,9 +81,12 @@ class ListPage extends Component {
                             showEditPage: true,
                         })} > Add</button>
                     <button id="list-page-edit"
-                        onClick={() => this.setState({
-                            showEditPage: true,
-                        })} disabled={this.handleEditButton() ? false : "disabled"}>Edit</button>
+                        onClick={() => {
+                            console.log("editClick");
+                            this.setState({
+                                showEditPage: true,
+                            })
+                        }} disabled={this.handleEditButton() ? false : "disabled"}>Edit</button>
                     <button id="list-page-study"
                         onClick={() => this.props.setStudyList(this.state.wordList)}
                         disabled={this.handleStudyButton() ? false : "disabled"}>Study</button>
