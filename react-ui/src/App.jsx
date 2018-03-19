@@ -38,37 +38,37 @@ class App extends Component {
 
         <div className='homepage'>
           
-            <Banner text={'Welcome to Vermillion Flashcard! User '} id={this.state.currentId}/>
+          <Banner text={'Welcome to Vermillion Flashcard! User '} id={this.state.currentId}/>
 
-            <div className='slogan'>
-              <p id='slogan-study'>STUDY: <span id='slogan-easier'>Easier</span></p>
-              <p id='slogan-faster'>Faster</p>
-              <p id='slogan-harder'>Harder</p>
-            </div>
+          <div className='slogan'>
+            <p id='slogan-study'>STUDY: <span id='slogan-easier'>Easier</span></p>
+            <p id='slogan-faster'>Faster</p>
+            <p id='slogan-harder'>Harder</p>
+          </div>
 
-            <div className='homepage-buttons'>
-              <button className='test-dummy' onClick={() => this.goToView('.study-page')}>STUDY</button>
-              <button className='test-dummy' onClick={() => this.goToView('.favorite-page')}>FAVORITE</button>
-              <button className='test-dummy' onClick={() => this.goToView('.my-cards-page')}>CUSTOM</button>            
-              <select className='test-dummy' id='homepage-dropbtn'></select>            
-            </div>
+          <div className='homepage-buttons'>
+            <button className='test-dummy' onClick={() => this.goToView('.study-page')}>STUDY</button>
+            <button className='test-dummy' onClick={() => this.goToView('.favorite-page')}>FAVORITE</button>
+            <button className='test-dummy' onClick={() => this.goToView('.my-cards-page')}>CUSTOM</button>            
+            <select className='test-dummy' id='homepage-dropbtn'></select>            
+          </div>
           
         </div>
 
         <div>
-              <StudyPage actualJSON={this.state['.study-page']} currentUserId={this.state.currentId} 
-              clickExitButton={() => this.backToHome('.study-page')}/>
-              
-              <FavPage wordList={this.state['.favorite-page']} currentUserId={this.state.currentId} 
-              clickBackButton={() => this.backToHome('.favorite-page')} setStudyList={(list)=>this.setStudyList(list)}/>
+          <StudyPage actualJSON={this.state['.study-page']} currentUserId={this.state.currentId} 
+          clickExitButton={() => this.backToHome('.study-page')}/>
+          
+          <FavPage wordList={this.state['.favorite-page']} currentUserId={this.state.currentId} 
+          clickBackButton={() => this.backToHome('.favorite-page')} setStudyList={(list)=>this.setStudyList(list)}/>
 
-              <MyCardsPage wordList={this.state['.my-cards-page']} currentUserId={this.state.currentId} 
-              clickBackButton={() => this.backToHome('.my-cards-page')} setStudyList={(list)=>this.setStudyList(list)}/>
+          <MyCardsPage wordList={this.state['.my-cards-page']} currentUserId={this.state.currentId} 
+          clickBackButton={() => this.backToHome('.my-cards-page')} setStudyList={(list)=>this.setStudyList(list)}/>
 
-              <SharedCardsPage wordList={this.state['.shared-cards-page']} currentUserId={this.state.currentId} 
-              clickBackButton={() => this.backToHome('.shared-cards-page')} setStudyList={(list)=>this.setStudyList(list)}/>
+          <SharedCardsPage wordList={this.state['.shared-cards-page']} currentUserId={this.state.currentId} 
+          clickBackButton={() => this.backToHome('.shared-cards-page')} setStudyList={(list)=>this.setStudyList(list)}/>
 
-            </div>       
+        </div>       
         
         <Alert message='custom alert message' onClick={() => this.hideElement('.alert')} />
 
@@ -127,7 +127,8 @@ class App extends Component {
     const drop = document.getElementById('homepage-dropbtn');
     drop.options.length = 0;
     const placeholder = document.createElement('option');
-    placeholder.text = 'SHARED CARDS';
+    placeholder.text = 'Shared Lists';
+    placeholder.value = 'placeholder';
     placeholder.selected = 'selected';
     placeholder.disabled = 'disabled';
     drop.add(placeholder); 
@@ -144,9 +145,11 @@ class App extends Component {
   addSelectListener(){
     const select=document.getElementById('homepage-dropbtn');
     select.addEventListener('change', ()=>{
-      console.log(select.value);
       this.setState({selectedId : select.value}, 
-        ()=>{this.goToView('.shared-cards-page')}
+        ()=>{
+          this.goToView('.shared-cards-page');
+          select.value = 'placeholder';
+        }
       )
     });
   }
