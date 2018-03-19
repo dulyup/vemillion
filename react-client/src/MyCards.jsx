@@ -21,7 +21,9 @@ class MyCardsPage extends Component {
         return (
             <div className="my-cards-page hidden">
 
-                <ListPage title={'My Cards'} currentId={this.currentId} wordList={this.state.wordList} clickBackButton={this.props.clickBackButton} />
+                <ListPage title={'My Cards'} currentId={this.currentId} wordList={this.state.wordList}
+                          clickBackButton={this.props.clickBackButton}
+                          setStudyList={this.props.setStudyList}/>
 
             </div>
         );
