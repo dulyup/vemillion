@@ -17,11 +17,15 @@ class ListPage extends Component {
 
         };
         this.currentId = this.props.currentId;
-        this.handleSelected = this.handleSelected.bind(this);
+        this.handleSelected = this.handleSelected.bind(this);        
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({wordList : nextProps.wordList });
     }
 
     componentDidMount(){
-        this.initial();
+        this.initial();        
     }
 
     initial() {

@@ -13,6 +13,9 @@ class MyCardsPage extends Component {
         this.currentId = this.props.currentId;
     }
 
+    componentWillReceiveProps(nextProps) {
+        this.setState({wordList : nextProps.wordList });
+    }
 
     render() {
         return (

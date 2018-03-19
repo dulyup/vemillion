@@ -91,7 +91,7 @@ class App extends Component {
     .then(json => {
       this.setState({[queryString] : json});
       //hide loading
-      console.log(this.state);
+      //console.log(this.state);
       
       this.showElement(queryString);
     })

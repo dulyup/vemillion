@@ -8,11 +8,15 @@ class FavPage extends Component {
         super(props);
         this.state = {
             selected:'',
-            wordList: this.props.wordList
+            wordList : props.wordList
         };
         this.currentId = this.props.currentId;
+        
     }
 
+    componentWillReceiveProps(nextProps) {
+        this.setState({wordList : nextProps.wordList });
+    }
 
     render() {
         return (
