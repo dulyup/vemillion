@@ -46,9 +46,10 @@ class App extends Component {
             <Button to fav/>
             <Button to custom/>
             <Select to shared/>
+            <button onClick={() => this.setStudyList(Math.random().toString())}>setStudyList</button>
             */}
           </div>
-          <button onClick={() => this.showElement('.alert')}>Show Alert</button>
+          
         </div>
         <div>
           {/*
@@ -57,21 +58,27 @@ class App extends Component {
         <Listview of custom/>
         <Listview of shared/>
         */}
-        <StudyPage actualJSON={this.state['.study-page']} currentUserId={this.state.currentId} clickExitButton={() => this.backToHome('.study-page')}/>
-        <FavPage wordList={this.state['.favorite-page']} currentUserId={this.state.currentId} clickBackButton={() => this.backToHome('.favorite-page')}/>
-        <MyCardsPage wordList={this.state['.my-cards-page']} currentUserId={this.state.currentId} clickBackButton={() => this.backToHome('.my-cards-page')}/>
+
+        <StudyPage actualJSON={this.state['.study-page']} currentUserId={this.state.currentId} 
+          clickExitButton={() => this.backToHome('.study-page')}/>
+
+        <FavPage wordList={this.state['.favorite-page']} currentUserId={this.state.currentId} 
+          clickBackButton={() => this.backToHome('.favorite-page')} setStudyList={(list)=>this.setStudyList(list)}/>
+
+        <MyCardsPage wordList={this.state['.my-cards-page']} currentUserId={this.state.currentId} 
+          clickBackButton={() => this.backToHome('.my-cards-page')} setStudyList={(list)=>this.setStudyList(list)}/>
+
         </div>
         
-        <p className='hidden test-dummy study-page' onClick={() => this.backToHome('.study-page')}> study-page </p>
-        <p className='hidden test-dummy favorite-page' onClick={() => this.backToHome('.favorite-page')}>favorite-page </p>
-        <p className='hidden test-dummy my-cards-page' onClick={() => this.backToHome('.my-cards-page')}> my-cards-page </p>        
-        
         <Alert message='custom alert message' onClick={() => this.hideElement('.alert')} />
-
 
       </div>
     );
 
+  }
+
+  setStudyList(list){
+    this.setState({'.study-page': list}, ()=>{console.log(this.state);});    
   }
 
   goToView(queryString) {
