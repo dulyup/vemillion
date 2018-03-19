@@ -12,7 +12,7 @@ if (!String.prototype.format) {
     };
 }
 
-let cardURL = "http://localhost:3000/cards/{0}";
+let cardURL = "/cards/{0}";
 
 function saveCard(saveCardURL, obj, currentUserId) {
     return fetch(saveCardURL,
@@ -22,13 +22,13 @@ function saveCard(saveCardURL, obj, currentUserId) {
             body: JSON.stringify(obj),
         }).then((response) => {
             if (response.status !== 200) {
-                throw "unexpected error";
+                throw new Error("unexpected error");
             }
         });
 }
 
 export function saveCtmCard(obj, currentUserId) {
-    let saveCtmCardURL = "http://localhost:3000/users/" + currentUserId + "/custom";
+    let saveCtmCardURL = "/users/" + currentUserId + "/custom";
     return saveCard(saveCtmCardURL, obj, currentUserId);
 };
 
@@ -40,7 +40,7 @@ export function updateCard(id, obj, currentUserId) {
             body: JSON.stringify(obj)
         }).then((response) => {
             if (response.status !== 200) {
-                throw "unexpected error";
+                throw new Error("unexpected error");
             }
         });
 };
@@ -60,7 +60,7 @@ export class EditPage extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.selectedId) {
-            if (nextProps.selectedId != this.props.selectedId || nextProps.hidden != this.props.hidden) {
+            if (nextProps.selectedId !== this.props.selectedId || nextProps.hidden !== this.props.hidden) {
                 this.getCardById(nextProps.selectedId, nextProps.currentUserId)
                     .then((data) => {
                         if (!data["ownership"]) {

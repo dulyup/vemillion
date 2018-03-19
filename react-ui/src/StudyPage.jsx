@@ -100,7 +100,7 @@ class StudyPage extends React.Component {
 
   addtoFavoriteJson(currentUserId, i, actualJSON) {
     let xhr = new XMLHttpRequest();
-    let url = 'http://localhost:3000/users/' + currentUserId +'/fav';
+    let url = '/users/' + currentUserId +'/fav';
     xhr.open('POST', url, true);
     xhr.onreadystatechange = function(){
        console.log('onreadystatechange: '+ xhr.readyState);
@@ -111,7 +111,7 @@ class StudyPage extends React.Component {
 
   removeFromFavoriteJson(currentUserId, i, actualJSON) {
     let xhr = new XMLHttpRequest();
-    let url = 'http://localhost:3000/users/' + currentUserId +'/fav/' + actualJSON[i].cardId;
+    let url = '/users/' + currentUserId +'/fav/' + actualJSON[i].cardId;
     xhr.open('DELETE', url, true);
     xhr.onreadystatechange = function(){
         console.log('onreadystatechange: '+ xhr.readyState);

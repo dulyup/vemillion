@@ -127,7 +127,7 @@ class App extends Component {
     const drop = document.getElementById('homepage-dropbtn');
     drop.options.length = 0;
     const placeholder = document.createElement('option');
-    placeholder.text = 'Shared Lists';
+    placeholder.text = 'SHARED';
     placeholder.value = 'placeholder';
     placeholder.selected = 'selected';
     placeholder.disabled = 'disabled';
