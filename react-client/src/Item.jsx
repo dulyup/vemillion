@@ -21,6 +21,11 @@ class Item extends Component {
             word: this.props.word,
         };
     }
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({ word: nextProps.word });
+    }
+
     render() {
         return (
             <tr className={`row ${this.state.activeRow ? 'selected' :'row'}`}
