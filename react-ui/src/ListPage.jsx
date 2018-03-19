@@ -28,17 +28,20 @@ class ListPage extends Component {
     }
 
     componentDidMount() {
+        console.log(this.state.title);
+
         this.initial();
     }
 
     initial() {
+        let title = `.list-page-${this.state.title.split(" ").join("")} `;
         if (this.state.title === 'Favorite') {
-            this.hideElement('#list-page-add');
+            this.hideElement(title + '.list-page-add');
         }
-        // if (this.state.title === "Shared Cards") {
-        //     this.hideElement('#list-page-add');
-        //     this.hideElement('#list-page-edit');
-        // }
+        if (this.state.title === "Shared Cards") {
+            this.hideElement(title + '.list-page-add');
+            this.hideElement(title + '.list-page-edit');
+        }
     }
 
     handleSelected(id) {
@@ -53,12 +56,8 @@ class ListPage extends Component {
         return this.state.wordList;
     }
 
-    // goToView(queryString) {
-    //     this.hideElement('.list-page');
-    //     this.showElement(queryString);
-    // }
-
     hideElement(queryString) {
+        console.log(queryString);
         document.querySelector(queryString).classList.add('hidden');
     }
 
@@ -68,33 +67,34 @@ class ListPage extends Component {
 
     render() {
         return (
-            <div className="list-page">
+
+            <div className={"list-page-"+this.state.title.split(" ").join("")}>
                 <Banner text={this.state.title} />
                 <div className="whole-list">
                     <Table className="list"
-                        onClick={this.handleSelected}
-                        wordList={this.state.wordList}
+                           onClick={this.handleSelected}
+                           wordList={this.state.wordList}
+                           selectedId={this.state.selected}
                     />
                 </div>
 
                 <div className="list-page-buttons">
-                    <button id="list-page-back" onClick={this.props.clickBackButton}>Back</button>
-                    <button id="list-page-add"
-                        onClick={() => this.setState({
-                            showAddPage: true,
-                        })} > Add</button>
-                    <button id="list-page-edit"
-                        onClick={() => {
-                            this.setState({
-                                showEditPage: true,
-                            })
-                        }} disabled={this.handleEditButton() ? false : "disabled"}>Edit</button>
-                    <button id="list-page-study"
-                        onClick={() => this.props.setStudyList(this.state.wordList)}
-                        disabled={this.handleStudyButton() ? false : "disabled"}>Study</button>
+                    <button className="list-page-back" onClick={this.props.clickBackButton}>Back</button>
+                    <button className="list-page-add"
+                            onClick={() => this.setState({
+                                showAddPage: true,
+                            })} > Add</button>
+                    <button className="list-page-edit"
+                            onClick={() => {
+                                this.setState({
+                                    showEditPage: true,
+                                })
+                            }} disabled={this.handleEditButton() ? false : "disabled"}>Edit</button>
+                    <button className="list-page-study"
+                            onClick={() => this.props.setStudyList(this.state.wordList)}
+                            disabled={this.handleStudyButton() ? false : "disabled"}>Study</button>
                 </div>
 
-                {/*<StudyPage actualJSON={this.state.wordList} currentUserId={this.currentId} clickExitButton={() => this.props.backToHome('.study-page')}/>*/}
                 {/*please add "hidden" in the className of EditPage*/}
                 <EditPage
                     selectedId={null}
