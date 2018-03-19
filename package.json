@@ -2,9 +2,13 @@
   "name": "vermillion-test",
   "version": "1.0.0",
   "scripts": {
-    "start": "node service/controller.js",
-    "heroku-postbuild": "cd react-client/ && npm install && npm run build"
+    "start": "node server/controller.js",
+    "heroku-postbuild": "cd react-ui/ && npm install && npm run build"
   },
+  "cacheDirectories": [
+    "node_modules",
+    "react-ui/node_modules"
+  ],
   "keywords": [],
   "dependencies": {
     "body-parser": "^1.18.2",
