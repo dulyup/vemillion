@@ -3,8 +3,8 @@ import './App.css';
 import Alert from './Alert';
 import Banner from './Banner';
 import StudyPage from './StudyPage';
-import FavPage from "./FavPage";
-import MyCardsPage from "./MyCards";
+import FavPage from './FavPage';
+import MyCardsPage from './MyCards';
 import SharedCardsPage from './SharedCardsPage';
 const connection = require('./connection');
 
@@ -29,47 +29,46 @@ class App extends Component {
   }
 
   render() { 
+    
+    const loading=require('./loading.gif');
 
     return (
-      <div className="App">
-        <div className="homepage">
-          <Banner text={'Welcome to Vermillion Flashcard! User '} id={this.state.currentId}/>
-          <div className="slogan">
-            <p id="slogan-study">STUDY: <span id="slogan-easier">Easier</span></p>
-            <p id="slogan-faster">Faster</p>
-            <p id="slogan-harder">Harder</p>
-          </div>
-          <div className="homepage-buttons">
+      <div className='App'>
+        <div className='hidden' id='loading'><p className='img'><img src={loading}/></p></div>
 
-            <button className='test-dummy' onClick={() => this.goToView('.study-page')}>STUDY</button>
-            <button className='test-dummy' onClick={() => this.goToView('.favorite-page')}>FAVORITE</button>
-            <button className='test-dummy' onClick={() => this.goToView('.my-cards-page')}>CUSTOM</button>            
-            <select className='test-dummy' id='homepage-dropbtn'></select>
-            {/*
-            <Button to presotred/>
-            <Button to fav/>
-            <Button to custom/>
-            <Select to shared/>
-            <button onClick={() => this.setStudyList(Math.random().toString())}>setStudyList</button>
-            */}
-          </div>
+        <div className='homepage'>
+          
+            <Banner text={'Welcome to Vermillion Flashcard! User '} id={this.state.currentId}/>
+
+            <div className='slogan'>
+              <p id='slogan-study'>STUDY: <span id='slogan-easier'>Easier</span></p>
+              <p id='slogan-faster'>Faster</p>
+              <p id='slogan-harder'>Harder</p>
+            </div>
+
+            <div className='homepage-buttons'>
+              <button className='test-dummy' onClick={() => this.goToView('.study-page')}>STUDY</button>
+              <button className='test-dummy' onClick={() => this.goToView('.favorite-page')}>FAVORITE</button>
+              <button className='test-dummy' onClick={() => this.goToView('.my-cards-page')}>CUSTOM</button>            
+              <select className='test-dummy' id='homepage-dropbtn'></select>            
+            </div>
           
         </div>
-        <div>          
 
-        <StudyPage actualJSON={this.state['.study-page']} currentUserId={this.state.currentId} 
-          clickExitButton={() => this.backToHome('.study-page')}/>
+        <div>
+              <StudyPage actualJSON={this.state['.study-page']} currentUserId={this.state.currentId} 
+              clickExitButton={() => this.backToHome('.study-page')}/>
+              
+              <FavPage wordList={this.state['.favorite-page']} currentUserId={this.state.currentId} 
+              clickBackButton={() => this.backToHome('.favorite-page')} setStudyList={(list)=>this.setStudyList(list)}/>
 
-        <FavPage wordList={this.state['.favorite-page']} currentUserId={this.state.currentId} 
-          clickBackButton={() => this.backToHome('.favorite-page')} setStudyList={(list)=>this.setStudyList(list)}/>
+              <MyCardsPage wordList={this.state['.my-cards-page']} currentUserId={this.state.currentId} 
+              clickBackButton={() => this.backToHome('.my-cards-page')} setStudyList={(list)=>this.setStudyList(list)}/>
 
-        <MyCardsPage wordList={this.state['.my-cards-page']} currentUserId={this.state.currentId} 
-          clickBackButton={() => this.backToHome('.my-cards-page')} setStudyList={(list)=>this.setStudyList(list)}/>
+              <SharedCardsPage wordList={this.state['.shared-cards-page']} currentUserId={this.state.currentId} 
+              clickBackButton={() => this.backToHome('.shared-cards-page')} setStudyList={(list)=>this.setStudyList(list)}/>
 
-        <SharedCardsPage wordList={this.state['.shared-cards-page']} currentUserId={this.state.currentId} 
-          clickBackButton={() => this.backToHome('.shared-cards-page')} setStudyList={(list)=>this.setStudyList(list)}/>
-
-        </div>
+            </div>       
         
         <Alert message='custom alert message' onClick={() => this.hideElement('.alert')} />
 
@@ -95,8 +94,7 @@ class App extends Component {
   goToView(queryString) {
 
     this.hideElement('.homepage');
-
-    //show loading
+    this.showElement('#loading');
 
     const views={'.study-page':'/prestored'
     ,'.favorite-page':'/users/'+this.state.currentId+'/fav'
@@ -110,10 +108,11 @@ class App extends Component {
 
     connection.fetchJsonFrom(views[queryString],'get', this.state.currentId)
     .then(json => {
-      this.setState({[queryString] : json});
-      //hide loading
+      this.setState({[queryString] : json}, ()=>{
+        this.hideElement('#loading');      
+        this.showElement(queryString);
+      });
       
-      this.showElement(queryString);
     })
     .catch((error) => {
     if (error.toString().startsWith('error-')) {
@@ -128,9 +127,9 @@ class App extends Component {
     const drop = document.getElementById('homepage-dropbtn');
     drop.options.length = 0;
     const placeholder = document.createElement('option');
-    placeholder.text = "SHARED CARDS";
-    placeholder.selected = "selected";
-    placeholder.disabled = "disabled";
+    placeholder.text = 'SHARED CARDS';
+    placeholder.selected = 'selected';
+    placeholder.disabled = 'disabled';
     drop.add(placeholder); 
 
     let list = await connection.getUserList();
@@ -157,7 +156,7 @@ class App extends Component {
   }
 
   showElement(queryString) {
-    document.querySelector(queryString).classList.remove('hidden');;
+    document.querySelector(queryString).classList.remove('hidden');
   }
 
   backToHome(curView){

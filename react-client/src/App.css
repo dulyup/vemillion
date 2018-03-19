@@ -50,7 +50,22 @@
 	font-size: 30px;
 	font-weight: bolder;
 	padding-right: 50px;
-  margin: 0px;
+  	margin: 0px;
+}
+
+#loading{
+	position: absolute;
+    top: 0%;
+    left: 0%;
+	height: 100%;
+	width: 100%;
+	align-items: center;
+	opacity: 0.9;
+	background-color:ghostwhite;
+}
+
+#loading >.img{
+	padding-top: 25%;
 }
 
 #slogan-study {
