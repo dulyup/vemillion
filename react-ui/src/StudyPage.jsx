@@ -122,10 +122,13 @@ class StudyPage extends React.Component {
 
   haveNoIdeaButtonClicked() {
     this.setState({
+       timeOut: "",
        result: "Missed!",
        card: false,
        answer: true,
        button: false,
+       second: 0,
+       timer: 0,
     })
   }
 
