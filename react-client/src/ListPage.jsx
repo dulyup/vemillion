@@ -85,7 +85,7 @@ class ListPage extends Component {
                             showEditPage: true,
                         })} disabled={this.handleEditButton() ? false : "disabled"}>Edit</button>
                     <button id="list-page-study"
-                            onClick={() => this.props.setStudyList(this.state.wordList)}
+                        onClick={() => this.props.setStudyList(this.state.wordList)}
                         disabled={this.handleStudyButton() ? false : "disabled"}>Study</button>
                 </div>
 
@@ -96,14 +96,21 @@ class ListPage extends Component {
                     currentUserId={this.currentId}
                     hidden={!this.state.showEditPage}
                     onCancelClick={() => {
-                        // Add code here when click cancel
-
+                        this.setState({
+                            showEditPage: false,
+                        })
                     }}
                     onAccessDenied={() => {
                         // Add code here when user ownership is false
-
+                        this.setState({
+                            showEditPage: false,
+                        })
                     }}
                     onSaveClick={(data) => {
+                        this.setState({
+                            showEditPage: false,
+                        })
+
                         if (!this.state.selected) {
                             saveCtmCard(data, this.currentId).then(() => {
                                 // Save completed.
