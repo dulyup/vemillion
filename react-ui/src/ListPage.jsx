@@ -70,7 +70,7 @@ class ListPage extends Component {
                     <Table className="list"
                         onClick={this.handleSelected}
                         wordList={this.state.wordList}
-                           selectedWordId={this.state.selectedWordId}
+                        selectedWordId={this.state.selectedWordId}
                     />
 
                 <div className="list-page-buttons">

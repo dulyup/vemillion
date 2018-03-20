@@ -15,8 +15,8 @@
     width:100px;
     float:right;
     position:fixed;
-    right:0px;
-    bottom:30px;
+    right:100px;
+    bottom:150px;
     z-index:20;
     _position:absolute;
 }
