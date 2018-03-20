@@ -7,7 +7,6 @@ class SharedCardsPage extends Component {
     constructor (props) {
         super(props);
         this.state = {
-            selected:'',
             wordList: this.props.wordList
         };
         this.currentId = this.props.currentId;
@@ -22,6 +21,7 @@ class SharedCardsPage extends Component {
             <div className="shared-cards-page hidden">
 
                 <ListPage title={'Shared Cards'} currentId={this.currentId} wordList={this.state.wordList}
+                          selectedWordId={this.props.selectedWordId}
                           clickBackButton={this.props.clickBackButton}
                           setStudyList={this.props.setStudyList}/>
 

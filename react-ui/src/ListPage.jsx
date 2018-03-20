@@ -12,7 +12,7 @@ class ListPage extends Component {
         this.state = {
             title: this.props.title,
             wordList: this.props.wordList,
-            selected: '',
+            selectedWordId: this.props.selectedWordId,
             isValidToEdit: false,
             isValidToStudy: false,
             showAddPage: false,
@@ -24,7 +24,7 @@ class ListPage extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({ wordList: nextProps.wordList });
+        this.setState({ wordList: nextProps.wordList, selectedWordId: nextProps.selectedWordId });
     }
 
     componentDidMount() {
@@ -43,11 +43,11 @@ class ListPage extends Component {
     }
 
     handleSelected(id) {
-        this.setState({ selected: id }, () => console.log(id));
+        this.setState({ selectedWordId: id }, () => console.log(id));
     }
 
     handleEditButton() {
-        return this.state.wordList && this.state.selected !== '';
+        return this.state.wordList && this.state.selectedWordId;
     }
 
     handleStudyButton() {
@@ -70,7 +70,7 @@ class ListPage extends Component {
                     <Table className="list"
                         onClick={this.handleSelected}
                         wordList={this.state.wordList}
-                        selectedId={this.state.selected}
+                           selectedWordId={this.state.selectedWordId}
                     />
 
                 <div className="list-page-buttons">
@@ -104,6 +104,7 @@ class ListPage extends Component {
                         // Add code here when user ownership is false
                         this.setState({
                             showAddPage: false,
+                            selectedWordId: null
                         });
                         setTimeout(() => {
                             this.hideElement('.alert');
@@ -122,7 +123,7 @@ class ListPage extends Component {
                     }
                     } />
                 <EditPage
-                    selectedId={this.state.selected}
+                    selectedId={this.state.selectedWordId}
                     currentUserId={this.currentId}
                     hidden={!this.state.showEditPage}
                     onCancelClick={() => {
@@ -134,6 +135,7 @@ class ListPage extends Component {
                         // Add code here when user ownership is false
                         this.setState({
                             showEditPage: false,
+                            selectedWordId: null
                         });
                         setTimeout(() => {
                             this.hideElement('.alert');
@@ -145,7 +147,7 @@ class ListPage extends Component {
                             showEditPage: false,
                         });
 
-                        updateCard(this.state.selected, data, this.currentId).then(() => {
+                        updateCard(this.state.selectedWordId, data, this.currentId).then(() => {
                             // Update completed
                             this.props.updateWordList();
                         })

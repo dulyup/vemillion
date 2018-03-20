@@ -8,7 +8,6 @@ class FavPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            selected: '',
             wordList: props.wordList
         };
 
@@ -39,6 +38,7 @@ class FavPage extends Component {
             <div className="favorite-page hidden">
 
                 <ListPage title={'Favorite'} currentId={this.currentId} wordList={this.state.wordList}
+                          selectedWordId={this.props.selectedWordId}
                           clickBackButton={this.props.clickBackButton}
                           setStudyList={this.props.setStudyList}
                           updateWordList={this.updateWordList}/>

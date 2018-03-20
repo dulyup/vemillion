@@ -1,14 +1,14 @@
 import React from 'react';
 import Item from './Item';
 
-const Tbody = ({wordList, onClick, selectedId}) => {
+const Tbody = ({wordList, onClick, selectedWordId}) => {
     return (
         <tbody>
         {wordList.map(function (word, index) {
             return <Item key={index}
                          word={word}
                          onClick={onClick}
-                         className={selectedId === word['cardId'] ? "selected" : ""}
+                         className={selectedWordId === word['cardId'] ? "selected" : ""}
             />
         })}
         </tbody>

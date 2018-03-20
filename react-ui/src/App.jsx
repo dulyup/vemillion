@@ -16,6 +16,7 @@ class App extends Component {
     this.state = {
       currentId : this.props.currentId,
       selectedId : null,
+      selectedWordId: null,
       '.study-page' : '',
       '.favorite-page' : '',
       '.my-cards-page' : '',
@@ -165,6 +166,7 @@ class App extends Component {
   backToHome(curView){
     this.hideElement(curView);
     this.showElement('.homepage');
+    this.setState({selectedWordId: null})
   }
 
 }
