@@ -1,4 +1,4 @@
-#[heroku instance](https://vermillion.herokuapp.com/)
+[heroku instance](https://vermillion.herokuapp.com/)
 
 # Flash Card App (Team Vermillion)
 
