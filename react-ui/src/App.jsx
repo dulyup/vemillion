@@ -47,10 +47,10 @@ class App extends Component {
           </div>
 
           <div className='homepage-buttons'>
-            <button className='test-dummy' onClick={() => this.goToView('.study-page')}>STUDY</button>
-            <button className='test-dummy' onClick={() => this.goToView('.favorite-page')}>FAVORITE</button>
-            <button className='test-dummy' onClick={() => this.goToView('.my-cards-page')}>CUSTOM</button>            
-            <select className='test-dummy' id='homepage-dropbtn'></select>            
+            <button onClick={() => this.goToView('.study-page')}>PRESTORED</button>
+            <button onClick={() => this.goToView('.favorite-page')}>FAVORITE</button>
+            <button onClick={() => this.goToView('.my-cards-page')}>CUSTOM</button>            
+            <select id='homepage-dropbtn'></select>            
           </div>
           
         </div>
