@@ -2,16 +2,6 @@
     display: none;
 }
 
-.whole-list {
-    background-color: WhiteSmoke;
-    display: block;
-    height: auto;
-    width: 800px;
-    margin: auto;
-    padding: 20px;
-    border: seagreen;
-}
-
 .list-page {
     position: relative;
     font-family: Helvetica;

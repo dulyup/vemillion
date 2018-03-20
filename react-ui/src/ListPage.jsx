@@ -67,13 +67,11 @@ class ListPage extends Component {
 
             <div className={"list-page-"+this.state.title.split(" ").join("")}>
                 <Banner text={this.state.title} />
-                <div className="whole-list">
                     <Table className="list"
                         onClick={this.handleSelected}
                         wordList={this.state.wordList}
                         selectedId={this.state.selected}
                     />
-                </div>
 
                 <div className="list-page-buttons">
                     <button className="list-page-back" onClick={this.props.clickBackButton}>Back</button>
